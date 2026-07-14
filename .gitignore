@@ -1,0 +1,25 @@
+# Entorno / Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Config y secretos
+.env
+
+# PDFs generados / almacenamiento local
+data/
+*.pdf
+
+# Muestras generadas (pesadas)
+samples/
+samples.zip
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# NOTA: los assets optimizados (assets/report/**, assets/fonts/*.ttf) SÍ se
+# versionan para que viajen con el deploy a Railway. Fueron reducidos con
+# scripts/optimize_assets.py (~150 DPI). Las fuentes de marca faltantes
+# (PassionOne, LazyDog) usan reserva unicode hasta que se agreguen.

@@ -1,0 +1,16 @@
+# Código y texto: normalizar a LF
+*.py    text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.toml  text eol=lf
+*.json  text eol=lf
+*.env*  text eol=lf
+Dockerfile text eol=lf
+
+# Binarios: sin conversión de fin de línea ni diffs
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.ttf  binary
+*.otf  binary
+*.pdf  binary

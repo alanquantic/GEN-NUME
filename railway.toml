@@ -1,0 +1,16 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Recordatorio de configuración en Railway (no lo lee Railway, es documentación):
+#   - Crear un Volume y montarlo en /data
+#   - Variables:
+#       WEBHOOK_SECRET=<secreto compartido con la tienda>
+#       PUBLIC_BASE_URL=https://<tu-servicio>.up.railway.app
+#       STORAGE_DIR=/data
+#       ENVIRONMENT=production

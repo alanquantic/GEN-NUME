@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+data/
+.git/
+tests/
+*.md
+# NOTA: assets/ NO se ignora — debe copiarse a la imagen (plantillas y fuentes).
