@@ -112,6 +112,10 @@ Respuesta:
 
 ## Integración con la tienda Next.js
 
+📖 **Guía completa de integración: [`docs/INTEGRACION.md`](docs/INTEGRACION.md)**
+(contrato de la API, catálogo, firma HMAC, esquema Drizzle, disparo al pago,
+idempotencia, reintentos y checklist).
+
 Cliente reutilizable (server-side; nunca expongas `WEBHOOK_SECRET` al navegador):
 
 ```ts
