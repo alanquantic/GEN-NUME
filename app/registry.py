@@ -111,7 +111,9 @@ def _amor(req: GenerateRequest) -> Report:
 # --------------------------------------------------------------------- #
 # Pareja (requieren partner)
 # --------------------------------------------------------------------- #
-@register("reporte-pareja", "reporte-pareja-2025")
+# "nuestra-leccion" es el producto de la tienda para este mismo reporte de
+# pareja (plantillas pareja-g, año 2026). Comparte builder con reporte-pareja.
+@register("reporte-pareja", "reporte-pareja-2025", "nuestra-leccion")
 def _partner_2026(req: GenerateRequest) -> Report:
     _require(req.partner is not None, "reporte de pareja requiere partner")
     r = Partner(_person(req))

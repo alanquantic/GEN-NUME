@@ -256,7 +256,7 @@ Sheets).
 
 | Clave | Reporte |
 |---|---|
-| `reporte-pareja` / `reporte-pareja-2025` | Pareja (año 2026) |
+| `reporte-pareja` / `reporte-pareja-2025` / `nuestra-leccion` | Pareja (año 2026) |
 | `reporte-pareja-2023` | Pareja (año 2023) |
 | `bonus-pareja` | Pareja (bonus) |
 | `reporte-maestro` | Maestro |

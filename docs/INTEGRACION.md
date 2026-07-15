@@ -59,8 +59,9 @@ La clave (`report`) es uno de estos 16 valores. Consulta en vivo con
 | `reporte-etapa-de-vida-2026` | Etapas de vida | No |
 | `horoscopo` | Horóscopo | No |
 | `amor-pareja-ano-personal` | Amor / año personal | No |
-| `reporte-pareja` | Pareja (2026) | **Sí** |
-| `reporte-pareja-2025` | Pareja (2026) | **Sí** |
+| `reporte-pareja` | Pareja / año personal 2026 | **Sí** |
+| `reporte-pareja-2025` | Pareja (2026, alias) | **Sí** |
+| `nuestra-leccion` | Nuestra Lección (= pareja 2026) | **Sí** |
 | `reporte-pareja-2023` | Pareja (2023) | **Sí** |
 | `bonus-pareja` | Pareja (bonus) | **Sí** |
 | `reporte-maestro` | Maestro | **Sí** |
@@ -195,7 +196,7 @@ export type GeneratedKey =
   | "reporte-quien-soy" | "reporte-quien-soy-extended"
   | "reporte-etapa-de-vida-2022" | "reporte-etapa-de-vida-2023" | "reporte-etapa-de-vida-2026"
   | "horoscopo" | "amor-pareja-ano-personal"
-  | "reporte-pareja" | "reporte-pareja-2025" | "reporte-pareja-2023" | "bonus-pareja"
+  | "reporte-pareja" | "reporte-pareja-2025" | "reporte-pareja-2023" | "nuestra-leccion" | "bonus-pareja"
   | "reporte-maestro" | "reporte-herida" | "reporte-antidoto"
   | "reporte-personalidad-pareja" | "reporte-lectura-pareja";
 
@@ -263,6 +264,7 @@ export const PRODUCT_TO_REPORT: Record<string, ProductMap> = {
   "horoscopo":                { report: "horoscopo",                   kind: "generated" },
   "amor":                     { report: "amor-pareja-ano-personal",    kind: "generated" },
   "ano-personal-pareja-2026": { report: "reporte-pareja",              kind: "generated", needsPartner: true },
+  "nuestra-leccion":          { report: "nuestra-leccion",             kind: "generated", needsPartner: true },
   "maestro":                  { report: "reporte-maestro",             kind: "generated", needsPartner: true },
   "herida":                   { report: "reporte-herida",              kind: "generated", needsPartner: true },
   "antidoto":                 { report: "reporte-antidoto",            kind: "generated", needsPartner: true },
