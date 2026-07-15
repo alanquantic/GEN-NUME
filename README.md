@@ -267,15 +267,17 @@ Sheets).
 
 **Estáticos** (PDF pre-hecho, no se generan — se suben a `assets/static/`)
 
-| Clave | Producto |
-|---|---|
-| `reporte-semestral` | Reporte semestral |
-| `agenda-numerologica-2026` | Agenda Numerológica 2026 |
-| `planeador-numerologico-2026` | Planeador Numerológico 2026 |
+| Clave | Producto | `variant` |
+|---|---|---|
+| `reporte-semestral` | Reporte semestral | — |
+| `agenda-numerologica-2026` | Agenda Numerológica 2026 | — |
+| `planeador-numerologico-2026` | Planeador Numerológico 2026 | — |
+| `agenda-numerologica-2025` | Agenda Numerológica 2025 | `verde`/`azul`/`naranja`/`morado` |
 
 Se piden por el mismo `POST /reports/generate`; devuelve la URL del PDF servido
-en `/static/…` (404 `pdf_no_disponible` si aún no se subió). Config en
-`app/static_reports.py`; ver `assets/static/README.md`.
+en `/static/…` (404 `pdf_no_disponible` si aún no se subió). Los productos con
+versiones requieren `variant`. Config en `app/static_reports.py`; ver
+`assets/static/README.md`.
 
 ## Estado
 

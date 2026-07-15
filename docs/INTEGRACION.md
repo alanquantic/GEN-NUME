@@ -80,14 +80,19 @@ La clave (`report`) es uno de estos 16 valores. Consulta en vivo con
 Productos digitales iguales para todos: el generador solo devuelve la URL del PDF
 ya subido. **No requieren `person` ni `partner`.**
 
-| Clave (`report`) | Producto |
-|---|---|
-| `reporte-semestral` | Reporte semestral |
-| `agenda-numerologica-2026` | Agenda Numerológica 2026 Digital PDF |
-| `planeador-numerologico-2026` | Planeador Numerológico 2026 Digital PDF |
+| Clave (`report`) | Producto | `variant` |
+|---|---|---|
+| `reporte-semestral` | Reporte semestral | — |
+| `agenda-numerologica-2026` | Agenda Numerológica 2026 Digital PDF | — |
+| `planeador-numerologico-2026` | Planeador Numerológico 2026 Digital PDF | — |
+| `agenda-numerologica-2025` | Agenda Numerológica 2025 Digital PDF | **`verde` \| `azul` \| `naranja` \| `morado`** |
 
 Se piden por el **mismo** endpoint `POST /reports/generate`. Si el PDF aún no se
 ha subido al servidor, responde **404 `pdf_no_disponible`**.
+
+**Productos con versiones (color de portada):** `agenda-numerologica-2025` tiene
+4 variantes; la petición debe incluir el campo `variant` (una de las 4). Consulta
+las variantes disponibles en `GET /reports` → `static_variants`.
 
 ---
 
@@ -119,8 +124,14 @@ ha subido al servidor, responde **404 `pdf_no_disponible`**.
 }
 ```
 
+Para un producto estático con versiones se usa `variant`:
+```jsonc
+{ "order_id": "ORD-1002", "report": "agenda-numerologica-2025", "variant": "verde" }
+```
+
 Reglas:
 - `birth_date` debe ser una fecha ISO válida `YYYY-MM-DD`.
+- `variant` solo en productos estáticos con versiones (agenda 2025); omítelo en el resto.
 - No envíes campos que no estén en el esquema (validación estricta → 422).
 
 **Respuesta `200`**
@@ -142,7 +153,8 @@ Reglas:
 | 401 | `firma_invalida` | HMAC no coincide | Revisar secreto y que firmes el cuerpo exacto |
 | 422 | `payload_invalido` | Falta campo / fecha inválida / campo extra | Corregir el payload (no reintentar igual) |
 | 400 | `reporte_desconocido` | `report` no está en el catálogo | Revisar el mapeo producto→clave |
-| 400 | `parametros_faltantes` | Falta `partner` (pareja) o `person` (generado) | Enviar el campo faltante |
+| 400 | `parametros_faltantes` | Falta `partner` (pareja), `person` (generado) o `variant` (estático con versiones) | Enviar el campo faltante |
+| 400 | `variant_invalido` | `variant` no es una de las opciones válidas | Usar una variante del catálogo (`GET /reports`) |
 | 404 | `pdf_no_disponible` | Reporte estático cuyo PDF aún no se subió | Subir el PDF a `assets/static/` y redeployar |
 | 500 | `generacion_fallida` | Error interno al render | Reintentar con backoff; si persiste, avisar |
 
@@ -188,14 +200,17 @@ export type GeneratedKey =
   | "reporte-personalidad-pareja" | "reporte-lectura-pareja";
 
 export type StaticKey =
-  | "reporte-semestral" | "agenda-numerologica-2026" | "planeador-numerologico-2026";
+  | "reporte-semestral" | "agenda-numerologica-2026" | "planeador-numerologico-2026"
+  | "agenda-numerologica-2025";
 
 export type ReportKey = GeneratedKey | StaticKey;
+export type Agenda2025Variant = "verde" | "azul" | "naranja" | "morado";
 
 export type GenerateInput = {
   orderId: string;
   report: ReportKey;
-  person?: { name: string; birthDate: string };   // requerido en generados; omitir en estáticos
+  variant?: string;                                // solo estáticos con versiones (agenda 2025)
+  person?: { name: string; birthDate: string };    // requerido en generados; omitir en estáticos
   partner?: { name: string; birthDate: string };
 };
 
@@ -204,6 +219,7 @@ export async function generateReport(input: GenerateInput): Promise<{ url: strin
     order_id: input.orderId,
     report: input.report,
   };
+  if (input.variant) payload.variant = input.variant;
   if (input.person) payload.person = { name: input.person.name, birth_date: input.person.birthDate };
   if (input.partner) payload.partner = { name: input.partner.name, birth_date: input.partner.birthDate };
 
@@ -235,7 +251,7 @@ Define qué reporte corresponde a cada producto de tu catálogo y si necesita pa
 // lib/report-catalog.ts
 import type { ReportKey } from "./report-generator";
 
-type ProductMap = { report: ReportKey; kind: "generated" | "static"; needsPartner?: boolean };
+type ProductMap = { report: ReportKey; kind: "generated" | "static"; needsPartner?: boolean; needsVariant?: boolean };
 
 export const PRODUCT_TO_REPORT: Record<string, ProductMap> = {
   // "<id o slug del producto en tu tienda>": { report, kind, needsPartner? }
@@ -257,10 +273,13 @@ export const PRODUCT_TO_REPORT: Record<string, ProductMap> = {
   "semestral":                { report: "reporte-semestral",           kind: "static" },
   "agenda-2026":              { report: "agenda-numerologica-2026",    kind: "static" },
   "planeador-2026":           { report: "planeador-numerologico-2026", kind: "static" },
+  "agenda-2025":              { report: "agenda-numerologica-2025",    kind: "static", needsVariant: true },
 };
 ```
 
 > - `needsPartner: true` → el checkout debe **recolectar los datos de la pareja**.
+> - `needsVariant: true` → el checkout debe capturar el **color** elegido
+>   (`verde` | `azul` | `naranja` | `morado`) y enviarlo como `variant`.
 > - `kind: "static"` → producto digital pre-hecho: solo se devuelve su URL (no se
 >   envían `person` ni `partner`).
 
@@ -303,6 +322,7 @@ import { generatedReports } from "@/db/schema";
 
 type OrderItem = {
   productId: string;
+  variant?: string;                          // color elegido (p. ej. "verde") para agenda 2025
   customer: { name: string; birthDate: string };
   partner?: { name: string; birthDate: string };
 };
@@ -325,6 +345,7 @@ export async function POST(req: Request) {
       const { url } = await generateReport({
         orderId: order.id,
         report: map.report,
+        variant: map.needsVariant ? item.variant : undefined,   // color elegido
         // los estáticos no llevan persona/pareja
         person: map.kind === "generated" ? item.customer : undefined,
         partner: map.needsPartner ? item.partner : undefined,

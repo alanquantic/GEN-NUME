@@ -38,6 +38,8 @@ class GenerateRequest(BaseModel):
     # planeador, semestral) no lo necesitan y puede omitirse.
     person: PersonIn | None = None
     partner: PartnerIn | None = None
+    # Variante para estáticos con versiones (p. ej. color: verde/azul/naranja/morado)
+    variant: str | None = None
 
     # Parámetros opcionales según el reporte
     month: int | None = Field(default=None, ge=1, le=12)

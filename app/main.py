@@ -60,8 +60,9 @@ def health() -> dict:
 @app.get("/reports")
 def reports() -> dict:
     return {
-        "reports": available_reports(),          # reportes generados
+        "reports": available_reports(),               # reportes generados
         "static": static_reports.available_static(),  # PDFs pre-hechos
+        "static_variants": static_reports.variants_map(),  # {clave: [variantes]}
     }
 
 
@@ -83,14 +84,25 @@ async def generate(request: Request, x_signature: str | None = Header(default=No
 
     # Reportes estáticos (agenda, planeador, semestral): solo devolver la URL.
     if static_reports.is_static(req.report):
-        url = static_reports.static_url(req.report)
+        # Productos con versiones (p. ej. colores): requieren `variant`.
+        if static_reports.has_variants(req.report):
+            opciones = static_reports.variants(req.report)
+            if req.variant is None:
+                return JSONResponse(status_code=400, content={
+                    "ok": False, "error": "parametros_faltantes",
+                    "detail": f"'{req.report}' requiere 'variant'. Opciones: {', '.join(opciones)}"})
+            if req.variant not in opciones:
+                return JSONResponse(status_code=400, content={
+                    "ok": False, "error": "variant_invalido",
+                    "detail": f"variant '{req.variant}' no válido. Opciones: {', '.join(opciones)}"})
+        url = static_reports.static_url(req.report, req.variant)
         if url is None:
             return JSONResponse(
                 status_code=404,
                 content={"ok": False, "error": "pdf_no_disponible",
-                         "detail": f"El PDF estático '{req.report}' aún no se ha subido"},
+                         "detail": f"El PDF estático '{req.report}' ({req.variant or 'único'}) aún no se ha subido"},
             )
-        filename = static_reports.filename_for(req.report)
+        filename = static_reports.filename_for(req.report, req.variant)
         return JSONResponse(content=GenerateResponse(
             ok=True, report=req.report, order_id=req.order_id, url=url, path=f"/static/{filename}",
         ).model_dump())
