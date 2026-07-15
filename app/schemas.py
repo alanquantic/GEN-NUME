@@ -34,7 +34,9 @@ class GenerateRequest(BaseModel):
 
     order_id: str = Field(min_length=1, description="Id de pedido de la tienda")
     report: str = Field(min_length=1, description="Clave del reporte (ver /reports)")
-    person: PersonIn
+    # person es requerido para reportes generados; los estáticos (agenda,
+    # planeador, semestral) no lo necesitan y puede omitirse.
+    person: PersonIn | None = None
     partner: PartnerIn | None = None
 
     # Parámetros opcionales según el reporte

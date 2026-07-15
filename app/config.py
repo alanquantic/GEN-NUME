@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     def fonts_dir(self) -> Path:
         return self.assets_dir / "fonts"
 
+    @property
+    def static_pdf_dir(self) -> Path:
+        """PDFs pre-hechos (agenda, planeador, semestral) que solo se sirven."""
+        return self.assets_dir / "static"
+
 
 @lru_cache
 def get_settings() -> Settings:

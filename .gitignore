@@ -10,6 +10,8 @@ __pycache__/
 # PDFs generados / almacenamiento local
 data/
 *.pdf
+# ...pero los PDFs estáticos (productos pre-hechos) SÍ se versionan:
+!assets/static/*.pdf
 
 # Muestras generadas (pesadas)
 samples/

@@ -24,6 +24,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
+from . import static_reports
 from .config import settings
 from .registry import available_reports, build
 from .schemas import GenerateRequest, GenerateResponse
@@ -46,6 +47,10 @@ app = FastAPI(title="Generador de Reportes de Numerología", version="0.1.0", li
 ensure_storage()
 app.mount("/files", StaticFiles(directory=str(settings.storage_dir)), name="files")
 
+# PDFs pre-hechos (agenda, planeador, semestral) servidos desde assets/static.
+static_reports.ensure_static_dir()
+app.mount("/static", StaticFiles(directory=str(settings.static_pdf_dir)), name="static")
+
 
 @app.get("/health")
 def health() -> dict:
@@ -54,7 +59,10 @@ def health() -> dict:
 
 @app.get("/reports")
 def reports() -> dict:
-    return {"reports": available_reports()}
+    return {
+        "reports": available_reports(),          # reportes generados
+        "static": static_reports.available_static(),  # PDFs pre-hechos
+    }
 
 
 @app.post(
@@ -72,6 +80,27 @@ async def generate(request: Request, x_signature: str | None = Header(default=No
         req = GenerateRequest.model_validate_json(raw)
     except ValidationError as exc:
         return JSONResponse(status_code=422, content={"ok": False, "error": "payload_invalido", "detail": exc.errors()})
+
+    # Reportes estáticos (agenda, planeador, semestral): solo devolver la URL.
+    if static_reports.is_static(req.report):
+        url = static_reports.static_url(req.report)
+        if url is None:
+            return JSONResponse(
+                status_code=404,
+                content={"ok": False, "error": "pdf_no_disponible",
+                         "detail": f"El PDF estático '{req.report}' aún no se ha subido"},
+            )
+        filename = static_reports.filename_for(req.report)
+        return JSONResponse(content=GenerateResponse(
+            ok=True, report=req.report, order_id=req.order_id, url=url, path=f"/static/{filename}",
+        ).model_dump())
+
+    # Reportes generados: requieren datos de la persona.
+    if req.person is None:
+        return JSONResponse(
+            status_code=400,
+            content={"ok": False, "error": "parametros_faltantes", "detail": "person es requerido para este reporte"},
+        )
 
     try:
         report = build(req)

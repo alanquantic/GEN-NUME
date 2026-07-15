@@ -265,6 +265,18 @@ Sheets).
 | `reporte-personalidad-pareja` | Personalidad de pareja |
 | `reporte-lectura-pareja` | Lectura de pareja |
 
+**Estáticos** (PDF pre-hecho, no se generan — se suben a `assets/static/`)
+
+| Clave | Producto |
+|---|---|
+| `reporte-semestral` | Reporte semestral |
+| `agenda-numerologica-2026` | Agenda Numerológica 2026 |
+| `planeador-numerologico-2026` | Planeador Numerológico 2026 |
+
+Se piden por el mismo `POST /reports/generate`; devuelve la URL del PDF servido
+en `/static/…` (404 `pdf_no_disponible` si aún no se subió). Config en
+`app/static_reports.py`; ver `assets/static/README.md`.
+
 ## Estado
 
 - ✅ Dominio numerológico completo y **probado** (`Person`, `Universal`, reduce).

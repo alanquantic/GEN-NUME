@@ -71,6 +71,23 @@ La clave (`report`) es uno de estos 16 valores. Consulta en vivo con
 
 > `amor-pareja-ano-personal` NO requiere pareja pese al nombre (usa solo los
 > datos de la persona).
+>
+> `reporte-pareja` es el **"año personal de la pareja 2026"** (usa las plantillas
+> `pareja-g`). `horoscopo` usa las plantillas `horoscopo`.
+
+### Reportes estáticos (PDF pre-hecho, no se generan)
+
+Productos digitales iguales para todos: el generador solo devuelve la URL del PDF
+ya subido. **No requieren `person` ni `partner`.**
+
+| Clave (`report`) | Producto |
+|---|---|
+| `reporte-semestral` | Reporte semestral |
+| `agenda-numerologica-2026` | Agenda Numerológica 2026 Digital PDF |
+| `planeador-numerologico-2026` | Planeador Numerológico 2026 Digital PDF |
+
+Se piden por el **mismo** endpoint `POST /reports/generate`. Si el PDF aún no se
+ha subido al servidor, responde **404 `pdf_no_disponible`**.
 
 ---
 
@@ -125,7 +142,8 @@ Reglas:
 | 401 | `firma_invalida` | HMAC no coincide | Revisar secreto y que firmes el cuerpo exacto |
 | 422 | `payload_invalido` | Falta campo / fecha inválida / campo extra | Corregir el payload (no reintentar igual) |
 | 400 | `reporte_desconocido` | `report` no está en el catálogo | Revisar el mapeo producto→clave |
-| 400 | `parametros_faltantes` | Falta `partner` en un reporte de pareja | Enviar `partner` |
+| 400 | `parametros_faltantes` | Falta `partner` (pareja) o `person` (generado) | Enviar el campo faltante |
+| 404 | `pdf_no_disponible` | Reporte estático cuyo PDF aún no se subió | Subir el PDF a `assets/static/` y redeployar |
 | 500 | `generacion_fallida` | Error interno al render | Reintentar con backoff; si persiste, avisar |
 
 ### Otros endpoints
@@ -161,7 +179,7 @@ import { createHmac } from "crypto";
 const GENERATOR_URL = process.env.REPORT_GENERATOR_URL!;
 const WEBHOOK_SECRET = process.env.REPORT_WEBHOOK_SECRET!;
 
-export type ReportKey =
+export type GeneratedKey =
   | "reporte-quien-soy" | "reporte-quien-soy-extended"
   | "reporte-etapa-de-vida-2022" | "reporte-etapa-de-vida-2023" | "reporte-etapa-de-vida-2026"
   | "horoscopo" | "amor-pareja-ano-personal"
@@ -169,10 +187,15 @@ export type ReportKey =
   | "reporte-maestro" | "reporte-herida" | "reporte-antidoto"
   | "reporte-personalidad-pareja" | "reporte-lectura-pareja";
 
+export type StaticKey =
+  | "reporte-semestral" | "agenda-numerologica-2026" | "planeador-numerologico-2026";
+
+export type ReportKey = GeneratedKey | StaticKey;
+
 export type GenerateInput = {
   orderId: string;
   report: ReportKey;
-  person: { name: string; birthDate: string };          // birthDate = "YYYY-MM-DD"
+  person?: { name: string; birthDate: string };   // requerido en generados; omitir en estáticos
   partner?: { name: string; birthDate: string };
 };
 
@@ -180,11 +203,9 @@ export async function generateReport(input: GenerateInput): Promise<{ url: strin
   const payload: Record<string, unknown> = {
     order_id: input.orderId,
     report: input.report,
-    person: { name: input.person.name, birth_date: input.person.birthDate },
   };
-  if (input.partner) {
-    payload.partner = { name: input.partner.name, birth_date: input.partner.birthDate };
-  }
+  if (input.person) payload.person = { name: input.person.name, birth_date: input.person.birthDate };
+  if (input.partner) payload.partner = { name: input.partner.name, birth_date: input.partner.birthDate };
 
   const body = JSON.stringify(payload);
   const signature = createHmac("sha256", WEBHOOK_SECRET).update(body).digest("hex");
@@ -214,24 +235,34 @@ Define qué reporte corresponde a cada producto de tu catálogo y si necesita pa
 // lib/report-catalog.ts
 import type { ReportKey } from "./report-generator";
 
-export const PRODUCT_TO_REPORT: Record<string, { report: ReportKey; needsPartner: boolean }> = {
-  // "<id o slug del producto en tu tienda>": { report, needsPartner }
-  "quien-soy":        { report: "reporte-quien-soy",            needsPartner: false },
-  "etapa-de-vida":    { report: "reporte-etapa-de-vida-2026",   needsPartner: false },
-  "horoscopo":        { report: "horoscopo",                    needsPartner: false },
-  "amor":             { report: "amor-pareja-ano-personal",     needsPartner: false },
-  "pareja":           { report: "reporte-pareja",               needsPartner: true  },
-  "maestro":          { report: "reporte-maestro",              needsPartner: true  },
-  "herida":           { report: "reporte-herida",               needsPartner: true  },
-  "antidoto":         { report: "reporte-antidoto",             needsPartner: true  },
-  "personalidad":     { report: "reporte-personalidad-pareja",  needsPartner: true  },
-  "lectura-pareja":   { report: "reporte-lectura-pareja",       needsPartner: true  },
-  // ...añade el resto según tus productos
+type ProductMap = { report: ReportKey; kind: "generated" | "static"; needsPartner?: boolean };
+
+export const PRODUCT_TO_REPORT: Record<string, ProductMap> = {
+  // "<id o slug del producto en tu tienda>": { report, kind, needsPartner? }
+
+  // --- Generados (necesitan datos de la persona) ---
+  "quien-soy":                { report: "reporte-quien-soy",           kind: "generated" },
+  "quien-soy-extendido":      { report: "reporte-quien-soy-extended",  kind: "generated" },
+  "etapa-de-vida":            { report: "reporte-etapa-de-vida-2026",  kind: "generated" },
+  "horoscopo":                { report: "horoscopo",                   kind: "generated" },
+  "amor":                     { report: "amor-pareja-ano-personal",    kind: "generated" },
+  "ano-personal-pareja-2026": { report: "reporte-pareja",              kind: "generated", needsPartner: true },
+  "maestro":                  { report: "reporte-maestro",             kind: "generated", needsPartner: true },
+  "herida":                   { report: "reporte-herida",              kind: "generated", needsPartner: true },
+  "antidoto":                 { report: "reporte-antidoto",            kind: "generated", needsPartner: true },
+  "personalidad":             { report: "reporte-personalidad-pareja", kind: "generated", needsPartner: true },
+  "lectura-pareja":           { report: "reporte-lectura-pareja",      kind: "generated", needsPartner: true },
+
+  // --- Estáticos (PDF pre-hecho; NO necesitan persona ni pareja) ---
+  "semestral":                { report: "reporte-semestral",           kind: "static" },
+  "agenda-2026":              { report: "agenda-numerologica-2026",    kind: "static" },
+  "planeador-2026":           { report: "planeador-numerologico-2026", kind: "static" },
 };
 ```
 
-> Los reportes con `needsPartner: true` requieren que el checkout **recolecte los
-> datos de la pareja** (nombre + fecha de nacimiento).
+> - `needsPartner: true` → el checkout debe **recolectar los datos de la pareja**.
+> - `kind: "static"` → producto digital pre-hecho: solo se devuelve su URL (no se
+>   envían `person` ni `partner`).
 
 ### 6.3 Esquema Drizzle (Neon/Postgres)
 
@@ -294,7 +325,8 @@ export async function POST(req: Request) {
       const { url } = await generateReport({
         orderId: order.id,
         report: map.report,
-        person: item.customer,
+        // los estáticos no llevan persona/pareja
+        person: map.kind === "generated" ? item.customer : undefined,
         partner: map.needsPartner ? item.partner : undefined,
       });
       await db
