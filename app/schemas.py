@@ -40,6 +40,10 @@ class GenerateRequest(BaseModel):
     partner: PartnerIn | None = None
     # Variante para estáticos con versiones (p. ej. color: verde/azul/naranja/morado)
     variant: str | None = None
+    # Diferenciador cuando un mismo pedido genera el mismo `report` para dos
+    # personas distintas (p. ej. Membresía + Kit, ambos "¿quién soy?"). La tienda
+    # lo envía para que el segundo PDF no pise al primero en el Volume.
+    instance: str | None = None
 
     # Parámetros opcionales según el reporte
     month: int | None = Field(default=None, ge=1, le=12)

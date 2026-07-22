@@ -80,6 +80,7 @@ async def generate(request: Request, x_signature: str | None = Header(default=No
     try:
         req = GenerateRequest.model_validate_json(raw)
     except ValidationError as exc:
+        logger.warning("Payload inválido (422): %s", exc.errors())
         return JSONResponse(status_code=422, content={"ok": False, "error": "payload_invalido", "detail": exc.errors()})
 
     # Reportes estáticos (agenda, planeador, semestral): solo devolver la URL.
@@ -129,7 +130,7 @@ async def generate(request: Request, x_signature: str | None = Header(default=No
 
     try:
         data = report.output()
-        _, url = save_pdf(req.order_id, req.report, data)
+        _, url = save_pdf(req.order_id, req.report, data, req.instance)
     except Exception as exc:  # noqa: BLE001
         logger.exception("Error generando el reporte %s", req.report)
         return JSONResponse(status_code=500, content={"ok": False, "error": "generacion_fallida", "detail": str(exc)})
