@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reportes dinámicos · propuesta de diseño</title>
+<style>
+:root{
+  --primary:#4C1D95; --accent:#D3AE36; --fuchsia:#A816B6; --royal:#2047C5;
+  --amor:#EC4899; --trabajo:#3B82F6; --bienestar:#059669; --espiritual:#A855F7;
+  --bg:#FBF9FE; --fg:#2A1E3E; --border:#E6DDEE; --secondary:#F5EBFF;
+  --gray:#746E87; --danger:#E8304F;
+  --area:var(--primary);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#EDE9F3;color:var(--fg);
+  font:15px/1.6 Inter,-apple-system,"Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 24px 96px}
+h1{font-size:30px;letter-spacing:-.02em;margin:0 0 6px;font-weight:800}
+.lede{color:var(--gray);margin:0 0 40px;max-width:62ch}
+h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);
+  font-weight:700;margin:56px 0 16px;padding-bottom:8px;border-bottom:1px solid #D9D2E6}
+h2:first-of-type{margin-top:32px}
+.note{font-size:13px;color:var(--gray);margin:10px 0 26px;max-width:70ch}
+code{font:12px/1.5 ui-monospace,"SF Mono",Consolas,monospace;background:#fff;
+  border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+
+/* ── tokens ─────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
+.sw{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.sw .chip{height:52px}
+.sw .meta{padding:8px 10px;font-size:11px;line-height:1.45}
+.sw .meta b{display:block;font-size:12px;font-weight:600}
+.sw .meta span{color:var(--gray);font-family:ui-monospace,Consolas,monospace}
+
+/* ── páginas A4 ─────────────────────────────────── */
+.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;align-items:start}
+.page{position:relative;background:var(--bg);aspect-ratio:210/297;border-radius:3px;
+  box-shadow:0 10px 30px rgba(42,30,62,.16);overflow:hidden;
+  container-type:inline-size}
+.pg-label{font-size:11px;color:var(--gray);margin:0 0 8px;letter-spacing:.05em;text-transform:uppercase}
+.p{padding:7.5cqw 8cqw}
+/* todo en cqw para que escale como una A4 real */
+.kicker{font-size:2.6cqw;letter-spacing:.24em;text-transform:uppercase;color:var(--area);font-weight:700}
+.ttl{font-size:6.4cqw;line-height:1.12;letter-spacing:-.02em;font-weight:800;margin:2cqw 0 0}
+.sub{font-size:3.1cqw;color:var(--gray);line-height:1.5;margin:2cqw 0 0}
+.body p{font-size:2.85cqw;line-height:1.62;margin:0 0 2.2cqw;text-align:justify;hyphens:auto}
+
+/* portada */
+.cover{background:
+   radial-gradient(120% 70% at 50% 0%, color-mix(in srgb,var(--area) 12%,transparent), transparent 70%),
+   var(--bg);
+  height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.cover .big{font-size:44cqw;line-height:.78;font-weight:800;color:var(--area);
+  text-align:center;letter-spacing:-.05em;opacity:.92}
+.cover .frase{font-size:4.4cqw;line-height:1.3;font-weight:700;text-align:center;
+  max-width:22ch;margin:0 auto;letter-spacing:-.01em}
+.rule{height:2px;background:var(--accent);width:14cqw;margin:3cqw auto}
+.cover .who{text-align:center;font-size:2.9cqw;color:var(--gray)}
+.cover .who b{display:block;font-size:3.8cqw;color:var(--fg);font-weight:700;letter-spacing:.01em}
+
+/* ficha de números */
+.grid-nums{display:grid;grid-template-columns:1fr 1fr;gap:1.6cqw;margin-top:3cqw}
+.num{background:#fff;border:1px solid var(--border);border-left:3px solid var(--area);
+  border-radius:2px;padding:1.8cqw 2cqw;display:flex;align-items:baseline;gap:1.6cqw}
+.num .v{font-size:5.2cqw;font-weight:800;color:var(--area);line-height:1;min-width:3.4cqw;
+  font-variant-numeric:tabular-nums}
+.num .l{font-size:2.05cqw;line-height:1.35;color:var(--gray)}
+.num .l b{display:block;color:var(--fg);font-size:2.35cqw;font-weight:600}
+
+/* tensión central */
+.tension{background:var(--area);color:#fff;height:100%;display:flex;flex-direction:column;
+  justify-content:center}
+.tension .kicker{color:rgba(255,255,255,.62)}
+.tension .ttl{color:#fff}
+.tension p{color:rgba(255,255,255,.9);font-size:2.85cqw;line-height:1.65;margin:0 0 2.2cqw}
+.vs{display:flex;align-items:center;gap:3cqw;justify-content:center;margin:4cqw 0}
+.vs .n{width:14cqw;height:14cqw;border-radius:50%;border:2px solid rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:center;font-size:6cqw;font-weight:800}
+.vs .x{font-size:3cqw;color:rgba(255,255,255,.5);letter-spacing:.2em}
+.pull{border-left:2px solid var(--accent);padding-left:2.4cqw;margin:3cqw 0;
+  font-size:2.9cqw;line-height:1.5;font-style:italic;color:#fff}
+
+/* página de cuerpo */
+.section-head{border-top:2px solid var(--area);padding-top:2cqw;margin-bottom:3cqw}
+.entradilla{font-size:3.2cqw;line-height:1.42;font-weight:600;color:var(--area);margin:1.4cqw 0 3cqw}
+.destacado{background:var(--secondary);border-radius:2px;padding:2.4cqw;margin:2.4cqw 0;
+  font-size:2.5cqw;line-height:1.5;border-left:3px solid var(--accent)}
+.destacado b{display:block;font-size:1.9cqw;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.9cqw}
+.accion{border-top:1px solid var(--border);margin-top:2.6cqw;padding-top:2cqw;
+  font-size:2.6cqw;line-height:1.5;font-weight:600}
+.margin-note{position:absolute;right:3cqw;width:11cqw;font-size:1.9cqw;line-height:1.35;
+  color:var(--gray);text-align:right}
+.folio{position:absolute;bottom:4cqw;left:0;right:0;text-align:center;
+  font-size:2cqw;color:var(--gray);letter-spacing:.1em}
+
+/* ── galería de gráficos ────────────────────────── */
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;
+  box-shadow:0 1px 3px rgba(42,30,62,.05)}
+.card h3{margin:0 0 3px;font-size:14px;font-weight:700;letter-spacing:-.01em}
+.card .use{font-size:11px;color:var(--gray);margin:0 0 16px;letter-spacing:.03em}
+.card svg{width:100%;height:auto;display:block}
+.wide{grid-column:1/-1}
+@media(max-width:760px){.wide{grid-column:auto}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--gray)}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Reportes dinámicos — propuesta de diseño</h1>
+<p class="lede">
+  Sistema de diseño heredado de <b>web-nume.vercel.app</b> (los colores son las
+  variables CSS reales del sitio), maqueta de tres páginas tipo y los siete
+  gráficos SVG que alimentarían los cinco reportes. Datos de ejemplo:
+  <b>Juan Pedro Martínez · 20 de noviembre de 1991</b>.
+</p>
+
+<!-- ═══════════ TOKENS ═══════════ -->
+<h2>1 · Paleta — tomada del sitio, sin inventar nada</h2>
+<p class="note">
+  El sitio ya define un color por área (<code>--area-amor</code>,
+  <code>--area-trabajo</code>, <code>--area-bienestar</code>,
+  <code>--area-espiritual</code>) y esas cuatro áreas coinciden una a una con
+  cuatro de los cinco reportes. El quinto, «¿Quién soy?», usa el violeta de marca.
+</p>
+<div class="swatches">
+  <div class="sw"><div class="chip" style="background:#4C1D95"></div><div class="meta"><b>Quién soy · marca</b><span>--primary · #4C1D95</span></div></div>
+  <div class="sw"><div class="chip" style="background:#EC4899"></div><div class="meta"><b>Amor</b><span>--area-amor · #EC4899</span></div></div>
+  <div class="sw"><div class="chip" style="background:#3B82F6"></div><div class="meta"><b>Trabajo</b><span>--area-trabajo · #3B82F6</span></div></div>
+  <div class="sw"><div class="chip" style="background:#059669"></div><div class="meta"><b>Bienestar</b><span>--area-bienestar · #059669</span></div></div>
+  <div class="sw"><div class="chip" style="background:#A855F7"></div><div class="meta"><b>Propósito</b><span>--area-espiritual · #A855F7</span></div></div>
+  <div class="sw"><div class="chip" style="background:#D3AE36"></div><div class="meta"><b>Oro · acento</b><span>--accent · #D3AE36</span></div></div>
+  <div class="sw"><div class="chip" style="background:#E8304F"></div><div class="meta"><b>Desarmónico</b><span>--danger · #E8304F</span></div></div>
+  <div class="sw"><div class="chip" style="background:#FBF9FE;border-bottom:1px solid #E6DDEE"></div><div class="meta"><b>Papel</b><span>--background · #FBF9FE</span></div></div>
+  <div class="sw"><div class="chip" style="background:#2A1E3E"></div><div class="meta"><b>Texto</b><span>--foreground · #2A1E3E</span></div></div>
+  <div class="sw"><div class="chip" style="background:#746E87"></div><div class="meta"><b>Secundario</b><span>--gray · #746E87</span></div></div>
+</div>
+
+<!-- ═══════════ PÁGINAS ═══════════ -->
+<h2>2 · Tres páginas tipo (proporción A4 real)</h2>
+<p class="note">
+  Retícula asimétrica: columna de texto estrecha y margen derecho vivo para
+  números y micro-glosas. Es lo que hace que parezca un estudio y no un folleto.
+  Aquí en violeta (¿Quién soy?); cambiar <code>--area</code> repinta el reporte entero.
+</p>
+<div class="pages">
+
+  <div>
+    <p class="pg-label">pág. 1 — portada</p>
+    <div class="page">
+      <div class="p cover">
+        <div>
+          <div class="kicker" style="text-align:center">Numerología Cotidiana</div>
+          <div class="who" style="margin-top:1.6cqw"><b>Juan Pedro Martínez</b>20 de noviembre de 1991</div>
+        </div>
+        <div>
+          <div class="big">2</div>
+          <div class="rule"></div>
+          <div class="frase">Concilias por fuera lo que aún peleas por dentro.</div>
+        </div>
+        <div style="text-align:center">
+          <div class="kicker">¿Quién soy?</div>
+          <div class="who" style="margin-top:1cqw">según mi nombre y mi fecha de nacimiento</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p class="pg-label">pág. 6 — sección de cuerpo</p>
+    <div class="page">
+      <div class="p">
+        <div class="section-head">
+          <div class="kicker">04 · Tu alma</div>
+          <div class="ttl" style="font-size:5cqw">Lo que viniste a hacer</div>
+        </div>
+        <div class="entradilla">Las vocales de tu nombre suman 3: viniste a
+          expresar, no a callarte para no molestar.</div>
+        <div class="body">
+          <p>Tu alma 3 necesita salida creativa igual que necesita aire. No es un
+          adorno de tu carácter: es el canal por el que pasa todo lo demás. Cuando
+          llevas semanas sin crear nada tuyo, lo notas antes en el humor que en
+          las ganas.</p>
+          <p>Aquí aparece la primera fricción del cuadro. Tu esencia 2 concilia,
+          suaviza y se adapta; tu alma 3 quiere decir lo que ve. Muchas veces
+          ganará el 2 — y el precio lo paga el 3, que se queda con las palabras
+          dentro.</p>
+        </div>
+        <div class="destacado">
+          <b>Del texto de Laura</b>
+          «Bajo la vibración de la primera vocal el alma entra en el cuerpo.»
+        </div>
+        <div class="accion">Escribe sin destinatario tres veces por semana. No es
+          terapia: es mantener el canal abierto.</div>
+        <div class="margin-note" style="top:34cqw">ALMA<br><b style="font-size:3.6cqw;color:#4C1D95">3</b><br>vocales</div>
+        <div class="folio">— 6 —</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p class="pg-label">pág. 11 — la tensión central</p>
+    <div class="page">
+      <div class="p tension">
+        <div class="kicker">La tensión central</div>
+        <div class="ttl" style="font-size:5.4cqw">Conciliar o exponerte</div>
+        <div class="vs">
+          <div class="n">2</div><div class="x">CONTRA</div><div class="n">11</div>
+        </div>
+        <p>Tu esencia 2 evita el conflicto por instinto. Tu karma 11 te coloca
+        una y otra vez en el sitio donde hay que decir lo incómodo. No es mala
+        suerte: es el diseño de tu cuadro.</p>
+        <p>Por eso te agota tanto tener que dar la cara, y por eso, cuando por fin
+        la das, la gente te escucha más de lo que esperabas.</p>
+        <div class="pull">El 2 sabe cómo decirlo. El 11 sabe qué hay que decir.
+          No están peleados: están sin presentar.</div>
+        <div class="folio" style="color:rgba(255,255,255,.55)">— 11 —</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ GRÁFICOS ═══════════ -->
+<h2>3 · Los siete gráficos</h2>
+<p class="note">
+  Todos SVG generados en servidor desde los números ya calculados: sin librería
+  JS, sin rasterizar, nítidos a cualquier tamaño y compatibles con WeasyPrint.
+  Los valores A, B, C, D, H, I, J y P son los que devuelve tu propia web para
+  esta fecha; el resto de posiciones son de relleno para enseñar el encaje.
+</p>
+<div class="charts">
+
+  <!-- 1 · PINÁCULO -->
+  <div class="card wide">
+    <h3>1 · El Pináculo completo (24 posiciones)</h3>
+    <p class="use">¿Quién soy? · trazado <b>según el diagrama oficial del libro de Laura</b>, no según la web</p>
+    <svg viewBox="0 0 720 610" role="img" aria-label="Pináculo personal completo">
+      <defs><style>
+        .zn{font:700 19px Inter,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+        .zd{font:700 17px Inter,sans-serif;fill:#8A80A0;text-anchor:middle;dominant-baseline:central}
+        .zk{font:700 8.5px Inter,sans-serif;fill:#746E87;text-anchor:middle;letter-spacing:.06em}
+        .zf{font:600 8px Inter,sans-serif;fill:#A29CB2;text-anchor:middle}
+        .zz{font:700 8px Inter,sans-serif;text-anchor:middle;letter-spacing:.16em}
+      </style></defs>
+
+      <!-- zonas -->
+      <path d="M230 40 L372 250 L88 250 Z" fill="#DCEDC1" opacity=".55"/>
+      <rect x="30" y="278" width="530" height="62" rx="8" fill="#E9DEF7"/>
+      <path d="M88 372 L372 372 L230 574 Z" fill="#FADBD8" opacity=".6"/>
+      <text class="zz" x="128" y="30" fill="#7CB342">SER SUPERIOR · REALIZACIONES</text>
+      <text class="zz" x="112" y="272" fill="#6D28D9">HORIZONTAL · IDENTIDAD</text>
+      <text class="zz" x="108" y="366" fill="#C0392B">SER INFERIOR · DESAFÍOS</text>
+
+      <!-- conectores -->
+      <g stroke="#C9C0D8" stroke-width="1" stroke-dasharray="3 3" fill="none">
+        <path d="M90 309 L140 232 M230 309 L140 232 M230 309 L320 232 M390 309 L320 232
+                 M140 232 L230 155 M320 232 L230 155 M230 155 L230 78
+                 M320 232 L390 155 M230 78 L390 155
+                 M90 309 L140 400 M230 309 L140 400 M230 309 L320 400 M390 309 L320 400
+                 M140 400 L230 468 M320 400 L230 468 M230 468 L230 536"/>
+      </g>
+
+      <!-- SER SUPERIOR -->
+      <circle cx="230" cy="78"  r="27" fill="#D3AE36"/><text class="zn" x="230" y="78">4</text>
+      <text class="zk" x="230" y="118">H · DESTINO</text><text class="zf" x="230" y="130">A + C → 4* ó 22</text>
+      <circle cx="230" cy="155" r="26" fill="#8BC34A"/><text class="zn" x="230" y="155">8</text>
+      <text class="zk" x="176" y="160">G · 3.ª ETAPA</text><text class="zf" x="176" y="172">E + F</text>
+      <circle cx="140" cy="232" r="26" fill="#8BC34A"/><text class="zn" x="140" y="232">4</text>
+      <text class="zk" x="112" y="278">E · 1.ª ETAPA</text><text class="zf" x="112" y="290">A + B → 4*</text>
+      <circle cx="230" cy="232" r="26" fill="#7CB342"/><text class="zn" x="230" y="232">7</text>
+      <text class="zk" x="230" y="200">I · SEXTO SENTIDO</text><text class="zf" x="230" y="212">E + F + G → 7*</text>
+      <circle cx="320" cy="232" r="26" fill="#8BC34A"/><text class="zn" x="320" y="232">4</text>
+      <text class="zk" x="352" y="278">F · 2.ª ETAPA</text><text class="zf" x="352" y="290">B + C</text>
+      <circle cx="400" cy="155" r="26" fill="#7CB342"/><text class="zn" x="400" y="155">1</text>
+      <text class="zk" x="452" y="152">J · ESPEJO / PAREJA</text><text class="zf" x="452" y="164">H + D</text>
+
+      <!-- HORIZONTAL -->
+      <circle cx="90"  cy="309" r="27" fill="#4C1D95"/><text class="zn" x="90"  y="309">11</text>
+      <text class="zk" x="90" y="356">A · KARMA</text><text class="zf" x="90" y="368">mes</text>
+      <circle cx="230" cy="309" r="34" fill="#4C1D95" stroke="#D3AE36" stroke-width="2.5"/>
+      <text x="230" y="309" style="font:800 26px Inter,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">2</text>
+      <text class="zk" x="230" y="356">B · PERSONAL</text><text class="zf" x="230" y="368">día</text>
+      <circle cx="390" cy="309" r="27" fill="#4C1D95"/><text class="zn" x="390" y="309">2</text>
+      <text class="zk" x="390" y="356">C · VIDA PASADA</text><text class="zf" x="390" y="368">año</text>
+      <circle cx="500" cy="309" r="27" fill="#6D28D9"/><text class="zn" x="500" y="309">6</text>
+      <text class="zk" x="500" y="356">D · MÁSCARA</text><text class="zf" x="500" y="368">A + B + C</text>
+
+      <!-- EXTERIORES -->
+      <circle cx="608" cy="309" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text class="zd" x="608" y="309" fill="#2047C5">8</text>
+      <text class="zk" x="608" y="352" fill="#2047C5">X · REACCIÓN</text><text class="zf" x="608" y="364">B + D</text>
+      <circle cx="686" cy="309" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text class="zd" x="686" y="309" fill="#2047C5">11</text>
+      <text class="zk" x="686" y="352" fill="#2047C5">Y · MISIÓN</text><text class="zf" x="686" y="364">A+B+C+D+X</text>
+      <circle cx="647" cy="212" r="25" fill="#fff" stroke="#2047C5" stroke-width="2" stroke-dasharray="4 3"/><text class="zd" x="647" y="212" fill="#2047C5">1</text>
+      <text class="zk" x="647" y="255" fill="#2047C5">Z · REGALO DIVINO</text><text class="zf" x="647" y="267">2 últimos díg. del año</text>
+
+      <!-- SER INFERIOR -->
+      <circle cx="140" cy="400" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.8"/><text class="zd" x="140" y="400">0</text>
+      <text class="zk" x="118" y="440">K · 1.er DESAFÍO</text><text class="zf" x="118" y="452">A − B</text>
+      <circle cx="230" cy="400" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.8"/><text class="zd" x="230" y="400">0</text>
+      <text class="zk" x="230" y="367">O · INCONSC. NEGATIVO</text>
+      <circle cx="320" cy="400" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.8"/><text class="zd" x="320" y="400">0</text>
+      <text class="zk" x="344" y="440">L · 2.º DESAFÍO</text><text class="zf" x="344" y="452">B − C</text>
+      <circle cx="230" cy="468" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.8"/><text class="zd" x="230" y="468">0</text>
+      <text class="zk" x="168" y="472">M · 3.er DESAFÍO</text><text class="zf" x="168" y="484">K − L</text>
+      <circle cx="230" cy="536" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.8"/><text class="zd" x="230" y="536">0</text>
+      <text class="zk" x="230" y="576">N · 4.º DESAFÍO</text><text class="zf" x="230" y="588">A − C</text>
+
+      <circle cx="42" cy="452" r="24" fill="#2A1E3E"/><text class="zn" x="42" y="452">6</text>
+      <text class="zk" x="42" y="490" fill="#2A1E3E">P · SOMBRA</text><text class="zf" x="42" y="502">D + O</text>
+      <circle cx="42" cy="536" r="24" fill="#fff" stroke="#C9C0D8" stroke-width="1.8" stroke-dasharray="4 3"/><text class="zd" x="42" y="536" fill="#C9C0D8">—</text>
+      <text class="zk" x="42" y="574">W · TRIPLICIDAD</text><text class="zf" x="42" y="586">8 ceros → no aplica</text>
+
+      <circle cx="392" cy="468" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text class="zd" x="392" y="468">0</text>
+      <text class="zk" x="392" y="502">Q · K+M</text>
+      <circle cx="462" cy="468" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text class="zd" x="462" y="468">0</text>
+      <text class="zk" x="462" y="502">R · L+M</text>
+      <circle cx="532" cy="468" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text class="zd" x="532" y="468">0</text>
+      <text class="zk" x="532" y="502">S · Q+R</text>
+      <text class="zz" x="462" y="522" fill="#C0392B">SÚPER OCULTOS</text>
+
+      <rect x="586" y="428" width="118" height="52" rx="8" fill="#fff" stroke="#E8304F" stroke-width="1.8" stroke-dasharray="5 4"/>
+      <text x="645" y="450" style="font:700 17px Inter,sans-serif;fill:#E8304F;text-anchor:middle">3 · 5 · 9</text>
+      <text class="zk" x="645" y="468" fill="#E8304F">T · AUSENCIAS</text>
+      <text class="zf" x="645" y="496">vibraciones fuera de control</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#D3AE36"></i>Destino</span>
+      <span><i style="background:#8BC34A"></i>Ser Superior</span>
+      <span><i style="background:#4C1D95"></i>Horizontal · identidad</span>
+      <span><i style="background:#fff;border:1px solid #E8304F"></i>Ser Inferior</span>
+      <span><i style="background:#2A1E3E"></i>Sombra</span>
+      <span><i style="background:#fff;border:1px solid #2047C5"></i>Exteriores</span>
+      <span style="color:#B8952A"><b>*</b> = número kármico (13/14/16/19)</span>
+    </div>
+  </div>
+
+  <!-- 2 · ETAPAS -->
+  <div class="card wide">
+    <h3>2 · Línea de etapas de vida</h3>
+    <p class="use">Propósito · Trabajo — <code>Person._stages_timeline()</code> ya devuelve estos datos</p>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Etapas de vida">
+      <defs><style>
+        .en{font:700 20px Inter,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+        .ey{font:600 10px Inter,sans-serif;fill:#746E87;text-anchor:middle}
+        .ee{font:500 9.5px Inter,sans-serif;fill:#A29CB2;text-anchor:middle}
+        .eh{font:700 8.5px Inter,sans-serif;fill:#A855F7;text-anchor:middle;letter-spacing:.14em}
+      </style></defs>
+      <g>
+        <rect x="10"  y="46" width="230" height="42" rx="4" fill="#A855F7" opacity=".38"/>
+        <rect x="244" y="46" width="150" height="42" rx="4" fill="#A855F7"/>
+        <rect x="398" y="46" width="150" height="42" rx="4" fill="#A855F7" opacity=".38"/>
+        <rect x="552" y="46" width="158" height="42" rx="4" fill="#A855F7" opacity=".22"/>
+      </g>
+      <text class="en" x="125" y="67">4</text>
+      <text class="en" x="319" y="67">4</text>
+      <text class="en" x="473" y="67">8</text>
+      <text class="en" x="631" y="67" fill="#6B3FA0">4</text>
+      <text class="ey" x="125" y="106">1991 – 2020</text><text class="ee" x="125" y="120">0 – 30 años</text>
+      <text class="ey" x="319" y="106">2021 – 2029</text><text class="ee" x="319" y="120">30 – 39 años</text>
+      <text class="ey" x="473" y="106">2030 – 2038</text><text class="ee" x="473" y="120">39 – 48 años</text>
+      <text class="ey" x="631" y="106">2039 – 2047</text><text class="ee" x="631" y="120">48 – 57 años</text>
+      <text class="eh" x="319" y="14">ESTÁS AQUÍ · 35 AÑOS</text>
+      <path d="M319 20 L319 40" stroke="#A855F7" stroke-width="2"/>
+      <circle cx="319" cy="42" r="4" fill="#A855F7"/>
+    </svg>
+  </div>
+
+  <!-- 3 · RUEDA AÑO PERSONAL -->
+  <div class="card">
+    <h3>3 · Rueda del año personal</h3>
+    <p class="use">Trabajo · Amor · Bienestar</p>
+    <svg viewBox="0 0 300 210" role="img" aria-label="Año personal 5 de 9">
+      <g id="sectors" transform="translate(150,105)">
+        <!-- 9 sectores de 40°, el 5º activo -->
+        <path d="M0 0 L0 -92 A92 92 0 0 1 59.1 -70.5 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L59.1 -70.5 A92 92 0 0 1 90.6 -15.9 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L90.6 -15.9 A92 92 0 0 1 78.9 47.3 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L78.9 47.3 A92 92 0 0 1 31.9 86.3 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L31.9 86.3 A92 92 0 0 1 -31.9 86.3 Z" fill="#3B82F6"/>
+        <path d="M0 0 L-31.9 86.3 A92 92 0 0 1 -78.9 47.3 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L-78.9 47.3 A92 92 0 0 1 -90.6 -15.9 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L-90.6 -15.9 A92 92 0 0 1 -59.1 -70.5 Z" fill="#3B82F6" opacity=".14"/>
+        <path d="M0 0 L-59.1 -70.5 A92 92 0 0 1 0 -92 Z" fill="#3B82F6" opacity=".14"/>
+        <g style="font:700 11px Inter,sans-serif;fill:#2A1E3E;text-anchor:middle;dominant-baseline:central">
+          <text x="24" y="-64">1</text><text x="61" y="-32">2</text><text x="66" y="14">3</text>
+          <text x="42" y="53">4</text><text x="0" y="68" fill="#fff">5</text><text x="-42" y="53">6</text>
+          <text x="-66" y="14">7</text><text x="-61" y="-32">8</text><text x="-24" y="-64">9</text>
+        </g>
+        <circle r="42" fill="#fff" stroke="#E6DDEE"/>
+        <text y="-4" text-anchor="middle" style="font:800 32px Inter,sans-serif;fill:#3B82F6">5</text>
+        <text y="18" text-anchor="middle" style="font:700 7.5px Inter,sans-serif;letter-spacing:.14em;fill:#746E87">AÑO PERSONAL</text>
+        <text y="30" text-anchor="middle" style="font:500 8px Inter,sans-serif;fill:#A29CB2">2026 · binomio 5/1</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 4 · BALANZA -->
+  <div class="card">
+    <h3>4 · Balanza armónico ↔ desarmónico</h3>
+    <p class="use">Bienestar · Quién soy</p>
+    <svg viewBox="0 0 300 210" role="img" aria-label="Polaridades">
+      <g style="font:700 8px Inter,sans-serif;letter-spacing:.12em">
+        <text x="12" y="16" fill="#059669">ARMÓNICO +2</text>
+        <text x="288" y="16" fill="#E8304F" text-anchor="end">DESARMÓNICO −2</text>
+      </g>
+      <g style="font:500 10.5px Inter,sans-serif;fill:#2A1E3E">
+        <text x="12" y="52">Coopera</text><text x="288" y="52" text-anchor="end" fill="#8A6672">Se estanca</text>
+        <text x="12" y="82">Concilia</text><text x="288" y="82" text-anchor="end" fill="#8A6672">Se calla</text>
+        <text x="12" y="112">Escucha</text><text x="288" y="112" text-anchor="end" fill="#8A6672">Se disuelve</text>
+        <text x="12" y="142">Negocia</text><text x="288" y="142" text-anchor="end" fill="#8A6672">Nunca basta</text>
+      </g>
+      <g>
+        <rect x="86" y="42" width="128" height="6" rx="3" fill="#EEE9F2"/>
+        <rect x="86" y="42" width="92"  height="6" rx="3" fill="#059669"/>
+        <rect x="86" y="72" width="128" height="6" rx="3" fill="#EEE9F2"/>
+        <rect x="86" y="72" width="58"  height="6" rx="3" fill="#059669"/>
+        <rect x="86" y="102" width="128" height="6" rx="3" fill="#EEE9F2"/>
+        <rect x="86" y="102" width="104" height="6" rx="3" fill="#059669"/>
+        <rect x="86" y="132" width="128" height="6" rx="3" fill="#EEE9F2"/>
+        <rect x="86" y="132" width="44"  height="6" rx="3" fill="#E8304F"/>
+      </g>
+      <line x1="150" y1="34" x2="150" y2="150" stroke="#C9C0D8" stroke-dasharray="2 3"/>
+      <circle cx="150" cy="180" r="20" fill="#059669"/>
+      <text x="150" y="186" text-anchor="middle" style="font:800 20px Inter,sans-serif;fill:#fff">2</text>
+    </svg>
+  </div>
+
+  <!-- 5 · AUSENCIAS -->
+  <div class="card">
+    <h3>5 · Presencias y ausencias</h3>
+    <p class="use">Bienestar · Quién soy — <code>tarea-no-aprendida-y-ausencias</code></p>
+    <svg viewBox="0 0 300 210" role="img" aria-label="Números presentes y ausentes">
+      <g style="font:800 26px Inter,sans-serif;text-anchor:middle;dominant-baseline:central">
+        <!-- presentes: 1 2 4 6 7 -->
+        <rect x="34"  y="18" width="66" height="52" rx="7" fill="#059669"/><text x="67"  y="45" fill="#fff">1</text>
+        <rect x="117" y="18" width="66" height="52" rx="7" fill="#059669"/><text x="150" y="45" fill="#fff">2</text>
+        <rect x="200" y="18" width="66" height="52" rx="7" fill="none" stroke="#D9D2E6" stroke-width="2" stroke-dasharray="5 4"/><text x="233" y="45" fill="#C9C0D8">3</text>
+        <rect x="34"  y="80" width="66" height="52" rx="7" fill="#059669"/><text x="67"  y="107" fill="#fff">4</text>
+        <rect x="117" y="80" width="66" height="52" rx="7" fill="none" stroke="#D9D2E6" stroke-width="2" stroke-dasharray="5 4"/><text x="150" y="107" fill="#C9C0D8">5</text>
+        <rect x="200" y="80" width="66" height="52" rx="7" fill="#059669"/><text x="233" y="107" fill="#fff">6</text>
+        <rect x="34"  y="142" width="66" height="52" rx="7" fill="#059669"/><text x="67"  y="169" fill="#fff">7</text>
+        <rect x="117" y="142" width="66" height="52" rx="7" fill="none" stroke="#D9D2E6" stroke-width="2" stroke-dasharray="5 4"/><text x="150" y="169" fill="#C9C0D8">8</text>
+        <rect x="200" y="142" width="66" height="52" rx="7" fill="none" stroke="#D9D2E6" stroke-width="2" stroke-dasharray="5 4"/><text x="233" y="169" fill="#C9C0D8">9</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#059669"></i>En tu pináculo</span>
+      <span><i style="background:#fff;border:1px dashed #D9D2E6"></i>Ausente — tarea pendiente</span>
+    </div>
+  </div>
+
+  <!-- 6 · TIRA DEL NOMBRE -->
+  <div class="card wide">
+    <h3>6 · Tira del nombre</h3>
+    <p class="use">Quién soy · Trabajo — vocales = alma (3) · consonantes = expresión (9)</p>
+    <svg viewBox="0 0 720 150" role="img" aria-label="Valor numérico de cada letra del nombre">
+      <defs><style>
+        .lt{font:700 17px Inter,sans-serif;text-anchor:middle;dominant-baseline:central}
+        .lv{font:600 10px Inter,sans-serif;text-anchor:middle;dominant-baseline:central}
+        .lh{font:700 8px Inter,sans-serif;letter-spacing:.14em}
+      </style></defs>
+      <text class="lh" x="8" y="16" fill="#D3AE36">VOCALES · ALMA</text>
+      <text class="lh" x="8" y="140" fill="#4C1D95">CONSONANTES · EXPRESIÓN</text>
+      <!-- J U A N   P E D R O   M A R T I N E Z -->
+      <g>
+        <!-- fila base -->
+        <g class="lt" fill="#2A1E3E">
+          <text x="30"  y="75">J</text><text x="66"  y="75">U</text><text x="102" y="75">A</text><text x="138" y="75">N</text>
+          <text x="192" y="75">P</text><text x="228" y="75">E</text><text x="264" y="75">D</text><text x="300" y="75">R</text><text x="336" y="75">O</text>
+          <text x="390" y="75">M</text><text x="426" y="75">A</text><text x="462" y="75">R</text><text x="498" y="75">T</text>
+          <text x="534" y="75">I</text><text x="570" y="75">N</text><text x="606" y="75">E</text><text x="642" y="75">Z</text>
+        </g>
+        <!-- valores vocales arriba (oro) -->
+        <g class="lv" fill="#B8952A">
+          <text x="66"  y="46">3</text><text x="102" y="46">1</text>
+          <text x="228" y="46">5</text><text x="336" y="46">6</text>
+          <text x="426" y="46">1</text><text x="534" y="46">9</text><text x="606" y="46">5</text>
+        </g>
+        <g fill="#D3AE36">
+          <circle cx="66" cy="58" r="2"/><circle cx="102" cy="58" r="2"/><circle cx="228" cy="58" r="2"/>
+          <circle cx="336" cy="58" r="2"/><circle cx="426" cy="58" r="2"/><circle cx="534" cy="58" r="2"/><circle cx="606" cy="58" r="2"/>
+        </g>
+        <!-- valores consonantes abajo (violeta) -->
+        <g class="lv" fill="#6D28D9">
+          <text x="30"  y="104">1</text><text x="138" y="104">5</text><text x="192" y="104">7</text>
+          <text x="264" y="104">4</text><text x="300" y="104">9</text><text x="390" y="104">4</text>
+          <text x="462" y="104">9</text><text x="498" y="104">2</text><text x="570" y="104">5</text><text x="642" y="104">8</text>
+        </g>
+      </g>
+      <!-- marcador de la letra activa del ciclo de vida -->
+      <rect x="410" y="52" width="32" height="46" rx="5" fill="none" stroke="#D3AE36" stroke-width="2"/>
+      <text x="426" y="122" text-anchor="middle" style="font:700 7.5px Inter,sans-serif;letter-spacing:.1em;fill:#B8952A">LETRA ACTIVA · 35 AÑOS</text>
+      <line x1="686" y1="30" x2="686" y2="100" stroke="#E6DDEE"/>
+      <text x="700" y="52" style="font:800 20px Inter,sans-serif;fill:#D3AE36">3</text>
+      <text x="700" y="90" style="font:800 20px Inter,sans-serif;fill:#4C1D95">9</text>
+    </svg>
+  </div>
+
+  <!-- 7 · SINASTRÍA -->
+  <div class="card wide">
+    <h3>7 · Puente de sinastría</h3>
+    <p class="use">Amor con pareja — la taxonomía natural / complementaria / aprendizaje / reto ya la usa el sitio</p>
+    <svg viewBox="0 0 720 210" role="img" aria-label="Comparación de dos cuadros numerológicos">
+      <defs><style>
+        .sn{font:700 17px Inter,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+        .sl{font:600 9px Inter,sans-serif;fill:#746E87;text-anchor:middle;letter-spacing:.06em}
+        .sw{font:700 8px Inter,sans-serif;text-anchor:middle;letter-spacing:.08em}
+      </style></defs>
+      <text class="sl" x="90" y="16" style="font:700 9px Inter,sans-serif;fill:#2A1E3E">JUAN PEDRO</text>
+      <text class="sl" x="630" y="16" style="font:700 9px Inter,sans-serif;fill:#2A1E3E">ANA BELÉN</text>
+      <g>
+        <line x1="130" y1="46"  x2="590" y2="46"  stroke="#059669" stroke-width="2.5"/>
+        <line x1="130" y1="94"  x2="590" y2="94"  stroke="#3B82F6" stroke-width="2.5" stroke-dasharray="7 4"/>
+        <line x1="130" y1="142" x2="590" y2="142" stroke="#D3AE36" stroke-width="2.5" stroke-dasharray="2 4"/>
+        <line x1="130" y1="190" x2="590" y2="190" stroke="#E8304F" stroke-width="2.5" stroke-dasharray="1 5"/>
+      </g>
+      <g>
+        <rect x="62" y="26"  width="56" height="40" rx="6" fill="#EC4899"/><text class="sn" x="90" y="46">2</text>
+        <rect x="62" y="74"  width="56" height="40" rx="6" fill="#EC4899"/><text class="sn" x="90" y="94">3</text>
+        <rect x="62" y="122" width="56" height="40" rx="6" fill="#EC4899"/><text class="sn" x="90" y="142">7</text>
+        <rect x="62" y="170" width="56" height="40" rx="6" fill="#EC4899"/><text class="sn" x="90" y="190">11</text>
+        <rect x="602" y="26"  width="56" height="40" rx="6" fill="#9D174D"/><text class="sn" x="630" y="46">2</text>
+        <rect x="602" y="74"  width="56" height="40" rx="6" fill="#9D174D"/><text class="sn" x="630" y="94">6</text>
+        <rect x="602" y="122" width="56" height="40" rx="6" fill="#9D174D"/><text class="sn" x="630" y="142">1</text>
+        <rect x="602" y="170" width="56" height="40" rx="6" fill="#9D174D"/><text class="sn" x="630" y="190">4</text>
+      </g>
+      <g>
+        <rect x="286" y="34"  width="148" height="24" rx="12" fill="#fff" stroke="#059669"/><text class="sw" x="360" y="49" fill="#059669">ESENCIA · NATURAL</text>
+        <rect x="286" y="82"  width="148" height="24" rx="12" fill="#fff" stroke="#3B82F6"/><text class="sw" x="360" y="97" fill="#3B82F6">ALMA · COMPLEMENTARIA</text>
+        <rect x="286" y="130" width="148" height="24" rx="12" fill="#fff" stroke="#D3AE36"/><text class="sw" x="360" y="145" fill="#B8952A">ESPEJO · APRENDIZAJE</text>
+        <rect x="286" y="178" width="148" height="24" rx="12" fill="#fff" stroke="#E8304F"/><text class="sw" x="360" y="193" fill="#E8304F">KARMA · RETO</text>
+      </g>
+    </svg>
+  </div>
+
+</div>
+
+<h2>4 · Nota técnica</h2>
+<p class="note">
+  Esta página es HTML + CSS + SVG puro, sin JavaScript y sin recursos externos:
+  el mismo material que <b>WeasyPrint</b> convierte a PDF. La única diferencia
+  con la plantilla de producción es que aquí las páginas escalan con unidades de
+  contenedor (<code>cqw</code>) para que quepan tres A4 en pantalla; en el PDF
+  serían milímetros dentro de una regla <code>@page</code>. Los SVG pasan tal cual.
+  <br><br>
+  Ésa es la razón de la propuesta: cambiar el motor de <b>estos cinco</b> reportes
+  de coordenadas absolutas (fpdf2) a flujo HTML, para que un texto generado por
+  IA de longitud variable nunca pise la maquetación. Los 16 reportes actuales se
+  quedan exactamente como están.
+</p>
+
+</div>
+</body>
+</html>

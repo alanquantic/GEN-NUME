@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>¿Quién soy? · Juan Pedro Martinez</title>
+<style>:root{ --area:#4C1D95; --area-ink:#4C1D95; }
+/* ============================================================
+   Hoja de estilo de los reportes dinámicos (WeasyPrint).
+   El color de área lo inyecta el renderizador en :root{--area:…}.
+   Pensado para @page A4; en pantalla las hojas se apilan.
+   ============================================================ */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+:root{
+  --primary:#4C1D95; --accent:#D3AE36; --accent-ink:#96751B;
+  --royal:#2047C5; --danger:#E8304F;
+  --paper:#FBF9FE; --ink:#2A1E3E; --ink-soft:#6B6280; --border:#E6DDEE;
+  --secondary:#F5EBFF; --rule:#D9D2E6;
+  --area:#4C1D95;           /* lo sobreescribe el renderizador por reporte */
+  --area-ink:#4C1D95;
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:#ECE7F3; color:var(--ink);
+  font-family:&#34;PassionOne&#34;, &#34;Open Sans&#34;, ui-sans-serif, system-ui, sans-serif;
+  font-family:&#34;Open Sans&#34;, ui-sans-serif, system-ui, sans-serif;
+  line-height:1.6;
+}
+/* En impresión cada .page es una página física; en pantalla, una tarjeta. */
+.page{
+  position:relative; width:210mm; height:297mm; background:var(--paper);
+  overflow:hidden; margin:0 auto; page-break-after:always;
+}
+@media screen{
+  body{ padding:24px; }
+  .page{ box-shadow:0 14px 40px rgba(42,30,62,.20); margin-bottom:26px; border-radius:3px; }
+}
+
+.serif{ font-family:Georgia,&#34;Times New Roman&#34;,serif; }
+
+/* retícula */
+.pad{ padding:26mm 24mm; }
+.pad-rail{ padding:26mm 58mm 26mm 24mm; }
+.rail{ position:absolute; top:26mm; right:12mm; width:36mm; text-align:right; }
+.rail .rn{ font:400 26mm/1 Georgia,serif; color:var(--area); }
+.rail .rl{ font:600 3mm/1.3 sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-top:2mm; }
+.rail .rk{ font:600 2.9mm/1.4 sans-serif; color:var(--accent-ink); margin-top:5mm; }
+
+.eyebrow{ font:600 3.4mm/1 sans-serif; letter-spacing:.24em; text-transform:uppercase; color:var(--area); }
+h2.t{ font:600 15mm/1.08 Georgia,serif; letter-spacing:-.01em; margin:5mm 0 0; color:var(--ink); }
+h2.t.sm{ font-size:12mm; }
+.body p{ font-size:4mm; line-height:1.66; margin:0 0 5mm; text-align:justify; hyphens:auto; }
+.body.drop p:first-child::first-letter{
+  font-family:Georgia,serif; font-size:22mm; line-height:.8; float:left;
+  padding:2mm 3mm 0 0; color:var(--area);
+}
+
+/* portada */
+.cover{ height:100%; display:flex; flex-direction:column; justify-content:space-between;
+  background:radial-gradient(130% 80% at 50% -10%, color-mix(in srgb,var(--area) 16%, transparent), transparent 62%), var(--paper); }
+.cover .brand{ font:600 3.6mm/1 sans-serif; letter-spacing:.3em; text-transform:uppercase; color:var(--area); }
+.cover .who{ margin-top:5mm; font-size:3.8mm; color:var(--ink-soft); }
+.cover .who b{ display:block; font-family:Georgia,serif; font-size:6.5mm; color:var(--ink); font-weight:400; }
+.cover-top,.cover-mid,.cover-foot{ text-align:center; }
+.bignum{ font:400 150mm/.72 Georgia,serif; color:var(--area); letter-spacing:-.04em; }
+.frase{ font-family:Georgia,serif; font-style:italic; font-size:6.2mm; line-height:1.3; max-width:24ch; margin:8mm auto 0; color:var(--ink); }
+.gilt{ width:40mm; height:2px; background:var(--accent); margin:7mm auto; }
+.cover-foot .rep{ font:600 3.4mm/1 sans-serif; letter-spacing:.24em; text-transform:uppercase; color:var(--accent-ink); }
+.cover-foot .sub{ font-size:3.4mm; color:var(--ink-soft); margin-top:2mm; }
+
+/* ficha de números */
+.grid-nums{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-top:10mm; }
+.chip{ display:flex; align-items:baseline; gap:4mm; background:#fff; border:1px solid var(--border);
+  border-left:3px solid var(--area); border-radius:2px; padding:4.5mm 5mm; }
+.chip.karmic{ border-left-color:var(--accent); }
+.chip .v{ font-family:Georgia,serif; font-size:12mm; line-height:1; color:var(--area); min-width:12mm;
+  font-variant-numeric:tabular-nums; }
+.chip.karmic .v{ color:var(--accent-ink); }
+.chip .l{ font-size:2.9mm; line-height:1.35; color:var(--ink-soft); }
+.chip .l b{ display:block; color:var(--ink); font-size:3.4mm; font-weight:600; }
+.note{ font-size:3mm; color:var(--ink-soft); margin-top:8mm; line-height:1.5; }
+.note .star{ color:var(--accent-ink); font-weight:600; }
+
+/* gráficos */
+.chart{ margin-top:12mm; }
+.chart svg{ display:block; width:100%; height:auto; }
+.chart-cap{ font:600 3mm/1.4 sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-soft); margin-top:4mm; text-align:center; }
+
+/* secciones */
+.section-head{ border-top:2px solid var(--area); padding-top:6mm; }
+.entradilla{ font-family:Georgia,serif; font-style:italic; font-size:4.6mm; line-height:1.4;
+  color:var(--area); margin:4mm 0 8mm; }
+.pull{ margin:8mm 0; padding:6mm 7mm; border-radius:3px; background:var(--secondary); border-left:3px solid var(--accent); }
+.pull .kt{ font:600 2.6mm/1 sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink); }
+.pull.alerta{ background:#FDECEF; border-left-color:var(--danger); }
+.pull.alerta .kt{ color:var(--danger); }
+.pull.cita{ } .pull.dato{ }
+.pull p{ margin:2mm 0 0; font-size:3.7mm; line-height:1.5; font-style:italic; font-family:Georgia,serif; }
+.accion{ margin-top:8mm; padding-top:5mm; border-top:1px solid var(--border); font-size:3.7mm; line-height:1.5; }
+.accion b{ color:var(--area); }
+
+/* tensión central */
+.tension{ height:100%; background:linear-gradient(160deg,var(--area),color-mix(in srgb,var(--area) 60%, #000));
+  color:#fff; display:flex; flex-direction:column; justify-content:center; }
+.tension .eyebrow{ color:rgba(255,255,255,.6); }
+.tension h2.t{ color:#fff; }
+.tension .body p{ color:rgba(255,255,255,.9); }
+.vs{ display:flex; align-items:center; justify-content:center; gap:10mm; margin:12mm 0; }
+.vs .orb{ width:42mm; height:42mm; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:Georgia,serif; font-size:20mm; color:#fff; border:1.5px solid rgba(255,255,255,.5); }
+.vs .orb.a{ background:rgba(255,255,255,.08); }
+.vs .x{ font:600 3.6mm/1 sans-serif; letter-spacing:.24em; color:rgba(255,255,255,.55); }
+.resolve{ margin-top:8mm; padding-top:6mm; border-top:1px solid rgba(255,255,255,.25);
+  font-family:Georgia,serif; font-style:italic; font-size:4mm; line-height:1.5; color:#fff; }
+
+/* plan */
+.plan{ display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-top:8mm; }
+.pcard{ background:#fff; border:1px solid var(--border); border-radius:4px; padding:6mm; }
+.pcard .n{ font-family:Georgia,serif; font-size:8mm; color:var(--accent); line-height:1; }
+.pcard h4{ font:600 3.6mm/1.25 sans-serif; margin:2mm 0 3mm; color:var(--ink); }
+.pcard p{ margin:0; font-size:2.9mm; line-height:1.45; color:var(--ink-soft); }
+.cierre{ margin-top:9mm; font-family:Georgia,serif; font-style:italic; font-size:4mm; line-height:1.55; color:var(--ink); }
+
+.legal{ position:absolute; bottom:14mm; left:24mm; right:24mm; font-size:2.5mm; line-height:1.4;
+  color:var(--ink-soft); border-top:1px solid var(--border); padding-top:4mm; }
+.folio{ position:absolute; bottom:6mm; left:0; right:0; text-align:center; font-size:2.8mm;
+  letter-spacing:.15em; color:var(--ink-soft); }
+.tension .folio{ color:rgba(255,255,255,.5); }
+</style>
+</head>
+<body><section class="page">
+  <div class="cover pad">
+    <div class="cover-top">
+      <div class="brand">Numerología Cotidiana</div>
+      <div class="who"><b>Juan Pedro Martinez</b>20 noviembre 1991</div>
+    </div>
+    <div class="cover-mid">
+      <div class="bignum">2</div>
+      <div class="gilt"></div>
+      <div class="frase">«Concilias por fuera lo que aún peleas por dentro.»</div>
+    </div>
+    <div class="cover-foot">
+      <div class="rep">¿Quién soy?</div>
+      <div class="sub">Tu esencia busca la paz; tu karma te empuja a dar la cara</div>
+    </div>
+  </div>
+</section><section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu mapa</div>
+    <h2 class="t">Los números que te componen</h2>
+    <div class="grid-nums">
+      
+      <div class="chip">
+        <span class="v">2</span>
+        <span class="l"><b>Esencia</b>número personal · el día</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">11</span>
+        <span class="l"><b>Karma</b>el mes · tu clan</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">2</span>
+        <span class="l"><b>Vida pasada</b>el año</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">6</span>
+        <span class="l"><b>Personalidad</b>tu máscara</span>
+      </div>
+      
+      <div class="chip karmic">
+        <span class="v">4*</span>
+        <span class="l"><b>Destino</b>a dónde vas</span>
+      </div>
+      
+      <div class="chip karmic">
+        <span class="v">7*</span>
+        <span class="l"><b>Subconsciente</b>tu brújula</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">1</span>
+        <span class="l"><b>Espejo</b>lo que te atrae</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">6</span>
+        <span class="l"><b>Sombra</b>tu punto ciego</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">3</span>
+        <span class="l"><b>Alma</b>vocales del nombre</span>
+      </div>
+      
+      <div class="chip">
+        <span class="v">1</span>
+        <span class="l"><b>Regalo divino</b>tu don</span>
+      </div>
+      
+    </div>
+    <p class="note"><span class="star">*</span> Los números marcados son <b>kármicos</b>: deudas que este camino viene a saldar. Te faltan las vibraciones <b>3, 5, 9</b>: tus tareas por integrar.</p>
+    <div class="folio">— 2 —</div>
+  </div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu pináculo personal</div>
+    <h2 class="t sm">Un mapa que no cambia jamás</h2>
+    <div class="chart"><svg viewBox="0 0 720 640" role="img" aria-label="Pináculo personal"><defs><style>.pn{font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}.pk{font:600 8.5px sans-serif;fill:#6B6280;text-anchor:middle;letter-spacing:.05em}.pf{font:600 8px sans-serif;fill:#A99FBF;text-anchor:middle}.pz{font:700 8px sans-serif;text-anchor:middle;letter-spacing:.16em}</style></defs><path d="M230 46 L378 262 L82 262 Z" fill="#E4EFD3" opacity=".6"/><rect x="28" y="292" width="536" height="66" rx="9" fill="#EDE3F8"/><path d="M82 388 L378 388 L230 604 Z" fill="#FBDCE1" opacity=".55"/><text class="pz" x="140" y="34" fill="#7CB342">SER SUPERIOR · REALIZACIONES</text><text class="pz" x="120" y="286" fill="#6D28D9">HORIZONTAL · IDENTIDAD</text><text class="pz" x="118" y="382" fill="#C0392B">SER INFERIOR · DESAFÍOS</text><g stroke="#CFC6DE" stroke-width="1" stroke-dasharray="3 3" fill="none"><path d="M92 320 L146 244 M232 320 L146 244 M232 320 L322 244 M392 320 L322 244 M146 244 L232 166 M322 244 L232 166 M232 166 L232 84 M322 244 L400 166 M232 84 L400 166 M92 320 L146 420 M232 320 L146 420 M232 320 L322 420 M392 320 L322 420 M146 420 L232 488 M322 420 L232 488 M232 488 L232 556"/></g><circle cx="232" cy="84" r="26" fill="#D3AE36"/><text x="232" y="84" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">4*</text><text class="pk" x="232" y="123">H · DESTINO</text><circle cx="232" cy="166" r="26" fill="#8BC34A"/><text x="232" y="166" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">8</text><text class="pk" x="232" y="171">G · 3.ª ETAPA</text><circle cx="146" cy="244" r="26" fill="#8BC34A"/><text x="146" y="244" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">4*</text><text class="pk" x="146" y="290">E · 1.ª ETAPA</text><circle cx="232" cy="244" r="26" fill="#8BC34A"/><text x="232" y="244" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">7*</text><text class="pk" x="232" y="212">I · SEXTO SENTIDO</text><circle cx="322" cy="244" r="26" fill="#8BC34A"/><text x="322" y="244" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">4</text><text class="pk" x="322" y="290">F · 2.ª ETAPA</text><circle cx="400" cy="166" r="26" fill="#8BC34A"/><text x="400" y="166" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">1</text><text class="pk" x="400" y="163">J · ESPEJO / PAREJA</text><circle cx="92" cy="325" r="27" fill="#4C1D95"/><text x="92" y="325" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">11</text><text class="pk" x="92" y="372">A · KARMA · mes</text><circle cx="232" cy="325" r="35" fill="#4C1D95" stroke="#D3AE36" stroke-width="2.5"/><text x="232" y="325" style="font:700 27px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">2</text><text class="pk" x="232" y="374">B · PERSONAL · día</text><circle cx="392" cy="325" r="27" fill="#4C1D95"/><text x="392" y="325" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">2</text><text class="pk" x="392" y="372">C · VIDA PASADA · año</text><circle cx="502" cy="325" r="27" fill="#6D28D9"/><text x="502" y="325" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">6</text><text class="pk" x="502" y="372">D · MÁSCARA</text><circle cx="610" cy="325" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text x="610" y="325" style="font:700 18px sans-serif;fill:#2047C5;text-anchor:middle;dominant-baseline:central">8</text><text class="pk" x="610" y="368">X · REACCIÓN</text><circle cx="688" cy="325" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text x="688" y="325" style="font:700 18px sans-serif;fill:#2047C5;text-anchor:middle;dominant-baseline:central">11</text><text class="pk" x="688" y="368">Y · MISIÓN</text><circle cx="648" cy="228" r="25" fill="#fff" stroke="#2047C5" stroke-width="2" stroke-dasharray="4 3"/><text x="648" y="228" style="font:700 18px sans-serif;fill:#2047C5;text-anchor:middle;dominant-baseline:central">1</text><text class="pk" x="648" y="271">Z · REGALO DIVINO</text><circle cx="146" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="146" y="420" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pk" x="146" y="456">K · DESAFÍO</text><circle cx="232" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="232" y="420" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pk" x="232" y="387">O · INCONSC. NEG.</text><circle cx="322" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="322" y="420" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pk" x="322" y="456">L · DESAFÍO</text><circle cx="232" cy="488" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="232" y="488" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pk" x="232" y="492">M · DESAFÍO</text><circle cx="232" cy="556" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="232" y="556" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pk" x="232" y="592">N · DESAFÍO</text><circle cx="44" cy="452" r="24" fill="#2A1E3E"/><text x="44" y="452" style="font:700 21px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central">6</text><text class="pk" x="44" y="490">P · SOMBRA</text><circle cx="392" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="392" y="488" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><circle cx="462" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="462" y="488" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><circle cx="532" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.6"/><text x="532" y="488" style="font:700 18px sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central">0</text><text class="pz" x="462" y="520" fill="#C0392B">Q · R · S — SÚPER OCULTOS</text><rect x="590" y="446" width="118" height="52" rx="8" fill="#fff" stroke="#E8304F" stroke-width="1.7" stroke-dasharray="5 4"/><text x="649" y="468" style="font:700 17px serif;fill:#C0392B;text-anchor:middle">3 · 5 · 9</text><text class="pk" x="649" y="486" fill="#C0392B">T · AUSENCIAS</text></svg></div>
+    <p class="note">Tu zona inferior está llena de ceros: es un <b>Pináculo Especial</b>, con la energía de los desafíos volcada hacia lo colectivo.</p>
+    <div class="folio">— 3 —</div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">El poder de tu nombre</div>
+    <h2 class="t sm">Cada letra, una vibración</h2>
+    <div class="chart"><svg viewBox="0 0 720 200" role="img" aria-label="Valor de cada letra del nombre"><defs><style>.lt{font:400 20px serif;fill:#2A1E3E;text-anchor:middle;dominant-baseline:central}.lv{font:600 11px sans-serif;text-anchor:middle;dominant-baseline:central}.lh{font:600 8.5px sans-serif;letter-spacing:.14em}</style></defs><text class="lh" x="6" y="16" fill="#96751B">VOCALES · ALMA 3</text><text class="lh" x="6" y="192" fill="#4C1D95">CONSONANTES · EXPRESIÓN 9</text><line x1="0" y1="100" x2="678" y2="100" stroke="#E6DDEE"/><text class="lt" x="88" y="100">J</text><text class="lv" x="88" y="140" fill="#5B21B6">1</text><text class="lt" x="122" y="100">U</text><text class="lv" x="122" y="60" fill="#96751B">3</text><circle cx="122" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="156" y="100">A</text><text class="lv" x="156" y="60" fill="#96751B">1</text><circle cx="156" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="190" y="100">N</text><text class="lv" x="190" y="140" fill="#5B21B6">5</text><text class="lt" x="224" y="100">P</text><text class="lv" x="224" y="140" fill="#5B21B6">7</text><text class="lt" x="258" y="100">E</text><text class="lv" x="258" y="60" fill="#96751B">5</text><circle cx="258" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="292" y="100">D</text><text class="lv" x="292" y="140" fill="#5B21B6">4</text><text class="lt" x="326" y="100">R</text><text class="lv" x="326" y="140" fill="#5B21B6">9</text><text class="lt" x="360" y="100">O</text><text class="lv" x="360" y="60" fill="#96751B">6</text><circle cx="360" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="394" y="100">M</text><text class="lv" x="394" y="140" fill="#5B21B6">4</text><text class="lt" x="428" y="100">A</text><text class="lv" x="428" y="60" fill="#96751B">1</text><circle cx="428" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="462" y="100">R</text><text class="lv" x="462" y="140" fill="#5B21B6">9</text><text class="lt" x="496" y="100">T</text><text class="lv" x="496" y="140" fill="#5B21B6">2</text><text class="lt" x="530" y="100">I</text><text class="lv" x="530" y="60" fill="#96751B">9</text><circle cx="530" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="564" y="100">N</text><text class="lv" x="564" y="140" fill="#5B21B6">5</text><text class="lt" x="598" y="100">E</text><text class="lv" x="598" y="60" fill="#96751B">5</text><circle cx="598" cy="76" r="2.4" fill="#D3AE36"/><text class="lt" x="632" y="100">Z</text><text class="lv" x="632" y="140" fill="#5B21B6">8</text></svg></div>
+    
+    <div class="folio">— 4 —</div>
+  </div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu retrato</div>
+    <h2 class="t">Quién eres cuando nadie mira</h2>
+    <div class="body drop" style="margin-top:9mm">
+      <p>Juan Pedro, tu número personal es el 2, y define tu esencia: la tuya es una energía de vínculo. No estás hecho para el protagonismo ni para imponerte; estás hecho para cooperar, para leer lo que el otro necesita antes de que lo diga, para sostener la armonía de un grupo. La gente cercana te conoce como alguien receptivo, cordial y buen negociador, de esos que resuelven sin levantar la voz.</p><p>Pero sobre esa esencia suave se monta un karma 11, la vibración más exigente del cuadro. El 11 no vino a pasar desapercibido: es intuición, idealismo, una necesidad de guiar o enseñar que te empuja justo hacia donde el 2 preferiría no ir: a exponerte. De ahí viene esa sensación, que probablemente conoces, de agotarte cuando tienes que dar la cara, y de sorprenderte de cuánto te escuchan cuando por fin lo haces.</p><p>Y encima, tu alma es un 3: necesita expresarse, crear, decir lo que ve. Tres fuerzas, entonces, en un mismo hombre: la que concilia (2), la que debe exponerse (11) y la que quiere hablar (3). Entenderlas es dejar de sentirte contradictorio y empezar a usarte entero.</p>
+    </div>
+  </div>
+</section>
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">01 · esencia</div>
+      <h2 class="t sm">Tu verdadera esencia</h2>
+    </div>
+    <div class="entradilla">El 2 es tu centro: cooperación, sensibilidad y el arte de unir a la gente.</div>
+    <div class="body"><p>Tu número personal, el 2, es el director de orquesta de todo tu cuadro. Las personas 2 se distinguen por su disposición a cooperar y trabajar en equipo; sueles funcionar mejor acompañando que liderando, y tienes un talento natural para la negociación, la cordialidad y la paciencia. Donde otros ven un conflicto, tú ves dos posturas que todavía no se han presentado.</p><p>El reverso de esa moneda es la inconformidad. El 2 en su cara desarmónica nunca está del todo satisfecho, y puede quedarse estancado, dejando de empujar porque intuye que, de un modo u otro, las cosas se acabarán resolviendo. Reconocer ese punto es la mitad del trabajo: tu don es unir, pero no a costa de desaparecer tú.</p></div>
+    
+    <div class="pull cita">
+      <div class="kt">Del texto de Laura</div>
+      <p>El 2 vino a vivir la unión, la solidaridad y el servicio; su lucha es no perderse en el otro.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Esta semana, en una decisión de grupo, di lo que TÚ quieres antes de preguntar qué quieren los demás.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">2</div>
+      <div class="rl">Esencia</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">02 · mascara</div>
+      <h2 class="t sm">La máscara con la que sales al mundo</h2>
+    </div>
+    <div class="entradilla">Tu personalidad 6 te presenta como el responsable, el que cuida y sostiene.</div>
+    <div class="body"><p>Antes de que alguien conozca tu esencia, ve tu 6: la máscara del responsable, del que se hace cargo, del que pone orden y belleza en lo que toca. Es la cara que aprendiste a mostrar en tu familia para ser querido y aceptado, y funciona: la gente confía en ti porque proyectas cuidado y compromiso.</p><p>El riesgo del 6 como máscara es que te vuelvas el que carga con todo. Cuidar se convierte en controlar, y el servicio en una factura silenciosa que pasas después. Tu 6 es una herramienta magnífica mientras tú elijas cuándo ponértelo, no mientras te use él a ti.</p></div>
+    
+    <div class="pull dato">
+      <div class="kt">Dato</div>
+      <p>La máscara (D) es lo primero que ven los demás; tu esencia (B) es lo que descubren si se quedan.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Identifica una responsabilidad que asumiste sin que te la pidieran y devuélvela a quien le toca.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">6</div>
+      <div class="rl">Personalidad</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">03 · clan</div>
+      <h2 class="t sm">Lo que traes de tu clan</h2>
+    </div>
+    <div class="entradilla">Tu karma 11 es una deuda de exposición y guía heredada de tu linaje.</div>
+    <div class="body"><p>El mes en que naciste marca tu karma, y el tuyo es un 11: una vibración maestra. Eso significa que traes de tu clan una tarea grande, la de ser una especie de guía o referente, de enseñar con el ejemplo. No es casual que te encuentres una y otra vez en el lugar donde hay que decir lo incómodo o marcar el camino: es la lección que tu familia no terminó de resolver y que llega a ti para saldarse.</p><p>El 11 mal vivido se hunde en la duda, la depresión o el autoengaño, o se va al otro extremo y manipula desde la posición de víctima. Vivido bien, es inspiración y palabra que mueve. La clave es que tu 2 esencial no se asuste del tamaño del 11: no tienes que gritar para guiar, sólo dejar de esconderte.</p></div>
+    
+    <div class="pull alerta">
+      <div class="kt">Atención</div>
+      <p>El 11 es un número de prueba: pide una exigencia moral mayor de lo normal a quien lo lleva.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Piensa en un tema en el que la gente ya te pide opinión: es ahí donde tu 11 quiere trabajar.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">11</div>
+      <div class="rl">Karma</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">04 · memoria</div>
+      <h2 class="t sm">Lo que traes de antes</h2>
+    </div>
+    <div class="entradilla">Tu vida pasada 2 confirma un alma acostumbrada a acompañar y sostener.</div>
+    <div class="body"><p>Tu año de nacimiento reduce a otro 2, tu número de vida pasada. Es el kit de herramientas que ya traes trabajado: la sensibilidad, la capacidad de leer a las personas, el instinto de mediar. Que vuelva a aparecer como un 2 —igual que tu esencia— te dice que esta energía es profundamente tuya, y que todavía tienes que perfeccionarla.</p><p>Traer un 2 de atrás y un 2 de esencia te da una empatía enorme, pero también repite el mismo aprendizaje: dar sin anularte. Lo que en otra vida fue servicio, en esta puede ser tu mayor fuerza si le pones límites conscientes.</p></div>
+    
+    <div class="accion"><b>→</b> Cuando notes que estás resolviendo el problema de otro, pregúntate si te lo pidieron o te ofreciste.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">2</div>
+      <div class="rl">Vida pasada</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">05 · alma</div>
+      <h2 class="t sm">Lo que tu alma vino a hacer</h2>
+    </div>
+    <div class="entradilla">Las vocales de tu nombre suman 3: viniste a expresar, no a callarte.</div>
+    <div class="body"><p>El anhelo de tu alma es un 3: creatividad, comunicación, ingenio. Tu alma necesita una salida expresiva igual que necesita aire; cuando llevas tiempo sin crear algo tuyo, lo notas antes en el humor que en las ganas. Tu nombre completo también vibra en 3, así que el mundo recibe esa misma señal creativa, mientras que tus consonantes en 9 le dan un fondo generoso, casi de servicio a los demás.</p><p>Aquí aparece la primera fricción del cuadro: tu esencia 2 concilia y se adapta, pero tu alma 3 quiere decir lo que ve. Muchas veces ganará el 2, y el precio lo paga el 3, que se queda con las palabras dentro. Tu nombre activo, un 1, es la pista de por dónde sale: cuando arrancas algo por tu cuenta, tu alma respira.</p></div>
+    
+    <div class="pull cita">
+      <div class="kt">Del texto de Laura</div>
+      <p>Bajo la vibración de la primera vocal, el alma entra en el cuerpo.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Escribe sin destinatario tres veces por semana. No es terapia: es mantener el canal del 3 abierto.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">3</div>
+      <div class="rl">Alma</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">06 · brujula</div>
+      <h2 class="t sm">Tu brújula interna</h2>
+    </div>
+    <div class="entradilla">Tu subconsciente 7 te guía por intuición hacia el análisis y la verdad.</div>
+    <div class="body"><p>Tu sexto sentido es un 7: esa voz que no razona ni delibera, que actúa por instinto y te lleva a buscar el fondo de las cosas. El 7 te empuja a analizar, a no aceptar nada sin haberlo comprendido tú mismo, a retirarte a pensar cuando el ruido es mucho. Es la brújula que, sin que te des cuenta, te ha traído hasta donde estás.</p><p>Ese 7 lleva un asterisco: es kármico. Te pide que no uses la mente para desconectarte de la realidad ni para refugiarte del vínculo que tu 2 necesita. Tu intuición es fina; el trabajo es confiar en ella sin encerrarte en ella.</p></div>
+    
+    <div class="accion"><b>→</b> La próxima vez que &#39;tengas una corazonada&#39; sobre alguien, anótala y comprueba después si acertaste.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">7*</div>
+      <div class="rl">Subconsciente</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">07 · espejo</div>
+      <h2 class="t sm">Tu espejo</h2>
+    </div>
+    <div class="entradilla">Te atrae el 1: la independencia y la iniciativa que sientes que te faltan.</div>
+    <div class="body"><p>Tu número del inconsciente es un 1, y es el espejo de lo que crees no tener. Te atraen —como pareja, como amigos, como referentes— las personas independientes, decididas, que arrancan cosas sin pedir permiso. Los admiras porque encarnan una autonomía que tu 2 conciliador envidia en silencio.</p><p>Lo interesante es que ese 1 no está fuera de ti: es tu nombre activo, es tu regalo divino. Lo que te deslumbra en el otro es una capacidad tuya sin estrenar. La pareja ideal para ti no es la que tiene ese 1 por los dos, sino la que te deja espacio para desarrollar el tuyo.</p></div>
+    
+    <div class="pull dato">
+      <div class="kt">Dato</div>
+      <p>El número del espejo (J) describe lo que te atrae porque crees que te falta, no lo que necesitas.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Nombra a la persona que más admiras por su independencia y escribe qué de eso ya vive en ti.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">1</div>
+      <div class="rl">Espejo</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">08 · sombra</div>
+      <h2 class="t sm">Tu sombra</h2>
+    </div>
+    <div class="entradilla">Tu sombra 6 opera desde el exceso de responsabilidad y el sacrificio.</div>
+    <div class="body"><p>En la zona oculta de tu cuadro se repite el 6, tu número de sombra: lo que te lastima sin que lo veas del todo. En tu caso es la trampa del que se hace cargo de todo. La sombra 6 convierte el cuidado en control y el servicio en sacrificio, y luego reclama en silencio un reconocimiento que casi nunca pide en voz alta.</p><p>No es un defecto: es tu punto ciego. Aparece justo cuando estás dando de más, cuando sostienes a otros mientras tu propio 2 se queda sin apoyo. Hacerla consciente es dejar de pagar la factura del mártir y empezar a cuidar también hacia dentro.</p></div>
+    
+    <div class="pull alerta">
+      <div class="kt">Atención</div>
+      <p>La sombra no desaparece: se hace consciente. Lo que niegas tres veces, te dirige.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Esta semana di &#39;no&#39; una vez a una responsabilidad ajena, sin justificarte de más.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">6</div>
+      <div class="rl">Sombra</div>
+    </div>
+    
+  </div>
+</section>
+
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">09 · destino</div>
+      <h2 class="t sm">A dónde vas</h2>
+    </div>
+    <div class="entradilla">Tu destino 4 pide construir; tu regalo divino 1 te da con qué arrancar.</div>
+    <div class="body"><p>Tu destino es un 4, y lleva asterisco: es una deuda kármica de trabajo y estructura. La vida te lleva, una y otra vez, a construir algo sólido y estable, a echar raíces, a demostrarte que puedes sostener con esfuerzo lo que empiezas. No es el camino más ligero, pero es el que te da suelo firme bajo los pies.</p><p>Y no vas con las manos vacías: tu regalo divino es un 1, el don de la iniciativa, esa chispa para empezar cuando no hay apoyo externo. Junta las dos cosas —el 1 que arranca y el 4 que construye— y tienes la fórmula de tu destino: atrévete a iniciar, y después quédate a levantarlo ladrillo a ladrillo.</p></div>
+    
+    <div class="pull cita">
+      <div class="kt">Del texto de Laura</div>
+      <p>El 4 kármico salda una vieja deuda con el esfuerzo: lo que no se construyó antes, se construye ahora.</p>
+    </div>
+    
+    <div class="accion"><b>→</b> Elige un proyecto que vienes posponiendo y da hoy el primer paso pequeño y verificable.</div>
+    
+    
+    <div class="rail">
+      <div class="rn">4*</div>
+      <div class="rl">Destino</div>
+    </div>
+    
+  </div>
+</section>
+<section class="page">
+  <div class="tension pad">
+    <div class="eyebrow">La tensión central</div>
+    <h2 class="t">Conciliar o exponerte</h2>
+    
+    <div class="vs">
+      <div class="orb a">2</div>
+      <div class="x">CONTRA</div>
+      <div class="orb">11</div>
+    </div>
+    
+    <div class="body"><p>Aquí está el corazón de tu cuadro, Juan Pedro. Tu esencia 2 evita el conflicto por instinto: prefiere ceder, mediar, mantener la paz. Tu karma 11 hace exactamente lo contrario: te coloca, una y otra vez, en el sitio donde hay que decir lo incómodo, marcar la dirección, dar la cara. No es mala suerte ni casualidad: es el diseño mismo de tu pináculo.</p><p>Por eso te agota tanto exponerte, y por eso, cuando por fin lo haces, la gente te escucha más de lo que esperabas. El 2 vive la exposición como una amenaza a la armonía; el 11 la vive como su razón de ser. Mientras no los presentes, sentirás que te contradices: que quieres paz pero la vida te empuja al frente.</p><p>La salida no es elegir uno y matar al otro. Es entender que el 2 sabe CÓMO decir las cosas —con tacto, sin romper el vínculo— y el 11 sabe QUÉ hay que decir. No están peleados: están sin presentar.</p></div>
+    
+    <div class="resolve">La próxima vez que tengas algo importante que decir y sientas el impulso de callar para no incomodar, no elijas entre hablar o callar. Usa tu 2 para elegir las palabras y el momento, y tu 11 para no tragarte el mensaje. Esa es tu voz completa.</div>
+    
+    <div class="folio">tensión</div>
+  </div>
+</section><section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu plan</div>
+    <h2 class="t">Prácticas para esta vuelta</h2>
+    <div class="plan">
+      
+      <div class="pcard">
+        <div class="n">01</div>
+        <h4>Di lo tuyo primero</h4>
+        <p>Una vez al día, en una conversación de grupo, expresa tu opinión antes de preguntar la de los demás. Entrena al 2 a no desaparecer.</p>
+      </div>
+      
+      <div class="pcard">
+        <div class="n">02</div>
+        <h4>Abre el canal del 3</h4>
+        <p>Tres veces por semana crea algo sin destinatario: escribe, dibuja, graba una nota de voz. Tu alma necesita expresarse para no agriarse.</p>
+      </div>
+      
+      <div class="pcard">
+        <div class="n">03</div>
+        <h4>Suelta una carga ajena</h4>
+        <p>Identifica cada semana una responsabilidad que asumiste sin que te la pidieran y devuélvela. Desactiva la sombra 6 antes de que cobre factura.</p>
+      </div>
+      
+      <div class="pcard">
+        <div class="n">04</div>
+        <h4>Arranca algo tú solo</h4>
+        <p>Empieza un proyecto pequeño por tu cuenta, sin buscar apoyo. Es tu regalo divino 1 y tu destino 4 trabajando juntos.</p>
+      </div>
+      
+      <div class="pcard">
+        <div class="n">05</div>
+        <h4>Confía la corazonada</h4>
+        <p>Cuando tu 7 te dé una intuición sobre una persona o decisión, anótala y verifícala después. Aprende a fiarte de tu brújula.</p>
+      </div>
+      
+    </div>
+    <div class="cierre">Juan Pedro, no eres un hombre contradictorio: eres un hombre completo al que todavía no le han presentado sus propias partes. El 2 que concilia, el 11 que guía, el 3 que crea y el 4 que construye no compiten; se turnan. Tu vida se ordena el día que dejas de pedirle a una sola de esas fuerzas que haga el trabajo de todas. Empieza por dejar de esconder el 11: la paz que busca tu 2 no está en desaparecer, está en decir por fin lo que ves.</div>
+    <div class="legal">Este reporte está redactado a partir del método y los textos de Numerología Cotidiana de Laura L. Rodríguez. La numerología es una herramienta de autoconocimiento; sus interpretaciones no sustituyen el criterio profesional en ninguna materia.</div>
+  </div>
+</section>
+
+</body>
+</html>

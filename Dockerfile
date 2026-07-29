@@ -4,8 +4,12 @@ FROM python:3.12-slim
 
 # fonts-dejavu-core: fuente unicode de reserva del sistema (fallback si aún no
 # se cargan las TTF de marca). fontconfig ayuda a fpdf2 a resolver rutas.
+# Las libpango/harfbuzz/gdk-pixbuf son las libs nativas que WeasyPrint necesita
+# para maquetar los reportes dinámicos (HTML+CSS → PDF).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends fonts-dejavu-core \
+    && apt-get install -y --no-install-recommends \
+        fonts-dejavu-core fontconfig \
+        libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz0b libgdk-pixbuf-2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONUNBUFFERED=1 \
