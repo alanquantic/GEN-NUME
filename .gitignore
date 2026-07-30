@@ -25,3 +25,6 @@ Thumbs.db
 # versionan para que viajen con el deploy a Railway. Fueron reducidos con
 # scripts/optimize_assets.py (~150 DPI). Las fuentes de marca faltantes
 # (PassionOne, LazyDog) usan reserva unicode hasta que se agreguen.
+
+# Libro original (26 MB): su contenido ya está extraído en docs/libro/
+docs/new-reports/*.docx

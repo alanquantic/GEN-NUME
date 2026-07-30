@@ -32,6 +32,25 @@ class Settings(BaseSettings):
 
     environment: str = "development"
 
+    # --- Reportes dinámicos con IA ------------------------------------- #
+    # Proveedor del modelo: "anthropic" o "google" (Gemini · AI Studio).
+    ai_provider: str = "anthropic"
+    # Claves de API (nunca hardcodear; en Railway van en Variables).
+    anthropic_api_key: str | None = None
+    google_api_key: str | None = None
+    # Modelo. Opus 5 por defecto para Anthropic; el proveedor Google usa
+    # gemini-2.5-pro salvo que AI_MODEL empiece por "gemini".
+    ai_model: str = "claude-opus-5"
+    ai_effort: str = "high"          # low | medium | high | xhigh | max (Anthropic)
+    ai_max_tokens: int = 16000
+
+    @property
+    def resolved_model(self) -> str:
+        """Modelo efectivo según el proveedor."""
+        if self.ai_provider == "google" and not self.ai_model.startswith("gemini"):
+            return "gemini-2.5-pro"
+        return self.ai_model
+
     @property
     def report_templates_dir(self) -> Path:
         return self.assets_dir / "report"

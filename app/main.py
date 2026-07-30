@@ -4,14 +4,16 @@ Endpoints:
   GET  /health              -> healthcheck para Railway
   GET  /reports             -> lista de reportes disponibles
   POST /reports/generate    -> genera el PDF (requiere firma HMAC) y devuelve URL
+  POST /reports/generate-ai -> encola un reporte dinámico con IA y devuelve job_id
+  GET  /reports/jobs/{id}   -> consulta el estado del job dinámico
   GET  /files/{...}         -> descarga del PDF desde el Volume
 
 Flujo de integración con la tienda Next.js:
   1. Se paga un pedido en la tienda.
   2. Un route handler de Next.js firma el payload con el secreto compartido y
-     hace POST a /reports/generate.
-  3. El generador crea el PDF, lo guarda en el Volume y responde con la URL.
-  4. La tienda guarda esa URL (Drizzle/Neon) y se la muestra/envía al cliente.
+     hace POST a /reports/generate o /reports/generate-ai.
+  3. El generador crea el PDF al instante (legacy) o en segundo plano (IA).
+  4. La tienda guarda la URL final o consulta el job hasta que termine.
 """
 
 from __future__ import annotations
@@ -19,11 +21,15 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Header, Request
+from fastapi import BackgroundTasks, FastAPI, Header, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
+from .ai.job_store import AIJobStore
+from .ai.recipes import REPORTS as AI_REPORTS
+from .ai.schemas import GenerateAIAcceptedResponse, GenerateAIRequest
+from .ai.service import AIReportService
 from . import static_reports
 from .config import settings
 from .registry import available_reports, build
@@ -50,6 +56,7 @@ app.mount("/files", StaticFiles(directory=str(settings.storage_dir)), name="file
 # PDFs pre-hechos (agenda, planeador, semestral) servidos desde assets/static.
 static_reports.ensure_static_dir()
 app.mount("/static", StaticFiles(directory=str(settings.static_pdf_dir)), name="static")
+ai_service = AIReportService(AIJobStore(settings.storage_dir, settings.public_base_url))
 
 
 @app.get("/health")
@@ -61,9 +68,55 @@ def health() -> dict:
 def reports() -> dict:
     return {
         "reports": available_reports(),               # reportes generados
+        "ai": sorted(AI_REPORTS.keys()),             # reportes dinámicos con IA
         "static": static_reports.available_static(),  # PDFs pre-hechos
         "static_variants": static_reports.variants_map(),  # {clave: [variantes]}
     }
+
+
+@app.post(
+    "/reports/generate-ai",
+    response_model=GenerateAIAcceptedResponse,
+    responses={401: {"description": "Firma inválida"}, 400: {"description": "Reporte desconocido"}},
+)
+async def generate_ai(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    x_signature: str | None = Header(default=None),
+) -> JSONResponse:
+    raw = await request.body()
+
+    if not verify_signature(raw, x_signature):
+        return JSONResponse(status_code=401, content={"ok": False, "error": "firma_invalida"})
+
+    try:
+        req = GenerateAIRequest.model_validate_json(raw)
+    except ValidationError as exc:
+        logger.warning("Payload IA inválido (422): %s", exc.errors())
+        return JSONResponse(
+            status_code=422,
+            content={"ok": False, "error": "payload_invalido", "detail": exc.errors()},
+        )
+
+    try:
+        job = ai_service.submit_job(req)
+    except ValueError as exc:
+        detail = str(exc)
+        error = "reporte_desconocido" if detail == "reporte_desconocido" else "parametros_faltantes"
+        return JSONResponse(status_code=400, content={"ok": False, "error": error, "detail": detail})
+
+    background_tasks.add_task(ai_service.process_job, job.job_id)
+    accepted = GenerateAIAcceptedResponse(job_id=job.job_id, status=job.status)
+    return JSONResponse(status_code=202, content=accepted.model_dump(mode="json"))
+
+
+@app.get("/reports/jobs/{job_id}")
+def report_job_status(job_id: str) -> JSONResponse:
+    try:
+        job = ai_service.get_job_status(job_id)
+    except KeyError:
+        return JSONResponse(status_code=404, content={"ok": False, "error": "job_no_encontrado"})
+    return JSONResponse(content=job.model_dump(mode="json", by_alias=True))
 
 
 @app.post(

@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quién soy? · vista de diseño del reporte</title>
+<style>
+/* ============================================================
+   Sistema de diseño — heredado de web-nume.vercel.app
+   Violeta de marca + oro. Preview de impresión: las páginas son
+   "papel" en cualquier tema (decisión deliberada, como un PDF);
+   sólo el fondo del visor se adapta al tema.
+   ============================================================ */
+:root{
+  --primary:#4C1D95; --primary-700:#5B21B6; --accent:#D3AE36; --accent-ink:#96751B;
+  --fuchsia:#A816B6; --royal:#2047C5; --danger:#E8304F; --bienestar:#059669;
+  --paper:#FBF9FE; --ink:#2A1E3E; --ink-soft:#6B6280; --border:#E6DDEE;
+  --secondary:#F5EBFF; --rule:#D9D2E6;
+  --stage:#7C6AA8;
+  --shell:#ECE7F3; --shell-ink:#3B3350;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --shell:#171320; --shell-ink:#C9C0DE; }
+}
+:root[data-theme="light"]{ --shell:#ECE7F3; --shell-ink:#3B3350; }
+:root[data-theme="dark"]{ --shell:#171320; --shell-ink:#C9C0DE; }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--shell); color:var(--shell-ink);
+  font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.6;
+}
+.masthead{max-width:940px; margin:0 auto; padding:40px 24px 8px}
+.masthead h1{font:600 15px/1.4 ui-sans-serif,system-ui; letter-spacing:.02em; margin:0}
+.masthead p{margin:6px 0 0; font-size:13px; color:var(--shell-ink); opacity:.72; max-width:64ch}
+.legend-key{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; opacity:.7; margin:14px 0 0}
+.legend-key b{font-weight:600}
+
+.deck{max-width:940px; margin:0 auto; padding:24px 24px 80px; display:flex; flex-direction:column; gap:30px}
+.sheet-label{font:600 11px/1 ui-sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  opacity:.55; margin:14px 0 -14px 2px}
+
+/* ---- la hoja A4 ------------------------------------------------ */
+.page{
+  position:relative; background:var(--paper); color:var(--ink);
+  aspect-ratio:210/297; border-radius:4px; overflow:hidden;
+  box-shadow:0 18px 48px rgba(42,30,62,.22), 0 2px 6px rgba(42,30,62,.12);
+  container-type:inline-size;
+}
+/* retícula asimétrica: columna de texto + margen derecho vivo */
+.pad{padding:8.5cqw 8cqw}
+.pad-rail{padding:8.5cqw 20cqw 8.5cqw 8cqw}
+.rail{position:absolute; top:8.5cqw; right:4cqw; width:12cqw; text-align:right}
+.rail .rn{font:400 8.5cqw/1 Georgia, "Times New Roman", serif; color:var(--primary)}
+.rail .rl{font:600 1.9cqw/1.3 ui-sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-soft); margin-top:1cqw}
+.rail .rk{font:600 1.8cqw/1.4 ui-sans-serif; color:var(--accent-ink); margin-top:2.5cqw}
+
+.eyebrow{font:600 2.5cqw/1 ui-sans-serif; letter-spacing:.24em; text-transform:uppercase; color:var(--primary)}
+.serif{font-family:Georgia, "Times New Roman", serif}
+h2.t{font:600 6.2cqw/1.08 Georgia, serif; letter-spacing:-.01em; margin:2cqw 0 0; color:var(--ink); text-wrap:balance}
+.lead{font-size:3cqw; color:var(--ink-soft); margin:2cqw 0 0; line-height:1.5}
+.body p{font-size:2.75cqw; line-height:1.66; margin:0 0 2cqw; text-align:justify; hyphens:auto}
+.body p:first-child::first-letter{
+  font-family:Georgia,serif; font-size:9cqw; line-height:.8; float:left;
+  padding:1cqw 1.4cqw 0 0; color:var(--primary);
+}
+
+/* ---- portada --------------------------------------------------- */
+.cover{height:100%; display:flex; flex-direction:column; justify-content:space-between;
+  background:
+   radial-gradient(130% 80% at 50% -10%, color-mix(in srgb,var(--primary) 16%, transparent), transparent 62%),
+   linear-gradient(180deg, var(--paper), #F3EFFA);
+}
+.cover-top{text-align:center}
+.cover .brand{font:600 2.6cqw/1 ui-sans-serif; letter-spacing:.3em; text-transform:uppercase; color:var(--primary)}
+.cover .who{margin-top:2cqw; font-size:2.7cqw; color:var(--ink-soft)}
+.cover .who b{display:block; font-family:Georgia,serif; font-size:4.6cqw; color:var(--ink); font-weight:400; letter-spacing:.01em}
+.cover-mid{text-align:center}
+.bignum{font:400 62cqw/.72 Georgia, serif; color:var(--primary); letter-spacing:-.04em;
+  text-shadow:0 4px 0 rgba(76,29,149,.08)}
+.frase{font-family:Georgia,serif; font-style:italic; font-size:4.3cqw; line-height:1.3;
+  max-width:24ch; margin:3cqw auto 0; color:var(--ink)}
+.gilt{width:16cqw; height:2px; background:var(--accent); margin:3cqw auto}
+.cover-foot{text-align:center}
+.cover-foot .rep{font:600 2.4cqw/1 ui-sans-serif; letter-spacing:.24em; text-transform:uppercase; color:var(--accent-ink)}
+.cover-foot .sub{font-size:2.4cqw; color:var(--ink-soft); margin-top:1cqw}
+
+/* ---- ficha de números ------------------------------------------ */
+.grid-nums{display:grid; grid-template-columns:1fr 1fr; gap:1.6cqw; margin-top:4cqw}
+.chip{display:flex; align-items:baseline; gap:1.8cqw; background:#fff; border:1px solid var(--border);
+  border-left:3px solid var(--primary); border-radius:3px; padding:1.9cqw 2.2cqw}
+.chip.karmic{border-left-color:var(--accent)}
+.chip.zero{opacity:.5}
+.chip .v{font-family:Georgia,serif; font-size:5cqw; line-height:1; color:var(--primary); min-width:5cqw;
+  font-variant-numeric:tabular-nums}
+.chip.karmic .v{color:var(--accent-ink)}
+.chip .l{font-size:1.95cqw; line-height:1.35; color:var(--ink-soft)}
+.chip .l b{display:block; color:var(--ink); font-size:2.25cqw; font-weight:600}
+.note{font-size:2cqw; color:var(--ink-soft); margin-top:3cqw; line-height:1.5}
+.note .star{color:var(--accent-ink); font-weight:600}
+
+/* ---- destacados ------------------------------------------------ */
+.section-head{border-top:2px solid var(--primary); padding-top:2.4cqw}
+.entradilla{font-family:Georgia,serif; font-style:italic; font-size:3.2cqw; line-height:1.4;
+  color:var(--primary); margin:1.6cqw 0 3cqw}
+.pull{margin:3cqw 0; padding:2.6cqw 3cqw; border-radius:4px; background:var(--secondary);
+  border-left:3px solid var(--accent)}
+.pull .kt{font:600 1.7cqw/1 ui-sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink)}
+.pull.alerta{background:#FDECEF; border-left-color:var(--danger)}
+.pull.alerta .kt{color:var(--danger)}
+.pull p{margin:1cqw 0 0; font-size:2.5cqw; line-height:1.5; font-style:italic; font-family:Georgia,serif}
+.accion{margin-top:3cqw; padding-top:2.2cqw; border-top:1px solid var(--border);
+  font-size:2.5cqw; line-height:1.5}
+.accion b{color:var(--primary)}
+
+/* ---- tensión central (color pleno) ----------------------------- */
+.tension{height:100%; background:linear-gradient(160deg,var(--primary),#3A1373); color:#fff;
+  display:flex; flex-direction:column; justify-content:center}
+.tension .eyebrow{color:rgba(255,255,255,.6)}
+.tension h2.t{color:#fff}
+.tension .body p{color:rgba(255,255,255,.9)}
+.vs{display:flex; align-items:center; justify-content:center; gap:4cqw; margin:5cqw 0}
+.vs .orb{width:17cqw; height:17cqw; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:Georgia,serif; font-size:8cqw; color:#fff; border:1.5px solid rgba(255,255,255,.5)}
+.vs .orb.a{background:rgba(255,255,255,.08)}
+.vs .x{font:600 2.6cqw/1 ui-sans-serif; letter-spacing:.24em; color:rgba(255,255,255,.55)}
+.resolve{margin-top:3cqw; padding-top:2.4cqw; border-top:1px solid rgba(255,255,255,.25);
+  font-family:Georgia,serif; font-style:italic; font-size:2.7cqw; line-height:1.5; color:#fff}
+
+/* ---- plan ------------------------------------------------------ */
+.plan{display:grid; grid-template-columns:1fr 1fr; gap:2cqw; margin-top:3cqw}
+.card{background:#fff; border:1px solid var(--border); border-radius:5px; padding:2.6cqw}
+.card .n{font-family:Georgia,serif; font-size:3.4cqw; color:var(--accent); line-height:1}
+.card h4{font:600 2.5cqw/1.25 ui-sans-serif; margin:1cqw 0 1.2cqw; color:var(--ink)}
+.card p{margin:0; font-size:1.95cqw; line-height:1.45; color:var(--ink-soft)}
+.cierre{margin-top:3.5cqw; font-family:Georgia,serif; font-style:italic; font-size:2.8cqw; line-height:1.55; color:var(--ink)}
+
+.folio{position:absolute; bottom:4cqw; left:0; right:0; text-align:center;
+  font-size:1.9cqw; letter-spacing:.15em; color:var(--ink-soft)}
+.chart-cap{font:600 2cqw/1.3 ui-sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-top:1cqw}
+
+svg{display:block; width:100%; height:auto}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>¿Quién soy? — vista de diseño aplicada a un reporte real</h1>
+  <p>El texto es el del reporte de ejemplo (Juan Pedro Martínez, 20/11/1991); los
+  gráficos están poblados con <b>sus números reales</b>, calculados por el dominio.
+  Así se vería el JSON de la fase 4 una vez maquetado. Ocho hojas representativas
+  de un reporte de ~14 páginas.</p>
+  <div class="legend-key">
+    <span><b>Motor:</b> HTML + CSS + SVG (lo que renderiza WeasyPrint → PDF)</span>
+    <span><b>Marca:</b> violeta + oro, del sitio</span>
+  </div>
+</header>
+
+<main class="deck">
+
+<!-- ═══════════ 1 · PORTADA ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 1 — Portada</p>
+  <div class="page">
+    <div class="cover pad">
+      <div class="cover-top">
+        <div class="brand">Numerología Cotidiana</div>
+        <div class="who"><b>Juan Pedro Martínez</b>20 de noviembre de 1991</div>
+      </div>
+      <div class="cover-mid">
+        <div class="bignum">2</div>
+        <div class="gilt"></div>
+        <div class="frase">«Concilias por fuera lo que aún peleas por dentro.»</div>
+      </div>
+      <div class="cover-foot">
+        <div class="rep">¿Quién soy?</div>
+        <div class="sub">según mi nombre y mi fecha de nacimiento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 2 · TUS NÚMEROS ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 2 — Tus números</p>
+  <div class="page">
+    <div class="pad">
+      <div class="eyebrow">Tu mapa</div>
+      <h2 class="t">Los números que te componen</h2>
+      <div class="grid-nums">
+        <div class="chip"><span class="v">2</span><span class="l"><b>Esencia</b>número personal · el día</span></div>
+        <div class="chip"><span class="v">11</span><span class="l"><b>Karma</b>el mes · tu clan</span></div>
+        <div class="chip"><span class="v">2</span><span class="l"><b>Vida pasada</b>el año</span></div>
+        <div class="chip"><span class="v">6</span><span class="l"><b>Personalidad</b>tu máscara</span></div>
+        <div class="chip karmic"><span class="v">4*</span><span class="l"><b>Destino</b>a dónde vas</span></div>
+        <div class="chip karmic"><span class="v">7*</span><span class="l"><b>Subconsciente</b>tu brújula</span></div>
+        <div class="chip"><span class="v">1</span><span class="l"><b>Espejo</b>lo que te atrae</span></div>
+        <div class="chip"><span class="v">6</span><span class="l"><b>Sombra</b>tu punto ciego</span></div>
+        <div class="chip"><span class="v">3</span><span class="l"><b>Alma</b>vocales del nombre</span></div>
+        <div class="chip"><span class="v">1</span><span class="l"><b>Regalo divino</b>tu don</span></div>
+      </div>
+      <p class="note"><span class="star">*</span> Los números marcados son
+      <b>kármicos</b> (13→4, 16→7): deudas que este camino viene a saldar. Tu
+      destino puede vivirse como <b>4</b> o elevarse a su vibración maestra <b>22</b>.</p>
+      <div class="folio">— 2 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 3 · EL PINÁCULO (gráfico real) ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 3 — El gráfico insignia, con tus valores reales</p>
+  <div class="page">
+    <div class="pad">
+      <div class="eyebrow">Tu pináculo personal</div>
+      <h2 class="t" style="font-size:5cqw">Un mapa que no cambia jamás</h2>
+      <svg viewBox="0 0 720 640" role="img" aria-label="Pináculo personal de Juan Pedro Martínez">
+        <defs><style>
+          .pn{font:700 21px ui-sans-serif,system-ui;fill:#fff;text-anchor:middle;dominant-baseline:central}
+          .pz{font:700 18px ui-sans-serif;fill:#B2A9C6;text-anchor:middle;dominant-baseline:central}
+          .pk{font:600 8.5px ui-sans-serif;fill:#6B6280;text-anchor:middle;letter-spacing:.05em}
+          .pf{font:600 8px ui-sans-serif;fill:#A99FBF;text-anchor:middle}
+          .pz2{font:700 8px ui-sans-serif;text-anchor:middle;letter-spacing:.16em}
+        </style></defs>
+        <!-- zonas -->
+        <path d="M230 46 L378 262 L82 262 Z" fill="#E4EFD3" opacity=".6"/>
+        <rect x="28" y="292" width="536" height="66" rx="9" fill="#EDE3F8"/>
+        <path d="M82 388 L378 388 L230 604 Z" fill="#FBDCE1" opacity=".55"/>
+        <text class="pz2" x="140" y="34" fill="#7CB342">SER SUPERIOR · REALIZACIONES</text>
+        <text class="pz2" x="120" y="286" fill="#6D28D9">HORIZONTAL · IDENTIDAD</text>
+        <text class="pz2" x="118" y="382" fill="#C0392B">SER INFERIOR · DESAFÍOS</text>
+        <!-- conectores -->
+        <g stroke="#CFC6DE" stroke-width="1" stroke-dasharray="3 3" fill="none">
+          <path d="M92 320 L146 244 M232 320 L146 244 M232 320 L322 244 M392 320 L322 244
+                   M146 244 L232 166 M322 244 L232 166 M232 166 L232 84
+                   M322 244 L400 166 M232 84 L400 166
+                   M92 320 L146 420 M232 320 L146 420 M232 320 L322 420 M392 320 L322 420
+                   M146 420 L232 488 M322 420 L232 488 M232 488 L232 556"/>
+        </g>
+        <!-- SER SUPERIOR -->
+        <circle cx="232" cy="84"  r="27" fill="#D3AE36"/><text class="pn" x="232" y="84">4</text>
+        <text class="pk" x="232" y="123">H · DESTINO</text><text class="pf" x="232" y="135">A+C → 4* / 22</text>
+        <circle cx="232" cy="166" r="26" fill="#8BC34A"/><text class="pn" x="232" y="166">8</text>
+        <text class="pk" x="178" y="171">G · 3.ª ETAPA</text>
+        <circle cx="146" cy="244" r="26" fill="#8BC34A"/><text class="pn" x="146" y="244">4</text>
+        <text class="pk" x="112" y="290">E · 1.ª ETAPA</text>
+        <circle cx="232" cy="244" r="26" fill="#7CB342"/><text class="pn" x="232" y="244">7</text>
+        <text class="pk" x="232" y="212">I · SEXTO SENTIDO</text>
+        <circle cx="322" cy="244" r="26" fill="#8BC34A"/><text class="pn" x="322" y="244">4</text>
+        <text class="pk" x="356" y="290">F · 2.ª ETAPA</text>
+        <circle cx="400" cy="166" r="26" fill="#7CB342"/><text class="pn" x="400" y="166">1</text>
+        <text class="pk" x="454" y="163">J · ESPEJO / PAREJA</text>
+        <!-- HORIZONTAL -->
+        <circle cx="92"  cy="325" r="27" fill="#4C1D95"/><text class="pn" x="92"  y="325">11</text>
+        <text class="pk" x="92" y="372">A · KARMA · mes</text>
+        <circle cx="232" cy="325" r="35" fill="#4C1D95" stroke="#D3AE36" stroke-width="2.5"/>
+        <text x="232" y="325" style="font:700 27px Georgia,serif;fill:#fff;text-anchor:middle;dominant-baseline:central">2</text>
+        <text class="pk" x="232" y="374">B · PERSONAL · día</text>
+        <circle cx="392" cy="325" r="27" fill="#4C1D95"/><text class="pn" x="392" y="325">2</text>
+        <text class="pk" x="392" y="372">C · VIDA PASADA · año</text>
+        <circle cx="502" cy="325" r="27" fill="#6D28D9"/><text class="pn" x="502" y="325">6</text>
+        <text class="pk" x="502" y="372">D · MÁSCARA</text>
+        <!-- EXTERIORES -->
+        <circle cx="610" cy="325" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text class="pz" x="610" y="325" fill="#2047C5">8</text>
+        <text class="pk" x="610" y="368" fill="#2047C5">X · REACCIÓN</text>
+        <circle cx="688" cy="325" r="25" fill="#fff" stroke="#2047C5" stroke-width="2"/><text class="pz" x="688" y="325" fill="#2047C5">11</text>
+        <text class="pk" x="688" y="368" fill="#2047C5">Y · MISIÓN</text>
+        <circle cx="648" cy="228" r="25" fill="#fff" stroke="#2047C5" stroke-width="2" stroke-dasharray="4 3"/><text class="pz" x="648" y="228" fill="#2047C5">1</text>
+        <text class="pk" x="648" y="271" fill="#2047C5">Z · REGALO DIVINO</text>
+        <!-- SER INFERIOR (8 ceros) -->
+        <circle cx="146" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.7"/><text class="pz" x="146" y="420">0</text>
+        <text class="pk" x="120" y="456">K · DESAFÍO</text>
+        <circle cx="232" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.7"/><text class="pz" x="232" y="420">0</text>
+        <text class="pk" x="232" y="387">O · INCONSC. NEG.</text>
+        <circle cx="322" cy="420" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.7"/><text class="pz" x="322" y="420">0</text>
+        <text class="pk" x="348" y="456">L · DESAFÍO</text>
+        <circle cx="232" cy="488" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.7"/><text class="pz" x="232" y="488">0</text>
+        <text class="pk" x="170" y="492">M · DESAFÍO</text>
+        <circle cx="232" cy="556" r="24" fill="#fff" stroke="#E8304F" stroke-width="1.7"/><text class="pz" x="232" y="556">0</text>
+        <text class="pk" x="232" y="592">N · DESAFÍO</text>
+        <circle cx="44" cy="452" r="24" fill="#2A1E3E"/><text class="pn" x="44" y="452">6</text>
+        <text class="pk" x="44" y="490" fill="#2A1E3E">P · SOMBRA</text>
+        <g>
+          <circle cx="392" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.5"/><text class="pz" x="392" y="488">0</text>
+          <circle cx="462" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.5"/><text class="pz" x="462" y="488">0</text>
+          <circle cx="532" cy="488" r="22" fill="#fff" stroke="#E8304F" stroke-width="1.5"/><text class="pz" x="532" y="488">0</text>
+          <text class="pz2" x="462" y="520" fill="#C0392B">Q · R · S — SÚPER OCULTOS</text>
+        </g>
+        <rect x="590" y="446" width="118" height="52" rx="8" fill="#fff" stroke="#E8304F" stroke-width="1.7" stroke-dasharray="5 4"/>
+        <text x="649" y="468" style="font:700 17px Georgia,serif;fill:#C0392B;text-anchor:middle">3 · 5 · 9</text>
+        <text class="pk" x="649" y="486" fill="#C0392B">T · AUSENCIAS</text>
+      </svg>
+      <p class="note">Tu zona inferior está llena de ceros: es un
+      <b>Pináculo Especial</b>, con la energía de los desafíos volcada hacia lo
+      colectivo. Te faltan las vibraciones <b>3, 5 y 9</b> — tus tareas por integrar.</p>
+      <div class="folio">— 3 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 4 · RETRATO ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 4 — El retrato (síntesis)</p>
+  <div class="page">
+    <div class="pad">
+      <div class="eyebrow">Tu retrato</div>
+      <h2 class="t">Quién eres cuando nadie mira</h2>
+      <div class="body" style="margin-top:3.5cqw">
+        <p>Juan Pedro, tu número personal es el 2, y define tu esencia: la tuya es una energía de vínculo. No estás hecho para el protagonismo ni para imponerte; estás hecho para cooperar, para leer lo que el otro necesita antes de que lo diga, para sostener la armonía de un grupo.</p>
+        <p>Pero sobre esa esencia suave se monta un karma 11, la vibración más exigente del cuadro. El 11 no vino a pasar desapercibido: es intuición, idealismo, una necesidad de guiar que te empuja justo hacia donde el 2 preferiría no ir: a exponerte. De ahí esa sensación de agotarte cuando tienes que dar la cara, y de sorprenderte de cuánto te escuchan cuando por fin lo haces.</p>
+        <p>Y encima, tu alma es un 3: necesita expresarse, crear, decir lo que ve. Tres fuerzas en un mismo hombre: la que concilia, la que debe exponerse y la que quiere hablar. Entenderlas es dejar de sentirte contradictorio y empezar a usarte entero.</p>
+      </div>
+      <div class="folio">— 4 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 5 · SECCIÓN DE CUERPO con margen vivo ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 6 — Sección de cuerpo (retícula con margen vivo)</p>
+  <div class="page">
+    <div class="pad-rail">
+      <div class="section-head">
+        <div class="eyebrow">05 · Tu alma</div>
+        <h2 class="t" style="font-size:4.8cqw">Lo que tu alma vino a hacer</h2>
+      </div>
+      <div class="entradilla">Las vocales de tu nombre suman 3: viniste a expresar, no a callarte.</div>
+      <div class="body">
+        <p>El anhelo de tu alma es un 3: creatividad, comunicación, ingenio. Tu alma necesita una salida expresiva igual que necesita aire; cuando llevas tiempo sin crear algo tuyo, lo notas antes en el humor que en las ganas.</p>
+        <p>Aquí aparece la primera fricción del cuadro: tu esencia 2 concilia y se adapta, pero tu alma 3 quiere decir lo que ve. Muchas veces ganará el 2, y el precio lo paga el 3, que se queda con las palabras dentro.</p>
+      </div>
+      <div class="pull">
+        <div class="kt">Del texto de Laura</div>
+        <p>«Bajo la vibración de la primera vocal, el alma entra en el cuerpo.»</p>
+      </div>
+      <div class="accion"><b>→</b> Escribe sin destinatario tres veces por semana. No es terapia: es mantener el canal del 3 abierto.</div>
+      <div class="rail">
+        <div class="rn">3</div>
+        <div class="rl">Alma</div>
+        <div class="rk">Vocales<br>U·A·E·O·A·I·E</div>
+      </div>
+      <div class="folio">— 6 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 6 · LA TIRA DEL NOMBRE (gráfico real) ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 7 — Gráfico: tu nombre, letra a letra</p>
+  <div class="page">
+    <div class="pad">
+      <div class="eyebrow">El poder de tu nombre</div>
+      <h2 class="t" style="font-size:4.8cqw">Cada letra, una vibración</h2>
+      <svg viewBox="0 0 720 200" role="img" aria-label="Valor numérico de cada letra del nombre" style="margin-top:5cqw">
+        <defs><style>
+          .lt{font:400 20px Georgia,serif;fill:#2A1E3E;text-anchor:middle;dominant-baseline:central}
+          .lv{font:600 11px ui-sans-serif;text-anchor:middle;dominant-baseline:central}
+          .lh{font:600 8.5px ui-sans-serif;letter-spacing:.14em}
+        </style></defs>
+        <text class="lh" x="6" y="16" fill="#96751B">VOCALES · ALMA 3</text>
+        <text class="lh" x="6" y="192" fill="#4C1D95">CONSONANTES · EXPRESIÓN 9</text>
+        <line x1="0" y1="100" x2="678" y2="100" stroke="#E6DDEE"/>
+        <g class="lt">
+          <text x="26" y="100">J</text><text x="60" y="100">U</text><text x="94" y="100">A</text><text x="128" y="100">N</text>
+          <text x="180" y="100">P</text><text x="214" y="100">E</text><text x="248" y="100">D</text><text x="282" y="100">R</text><text x="316" y="100">O</text>
+          <text x="368" y="100">M</text><text x="402" y="100">A</text><text x="436" y="100">R</text><text x="470" y="100">T</text>
+          <text x="504" y="100">I</text><text x="538" y="100">N</text><text x="572" y="100">E</text><text x="606" y="100">Z</text>
+        </g>
+        <!-- vocales arriba (oro) -->
+        <g class="lv" fill="#96751B">
+          <text x="60" y="60">3</text><text x="94" y="60">1</text><text x="214" y="60">5</text>
+          <text x="316" y="60">6</text><text x="402" y="60">1</text><text x="504" y="60">9</text><text x="572" y="60">5</text>
+        </g>
+        <g fill="#D3AE36"><circle cx="60" cy="76" r="2.4"/><circle cx="94" cy="76" r="2.4"/><circle cx="214" cy="76" r="2.4"/><circle cx="316" cy="76" r="2.4"/><circle cx="402" cy="76" r="2.4"/><circle cx="504" cy="76" r="2.4"/><circle cx="572" cy="76" r="2.4"/></g>
+        <!-- consonantes abajo (violeta) -->
+        <g class="lv" fill="#5B21B6">
+          <text x="26" y="140">1</text><text x="128" y="140">5</text><text x="180" y="140">7</text><text x="248" y="140">4</text>
+          <text x="282" y="140">9</text><text x="368" y="140">4</text><text x="436" y="140">9</text><text x="470" y="140">2</text>
+          <text x="538" y="140">5</text><text x="606" y="140">8</text>
+        </g>
+      </svg>
+      <div class="body" style="margin-top:5cqw">
+        <p>Tu nombre completo también vibra en <b>3</b>, así que el mundo recibe esa misma señal creativa; tus consonantes en <b>9</b> le dan un fondo generoso, casi de servicio. Y tu nombre activo —«Juan», un <b>1</b>— es la pista de por dónde sale tu alma: cuando arrancas algo por tu cuenta, respira.</p>
+      </div>
+      <div class="folio">— 7 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 7 · TENSIÓN CENTRAL (color pleno) ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 11 — La tensión central (el momento de mayor impacto)</p>
+  <div class="page">
+    <div class="tension pad">
+      <div class="eyebrow">La tensión central</div>
+      <h2 class="t">Conciliar o exponerte</h2>
+      <div class="vs">
+        <div class="orb a">2</div>
+        <div class="x">CONTRA</div>
+        <div class="orb">11</div>
+      </div>
+      <div class="body">
+        <p>Tu esencia 2 evita el conflicto por instinto: prefiere ceder, mediar, mantener la paz. Tu karma 11 hace lo contrario: te coloca, una y otra vez, en el sitio donde hay que decir lo incómodo. No es mala suerte: es el diseño mismo de tu pináculo.</p>
+        <p>Por eso te agota tanto exponerte, y por eso, cuando por fin lo haces, la gente te escucha más de lo que esperabas. El 2 sabe CÓMO decir las cosas; el 11 sabe QUÉ hay que decir. No están peleados: están sin presentar.</p>
+      </div>
+      <div class="resolve">La próxima vez que tengas algo importante que decir y sientas el impulso de callar, no elijas entre hablar o callar: usa tu 2 para las palabras y tu 11 para no tragarte el mensaje. Esa es tu voz completa.</div>
+      <div class="folio" style="color:rgba(255,255,255,.5)">— 11 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 8 · PLAN + CIERRE ═══════════ -->
+<div>
+  <p class="sheet-label">Hoja 12 — Tu plan y cierre</p>
+  <div class="page">
+    <div class="pad">
+      <div class="eyebrow">Tu plan</div>
+      <h2 class="t" style="font-size:5cqw">Cinco prácticas para esta vuelta</h2>
+      <div class="plan">
+        <div class="card"><div class="n">01</div><h4>Di lo tuyo primero</h4><p>En una conversación de grupo, expresa tu opinión antes de preguntar la de los demás. Entrena al 2 a no desaparecer.</p></div>
+        <div class="card"><div class="n">02</div><h4>Abre el canal del 3</h4><p>Tres veces por semana crea algo sin destinatario. Tu alma necesita expresarse para no agriarse.</p></div>
+        <div class="card"><div class="n">03</div><h4>Suelta una carga ajena</h4><p>Devuelve una responsabilidad que asumiste sin que te la pidieran. Desactiva la sombra 6.</p></div>
+        <div class="card"><div class="n">04</div><h4>Arranca algo tú solo</h4><p>Un proyecto pequeño, sin buscar apoyo. Es tu regalo divino 1 y tu destino 4 trabajando juntos.</p></div>
+      </div>
+      <div class="cierre">No eres un hombre contradictorio: eres un hombre completo al que todavía no le han presentado sus propias partes. El 2 que concilia, el 11 que guía, el 3 que crea y el 4 que construye no compiten; se turnan.</div>
+      <div class="folio">— 12 —</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</body>
+</html>

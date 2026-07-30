@@ -1,0 +1,142 @@
+{#- Plantilla del reporte dinámico. Recibe un contexto ya preparado por
+    app/pdf/html_renderer.py: nada de lógica numerológica aquí, sólo presentación. -#}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>{{ report_title }} · {{ person_name }}</title>
+<style>:root{ --area:{{ area_hex }}; --area-ink:{{ area_hex }}; }
+{{ css }}</style>
+</head>
+<body>
+
+{#- ---------- 1 · portada ---------- -#}
+<section class="page">
+  <div class="cover pad">
+    <div class="cover-top">
+      <div class="brand">Numerología Cotidiana</div>
+      <div class="who"><b>{{ person_name }}</b>{{ birth_long }}</div>
+    </div>
+    <div class="cover-mid">
+      <div class="bignum">{{ cover_number }}</div>
+      <div class="gilt"></div>
+      <div class="frase">«{{ data.frase_clave }}»</div>
+    </div>
+    <div class="cover-foot">
+      <div class="rep">{{ report_title }}</div>
+      <div class="sub">{{ data.subtitulo }}</div>
+    </div>
+  </div>
+</section>
+
+{#- ---------- 2 · tus números ---------- -#}
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu mapa</div>
+    <h2 class="t">Los números que te componen</h2>
+    <div class="grid-nums">
+      {% for c in numbers_ficha %}
+      <div class="chip{% if c.karmic %} karmic{% endif %}">
+        <span class="v">{{ c.value }}</span>
+        <span class="l"><b>{{ c.title }}</b>{{ c.sub }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% if numbers_note %}<p class="note">{{ numbers_note|safe }}</p>{% endif %}
+    <div class="folio">— 2 —</div>
+  </div>
+</section>
+
+{#- ---------- 3 · páginas de gráficos ---------- -#}
+{% for chart in charts %}
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">{{ chart.eyebrow }}</div>
+    <h2 class="t sm">{{ chart.title }}</h2>
+    <div class="chart">{{ chart.svg|safe }}</div>
+    {% if chart.caption %}<p class="note">{{ chart.caption|safe }}</p>{% endif %}
+    <div class="folio">— {{ loop.index + 2 }} —</div>
+  </div>
+</section>
+{% endfor %}
+
+{#- ---------- 4 · retrato ---------- -#}
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu retrato</div>
+    <h2 class="t">{{ data.retrato.titulo }}</h2>
+    <div class="body drop" style="margin-top:9mm">
+      {% for par in data.retrato.cuerpo %}<p>{{ par }}</p>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{#- ---------- 5 · secciones ---------- -#}
+{% for sec in data.secciones %}
+<section class="page">
+  <div class="pad-rail">
+    <div class="section-head">
+      <div class="eyebrow">{{ "%02d"|format(loop.index) }} · {{ sec.id }}</div>
+      <h2 class="t sm">{{ sec.titulo }}</h2>
+    </div>
+    {% if sec.entradilla %}<div class="entradilla">{{ sec.entradilla }}</div>{% endif %}
+    <div class="body">{% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
+    {% if sec.destacado %}
+    <div class="pull {{ sec.destacado.tipo }}">
+      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}[sec.destacado.tipo] }}</div>
+      <p>{{ sec.destacado.texto }}</p>
+    </div>
+    {% endif %}
+    {% if sec.cierre_accionable %}<div class="accion"><b>→</b> {{ sec.cierre_accionable }}</div>{% endif %}
+    {% set rail = sec_rail[loop.index0] %}
+    {% if rail %}
+    <div class="rail">
+      <div class="rn">{{ rail.value }}</div>
+      <div class="rl">{{ rail.label }}</div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endfor %}
+
+{#- ---------- 6 · tensión central ---------- -#}
+<section class="page">
+  <div class="tension pad">
+    <div class="eyebrow">La tensión central</div>
+    <h2 class="t">{{ data.tension_central.titulo }}</h2>
+    {% if data.tension_central.numeros|length >= 2 %}
+    <div class="vs">
+      <div class="orb a">{{ tension_orbs[0] }}</div>
+      <div class="x">CONTRA</div>
+      <div class="orb">{{ tension_orbs[1] }}</div>
+    </div>
+    {% endif %}
+    <div class="body">{% for par in data.tension_central.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
+    {% if data.tension_central.como_resolverla %}
+    <div class="resolve">{{ data.tension_central.como_resolverla }}</div>
+    {% endif %}
+    <div class="folio">tensión</div>
+  </div>
+</section>
+
+{#- ---------- 7 · plan + cierre ---------- -#}
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Tu plan</div>
+    <h2 class="t">Prácticas para esta vuelta</h2>
+    <div class="plan">
+      {% for pr in data.plan %}
+      <div class="pcard">
+        <div class="n">{{ "%02d"|format(loop.index) }}</div>
+        <h4>{{ pr.titulo }}</h4>
+        <p>{{ pr.texto }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% if data.cierre %}<div class="cierre">{{ data.cierre }}</div>{% endif %}
+    <div class="legal">{{ legal }}</div>
+  </div>
+</section>
+
+</body>
+</html>
