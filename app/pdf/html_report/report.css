@@ -59,6 +59,33 @@ body{
 .pad{ padding:26mm 24mm; }
 .pad-rail{ padding:26mm 58mm 26mm 24mm; }
 
+.page-chrome{
+  position:absolute;
+  inset:12mm;
+  border:1px solid rgba(76,29,149,.06);
+  pointer-events:none;
+}
+
+.page-chrome::before,
+.page-chrome::after{
+  content:"";
+  position:absolute;
+  height:2px;
+  width:22mm;
+  background:linear-gradient(90deg, var(--accent), rgba(211,174,54,0));
+}
+
+.page-chrome::before{
+  top:-1px;
+  left:10mm;
+}
+
+.page-chrome::after{
+  bottom:-1px;
+  right:10mm;
+  transform:scaleX(-1);
+}
+
 .rail{
   position:absolute;
   top:26mm;
@@ -215,6 +242,29 @@ h2.t.sm{ font-size:12mm; }
   margin-top:10mm;
 }
 
+.intro-band{
+  margin-top:7mm;
+  padding:5mm 6mm;
+  border:1px solid rgba(76,29,149,.08);
+  background:linear-gradient(90deg, rgba(255,255,255,.92), var(--area-soft-alt));
+  border-radius:4mm;
+}
+
+.intro-kicker{
+  font:600 2.8mm/1 "Open Sans", sans-serif;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--accent-ink);
+}
+
+.intro-copy{
+  margin-top:2mm;
+  font-size:3.1mm;
+  line-height:1.5;
+  color:var(--ink-soft);
+  max-width:120mm;
+}
+
 .chip{
   display:flex;
   align-items:baseline;
@@ -286,6 +336,19 @@ h2.t.sm{ font-size:12mm; }
   z-index:1;
 }
 
+.chart-tag{
+  display:inline-block;
+  margin-top:4mm;
+  padding:1.5mm 3.2mm;
+  border-radius:999px;
+  border:1px solid rgba(76,29,149,.12);
+  background:rgba(255,255,255,.72);
+  font:600 2.5mm/1 "Open Sans", sans-serif;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--area);
+}
+
 .chart-shell{
   position:relative;
   margin-top:11mm;
@@ -304,6 +367,27 @@ h2.t.sm{ font-size:12mm; }
   height:42mm;
   border-radius:50%;
   background:radial-gradient(circle, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 72%);
+}
+
+.chart-orbit{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(76,29,149,.08);
+}
+
+.orbit-a{
+  width:58mm;
+  height:58mm;
+  right:-10mm;
+  top:-6mm;
+}
+
+.orbit-b{
+  width:22mm;
+  height:22mm;
+  left:10mm;
+  bottom:10mm;
+  background:rgba(255,255,255,.48);
 }
 
 .shell-wheel{
@@ -345,6 +429,10 @@ h2.t.sm{ font-size:12mm; }
 
 .chart-note{
   margin:6mm 2mm 0;
+  padding:4mm 5mm;
+  border-left:3px solid var(--accent);
+  border-radius:0 3mm 3mm 0;
+  background:rgba(255,255,255,.78);
   font-size:3mm;
   line-height:1.55;
   color:var(--ink-soft);
@@ -366,6 +454,14 @@ h2.t.sm{ font-size:12mm; }
   background:var(--accent);
 }
 
+.section-nums{
+  margin-top:4mm;
+  font:600 2.7mm/1 "Open Sans", sans-serif;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
 .entradilla{
   font-family:Georgia, serif;
   font-style:italic;
@@ -373,6 +469,61 @@ h2.t.sm{ font-size:12mm; }
   line-height:1.4;
   color:var(--area);
   margin:4mm 0 8mm;
+}
+
+.portrait-shell{
+  position:relative;
+  margin-top:9mm;
+  padding:10mm 10mm 10mm 12mm;
+  border-radius:5mm;
+  background:linear-gradient(180deg, #FFFFFF, var(--area-soft-alt));
+  border:1px solid rgba(76,29,149,.08);
+  box-shadow:0 5mm 14mm rgba(42,30,62,.06);
+}
+
+.portrait-quote{
+  position:relative;
+  margin-bottom:8mm;
+  padding:0 0 0 12mm;
+  max-width:120mm;
+}
+
+.portrait-mark{
+  position:absolute;
+  left:0;
+  top:-3mm;
+  font:400 22mm/1 Georgia, serif;
+  color:var(--area);
+  opacity:.28;
+}
+
+.portrait-frase{
+  font-family:Georgia, serif;
+  font-style:italic;
+  font-size:4.2mm;
+  line-height:1.5;
+  color:var(--area-deep);
+}
+
+.portrait-body{
+  position:relative;
+  z-index:1;
+}
+
+.section-panel{
+  position:relative;
+  z-index:1;
+  padding:0 8mm 10mm 0;
+}
+
+.section-watermark{
+  position:absolute;
+  right:26mm;
+  top:24mm;
+  font:700 44mm/1 Georgia, serif;
+  color:rgba(76,29,149,.05);
+  letter-spacing:-.04em;
+  z-index:0;
 }
 
 .pull{
@@ -513,7 +664,21 @@ h2.t.sm{ font-size:12mm; }
   margin-top:8mm;
 }
 
+.closing-band{
+  margin-top:7mm;
+  padding:4.5mm 6mm;
+  border-radius:4mm;
+  background:linear-gradient(90deg, var(--area-soft), rgba(255,255,255,.88));
+  border:1px solid rgba(76,29,149,.08);
+  font-family:Georgia, serif;
+  font-style:italic;
+  font-size:3.7mm;
+  line-height:1.5;
+  color:var(--area-deep);
+}
+
 .pcard{
+  position:relative;
   background:#fff;
   border:1px solid var(--border);
   border-radius:4px;
@@ -521,11 +686,22 @@ h2.t.sm{ font-size:12mm; }
   box-shadow:0 2mm 6mm rgba(42,30,62,.05);
 }
 
+.pcard-top{
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  height:3mm;
+  border-radius:4px 4px 0 0;
+  background:linear-gradient(90deg, var(--area), var(--accent));
+}
+
 .pcard .n{
   font-family:Georgia, serif;
   font-size:8mm;
   color:var(--accent);
   line-height:1;
+  margin-top:2mm;
 }
 
 .pcard h4{

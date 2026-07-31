@@ -34,8 +34,13 @@
 
 <section class="page">
   <div class="pad">
+    <div class="page-chrome"></div>
     <div class="eyebrow">Tu mapa</div>
     <h2 class="t">Los numeros que te componen</h2>
+    <div class="intro-band">
+      <div class="intro-kicker">Lectura personalizada</div>
+      <div class="intro-copy">Una vista sintetica de tus vibraciones principales antes de entrar al detalle del reporte.</div>
+    </div>
     <div class="grid-nums">
       {% for c in numbers_ficha %}
       <div class="chip{% if c.karmic %} karmic{% endif %}">
@@ -52,12 +57,16 @@
 {% for chart in charts %}
 <section class="page chart-page chart-page-{{ chart.kind }}">
   <div class="pad">
+    <div class="page-chrome"></div>
     <div class="chart-head">
       <div class="eyebrow">{{ chart.eyebrow }}</div>
       <h2 class="t sm">{{ chart.title }}</h2>
+      <div class="chart-tag">Lectura visual</div>
     </div>
     <div class="chart-shell shell-{{ chart.kind }}">
       <div class="chart-aura"></div>
+      <div class="chart-orbit orbit-a"></div>
+      <div class="chart-orbit orbit-b"></div>
       <div class="chart">{{ chart.svg|safe }}</div>
     </div>
     {% if chart.caption %}<p class="chart-note">{{ chart.caption|safe }}</p>{% endif %}
@@ -68,10 +77,17 @@
 
 <section class="page">
   <div class="pad">
+    <div class="page-chrome"></div>
     <div class="eyebrow">Tu retrato</div>
     <h2 class="t">{{ data.retrato.titulo }}</h2>
-    <div class="body drop" style="margin-top:9mm">
-      {% for par in data.retrato.cuerpo %}<p>{{ par }}</p>{% endfor %}
+    <div class="portrait-shell">
+      <div class="portrait-quote">
+        <div class="portrait-mark">“</div>
+        <div class="portrait-frase">{{ data.frase_clave }}</div>
+      </div>
+      <div class="body drop portrait-body">
+        {% for par in data.retrato.cuerpo %}<p>{{ par }}</p>{% endfor %}
+      </div>
     </div>
   </div>
 </section>
@@ -79,19 +95,24 @@
 {% for sec in data.secciones %}
 <section class="page">
   <div class="pad-rail">
-    <div class="section-head">
-      <div class="eyebrow">{{ "%02d"|format(loop.index) }} · {{ sec.id }}</div>
-      <h2 class="t sm">{{ sec.titulo }}</h2>
+    <div class="page-chrome"></div>
+    <div class="section-watermark">{{ "%02d"|format(loop.index) }}</div>
+    <div class="section-panel">
+      <div class="section-head">
+        <div class="eyebrow">{{ "%02d"|format(loop.index) }} · {{ sec.id }}</div>
+        <h2 class="t sm">{{ sec.titulo }}</h2>
+        {% if sec.numeros %}<div class="section-nums">{{ sec.numeros|join(' · ') }}</div>{% endif %}
+      </div>
+      {% if sec.entradilla %}<div class="entradilla">{{ sec.entradilla }}</div>{% endif %}
+      <div class="body">{% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
+      {% if sec.destacado %}
+      <div class="pull {{ sec.destacado.tipo }}">
+        <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atencion'}[sec.destacado.tipo] }}</div>
+        <p>{{ sec.destacado.texto }}</p>
+      </div>
+      {% endif %}
+      {% if sec.cierre_accionable %}<div class="accion"><b>→</b> {{ sec.cierre_accionable }}</div>{% endif %}
     </div>
-    {% if sec.entradilla %}<div class="entradilla">{{ sec.entradilla }}</div>{% endif %}
-    <div class="body">{% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
-    {% if sec.destacado %}
-    <div class="pull {{ sec.destacado.tipo }}">
-      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atencion'}[sec.destacado.tipo] }}</div>
-      <p>{{ sec.destacado.texto }}</p>
-    </div>
-    {% endif %}
-    {% if sec.cierre_accionable %}<div class="accion"><b>→</b> {{ sec.cierre_accionable }}</div>{% endif %}
     {% set rail = sec_rail[loop.index0] %}
     {% if rail %}
     <div class="rail">
@@ -129,11 +150,14 @@
 
 <section class="page">
   <div class="pad">
+    <div class="page-chrome"></div>
     <div class="eyebrow">Tu plan</div>
     <h2 class="t">Practicas para esta vuelta</h2>
+    <div class="closing-band">{{ data.cierre or data.frase_clave }}</div>
     <div class="plan">
       {% for pr in data.plan %}
       <div class="pcard">
+        <div class="pcard-top"></div>
         <div class="n">{{ "%02d"|format(loop.index) }}</div>
         <h4>{{ pr.titulo }}</h4>
         <p>{{ pr.texto }}</p>
