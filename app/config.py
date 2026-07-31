@@ -38,8 +38,8 @@ class Settings(BaseSettings):
     # Claves de API (nunca hardcodear; en Railway van en Variables).
     anthropic_api_key: str | None = None
     google_api_key: str | None = None
-    # Modelo. Opus 5 por defecto para Anthropic; el proveedor Google usa
-    # gemini-2.5-pro salvo que AI_MODEL empiece por "gemini".
+    # Modelo. Opus 5 por defecto para Anthropic; Google cae a un modelo
+    # estable vigente salvo que AI_MODEL ya sea un identificador Gemini.
     ai_model: str = "claude-opus-5"
     ai_effort: str = "high"          # low | medium | high | xhigh | max (Anthropic)
     ai_max_tokens: int = 16000
@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     def resolved_model(self) -> str:
         """Modelo efectivo según el proveedor."""
         if self.ai_provider == "google" and not self.ai_model.startswith("gemini"):
-            return "gemini-2.5-pro"
+            return "gemini-3.5-flash"
         return self.ai_model
 
     @property
