@@ -25,6 +25,14 @@ class PartnerIn(BaseModel):
     birth_date: date
 
 
+class NotifyIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    callback_url: str = Field(min_length=1)
+    callback_secret: str = Field(min_length=1)
+    report_row_id: str = Field(min_length=1)
+
+
 class GenerateAIRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -34,6 +42,7 @@ class GenerateAIRequest(BaseModel):
     partner: PartnerIn | None = None
     instance: str | None = None
     relationship_start: date | None = None
+    notify: NotifyIn | None = None
     today: date | None = Field(
         default=None,
         description="Fecha de cálculo reproducible; si no llega, usa hoy.",
