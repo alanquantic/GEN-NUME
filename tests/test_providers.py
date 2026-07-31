@@ -73,7 +73,7 @@ def test_resolved_model_google_por_defecto():
     from app.config import Settings
     # _env_file=None → hermético, ignora el .env real de desarrollo
     s = Settings(ai_provider="google", ai_model="claude-opus-5", _env_file=None)
-    assert s.resolved_model == "gemini-2.5-pro"
+    assert s.resolved_model == "gemini-3.5-flash"
     s2 = Settings(ai_provider="google", ai_model="gemini-2.5-flash", _env_file=None)
     assert s2.resolved_model == "gemini-2.5-flash"
     s3 = Settings(ai_provider="anthropic", ai_model="claude-opus-5", _env_file=None)

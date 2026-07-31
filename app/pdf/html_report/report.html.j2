@@ -1,20 +1,23 @@
-{#- Plantilla del reporte dinámico. Recibe un contexto ya preparado por
-    app/pdf/html_renderer.py: nada de lógica numerológica aquí, sólo presentación. -#}
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <title>{{ report_title }} · {{ person_name }}</title>
-<style>:root{ --area:{{ area_hex }}; --area-ink:{{ area_hex }}; }
+<style>:root{
+  --area:{{ area_hex }};
+  --area-ink:{{ area_hex }};
+  --area-soft:{{ area_soft }};
+  --area-soft-alt:{{ area_soft_alt }};
+  --area-deep:{{ area_deep }};
+}
 {{ css }}</style>
 </head>
 <body>
 
-{#- ---------- 1 · portada ---------- -#}
 <section class="page">
   <div class="cover pad">
     <div class="cover-top">
-      <div class="brand">Numerología Cotidiana</div>
+      <div class="brand">Numerologia Cotidiana</div>
       <div class="who"><b>{{ person_name }}</b>{{ birth_long }}</div>
     </div>
     <div class="cover-mid">
@@ -29,11 +32,10 @@
   </div>
 </section>
 
-{#- ---------- 2 · tus números ---------- -#}
 <section class="page">
   <div class="pad">
     <div class="eyebrow">Tu mapa</div>
-    <h2 class="t">Los números que te componen</h2>
+    <h2 class="t">Los numeros que te componen</h2>
     <div class="grid-nums">
       {% for c in numbers_ficha %}
       <div class="chip{% if c.karmic %} karmic{% endif %}">
@@ -47,20 +49,23 @@
   </div>
 </section>
 
-{#- ---------- 3 · páginas de gráficos ---------- -#}
 {% for chart in charts %}
-<section class="page">
+<section class="page chart-page chart-page-{{ chart.kind }}">
   <div class="pad">
-    <div class="eyebrow">{{ chart.eyebrow }}</div>
-    <h2 class="t sm">{{ chart.title }}</h2>
-    <div class="chart">{{ chart.svg|safe }}</div>
-    {% if chart.caption %}<p class="note">{{ chart.caption|safe }}</p>{% endif %}
+    <div class="chart-head">
+      <div class="eyebrow">{{ chart.eyebrow }}</div>
+      <h2 class="t sm">{{ chart.title }}</h2>
+    </div>
+    <div class="chart-shell shell-{{ chart.kind }}">
+      <div class="chart-aura"></div>
+      <div class="chart">{{ chart.svg|safe }}</div>
+    </div>
+    {% if chart.caption %}<p class="chart-note">{{ chart.caption|safe }}</p>{% endif %}
     <div class="folio">— {{ loop.index + 2 }} —</div>
   </div>
 </section>
 {% endfor %}
 
-{#- ---------- 4 · retrato ---------- -#}
 <section class="page">
   <div class="pad">
     <div class="eyebrow">Tu retrato</div>
@@ -71,7 +76,6 @@
   </div>
 </section>
 
-{#- ---------- 5 · secciones ---------- -#}
 {% for sec in data.secciones %}
 <section class="page">
   <div class="pad-rail">
@@ -83,7 +87,7 @@
     <div class="body">{% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
     {% if sec.destacado %}
     <div class="pull {{ sec.destacado.tipo }}">
-      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}[sec.destacado.tipo] }}</div>
+      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atencion'}[sec.destacado.tipo] }}</div>
       <p>{{ sec.destacado.texto }}</p>
     </div>
     {% endif %}
@@ -99,31 +103,34 @@
 </section>
 {% endfor %}
 
-{#- ---------- 6 · tensión central ---------- -#}
 <section class="page">
   <div class="tension pad">
-    <div class="eyebrow">La tensión central</div>
-    <h2 class="t">{{ data.tension_central.titulo }}</h2>
-    {% if data.tension_central.numeros|length >= 2 %}
-    <div class="vs">
-      <div class="orb a">{{ tension_orbs[0] }}</div>
-      <div class="x">CONTRA</div>
-      <div class="orb">{{ tension_orbs[1] }}</div>
+    <div class="tension-deco deco-a"></div>
+    <div class="tension-deco deco-b"></div>
+    <div class="tension-grid"></div>
+    <div class="tension-body">
+      <div class="eyebrow">La tension central</div>
+      <h2 class="t">{{ data.tension_central.titulo }}</h2>
+      {% if data.tension_central.numeros|length >= 2 %}
+      <div class="vs">
+        <div class="orb a">{{ tension_orbs[0] }}</div>
+        <div class="x">CONTRA</div>
+        <div class="orb">{{ tension_orbs[1] }}</div>
+      </div>
+      {% endif %}
+      <div class="body">{% for par in data.tension_central.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
+      {% if data.tension_central.como_resolverla %}
+      <div class="resolve">{{ data.tension_central.como_resolverla }}</div>
+      {% endif %}
     </div>
-    {% endif %}
-    <div class="body">{% for par in data.tension_central.cuerpo %}<p>{{ par }}</p>{% endfor %}</div>
-    {% if data.tension_central.como_resolverla %}
-    <div class="resolve">{{ data.tension_central.como_resolverla }}</div>
-    {% endif %}
-    <div class="folio">tensión</div>
+    <div class="folio">tension</div>
   </div>
 </section>
 
-{#- ---------- 7 · plan + cierre ---------- -#}
 <section class="page">
   <div class="pad">
     <div class="eyebrow">Tu plan</div>
-    <h2 class="t">Prácticas para esta vuelta</h2>
+    <h2 class="t">Practicas para esta vuelta</h2>
     <div class="plan">
       {% for pr in data.plan %}
       <div class="pcard">
