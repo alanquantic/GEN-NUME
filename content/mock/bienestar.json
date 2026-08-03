@@ -1,0 +1,137 @@
+{
+  "_mock": "Respuesta de EJEMPLO escrita a mano para revisar el diseño. Anclada a los números reales de Juan Pedro Martinez (20/11/1991): B=2, D=6, P=6, X=8, A=11, ALMA=3, AP=5.",
+  "titulo": "La energía del que sostiene a todos",
+  "subtitulo": "Tu sensibilidad es tu antena y tu fuga: aprende a cerrar el circuito",
+  "frase_clave": "No estás cansado de hacer: estás cansado de cargar.",
+  "resumen_portada": "Tu esencia 2 absorbe el clima emocional de cada cuarto en el que entras. Tu máscara y tu sombra —las dos en 6— te hacen cargar con lo de todos, y tu reacción 8 comprime la presión hasta que estalla. Este reporte es un manual de mantenimiento de tu energía: dónde se fuga, cómo se recarga y qué pide tu año 5.",
+  "retrato": {
+    "titulo": "Cómo funciona tu energía",
+    "cuerpo": [
+      "Juan Pedro, tu energía vital tiene la arquitectura del 2: una antena finísima. Percibes tensiones que nadie ha nombrado, estados de ánimo ajenos, el clima invisible de una casa o una oficina. Esa sensibilidad es tu don de mediador, pero tiene un costo de operación altísimo cuando no la administras: absorbes lo que no es tuyo y lo procesas como propio.",
+      "Encima de esa antena, tu doble 6 —máscara y sombra— instala el programa del cuidador: hacerte cargo. Del ánimo de tu pareja, de los pendientes del equipo, de la logística familiar. Y cuando la carga excede lo razonable, entra tu reacción 8: aprietas los dientes, controlas, sostienes... hasta que el cuerpo pasa la factura en tensión, insomnio o un estallido que ni tú viste venir.",
+      "Nada de esto es una condena: es un diseño con instrucciones. La misma sensibilidad que te drena es la que te avisa —antes que a nadie— cuándo algo no está bien. Este reporte te enseña a leer esos avisos a tiempo."
+    ]
+  },
+  "secciones": [
+    {
+      "id": "tu-energia-base",
+      "titulo": "Tu energía base: la antena del 2",
+      "entradilla": "El 2 armónico es calma que contagia; el desarmónico es una esponja sin escurrir.",
+      "cuerpo": [
+        "En su cara armónica, tu 2 es un regulador natural: tu sola presencia baja las revoluciones de un lugar. Duermes bien cuando tus vínculos están en paz, y tu energía se recarga en compañía tranquila, conversación suave y ambientes sin estridencia. El contacto con el agua y los espacios ordenados te devuelven al centro más rápido que cualquier suplemento.",
+        "En su cara desarmónica, el mismo 2 se vuelve esponja: absorbe conflictos ajenos, rumia lo que no dijo, somatiza lo que no negoció. Tu primera señal de alarma no es física sino relacional: cuando empiezas a evitar personas o a decir que sí con fastidio, tu tanque ya está en reserva. Aprende a leerla como lo que es: el indicador de gasolina de tu sistema."
+      ],
+      "numeros": ["B"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "El 2 no se agota trabajando: se agota conteniendo. Su descanso empieza donde termina el conflicto."
+      },
+      "cierre_accionable": "Identifica a tu 'vampiro' energético actual y reduce esta semana un 20% el tiempo que le dedicas."
+    },
+    {
+      "id": "tu-reaccion",
+      "titulo": "Cómo reaccionas bajo presión",
+      "entradilla": "Tu reacción es un 8: ante la crisis te vuelves ejecutivo, controlas, resuelves... y comprimes.",
+      "cuerpo": [
+        "El número de la reacción describe tu primera respuesta automática cuando la vida aprieta, y el tuyo es un 8: poder y control. En plena crisis eres admirable —tomas el mando, decides rápido, sostienes a todos—, pero el mecanismo tiene un precio oculto: el 8 no procesa la emoción en el momento; la comprime para después. Y 'después' a veces no llega nunca.",
+        "Esa compresión es tu principal riesgo de bienestar. La tensión que no expresas se instala en el cuerpo: mandíbula, cuello, espalda alta, sueño ligero. La práctica que más te conviene no es la que te relaja, sino la que te descarga: ejercicio intenso, caminar rápido, cualquier vía física para que el 8 suelte lo que apretó. Primero descargar, luego descansar: en ese orden."
+      ],
+      "numeros": ["X"],
+      "destacado": {
+        "tipo": "alerta",
+        "texto": "El 8 comprimido no avisa: acumula. Cuando 'no sientes nada', suele ser cuando más estás cargando."
+      },
+      "cierre_accionable": "Después de cada día difícil, 20 minutos de descarga física antes de sentarte al sillón. Sin excepciones."
+    },
+    {
+      "id": "sombra-del-cuidador",
+      "titulo": "La fuga del cuidador",
+      "entradilla": "Tu doble 6 convierte el cuidado en identidad: si no cargas, sientes que no vales.",
+      "cuerpo": [
+        "Tu máscara es 6 y tu sombra también: cuidar no es solo lo que haces, es lo que crees que eres. Por eso te cuesta tanto delegar, descansar sin culpa o dejar que un problema ajeno se resuelva sin ti. La fuga de energía más grande de tu sistema no está en tu agenda: está en esa identidad que equipara valor personal con carga soportada.",
+        "La señal clásica de que la sombra 6 tomó el mando es el resentimiento de bajo voltaje: sigues ayudando, pero por dentro llevas la cuenta. Ese contador silencioso gasta más energía que la ayuda misma. El antídoto no es dejar de cuidar —no podrías ni querrías— sino cuidar por elección y con límites: menos frentes, más presencia, y la valentía de dejar que los adultos de tu vida carguen lo suyo."
+      ],
+      "numeros": ["P", "D"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "La sombra (P) no se elimina: se administra. Un 6 con límites es medicina; sin límites, es autoconsumo."
+      },
+      "cierre_accionable": "Antes de ofrecer ayuda esta semana, espera a que te la pidan. Observa cuántas veces no hizo falta."
+    },
+    {
+      "id": "sistema-nervioso-maestro",
+      "titulo": "El voltaje del 11",
+      "entradilla": "Tu karma 11 trae un sistema nervioso de alta sensibilidad: más voltaje del que la instalación soporta.",
+      "cuerpo": [
+        "Las vibraciones maestras se sienten en el cuerpo, y tu karma 11 es un cable de alto voltaje: intuición encendida, mente que no para, percepción amplificada. Quienes cargan un 11 suelen conocer bien el insomnio de pensamiento acelerado, la ansiedad difusa de los domingos y esa sensación de estar 'demasiado despiertos' por dentro.",
+        "El 11 pide tierra física: rutinas que aterricen el voltaje. Horarios regulares de sueño, comida real, contacto con naturaleza, menos pantalla nocturna: lo básico, hecho en serio. Cuando el 11 tiene tierra, se convierte en tu radar de bienestar —detectas lo que te hace daño antes de que te dañe—; sin tierra, se convierte en estática permanente."
+      ],
+      "numeros": ["A"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "El maestro 11 ilumina o electrocuta: la diferencia la pone la conexión a tierra."
+      },
+      "cierre_accionable": "Fija una hora de apagado de pantallas y cúmplela cinco noches seguidas. Mide cómo despiertas."
+    },
+    {
+      "id": "valvula-creativa",
+      "titulo": "Tu válvula creativa",
+      "entradilla": "El alma 3 es tu válvula de escape: crear no es un pasatiempo, es parte de tu higiene energética.",
+      "cuerpo": [
+        "Tu alma vibra en 3, y eso hace de la expresión una necesidad fisiológica disfrazada de hobby. Cuando llevas semanas sin crear nada tuyo —escribir, cocinar inventando, tocar, construir—, tu sistema se congestiona: humor gris, energía plana, todo pesa. No es depresión ni flojera: es la válvula del 3 cerrada.",
+        "La prescripción es simple y no negociable: expresión regular sin propósito productivo. No para publicar, no para vender, no para mejorar: para soltar. Media hora de creación inútil vale más para tu energía que una tarde entera de sofá, porque el descanso del 3 no es pasivo: es expresivo."
+      ],
+      "numeros": ["ALMA"],
+      "destacado": null,
+      "cierre_accionable": "Tres bloques de 30 minutos esta semana para crear algo inútil y tuyo. Defiéndelos como juntas."
+    },
+    {
+      "id": "tu-anio-de-energia",
+      "titulo": "Cuidarte en un año 5",
+      "entradilla": "El año 5 acelera todo: es el año de moverse... y de cuidar los excesos del movimiento.",
+      "cuerpo": [
+        "Tu año personal 5 trae una energía alta, inquieta y estimulante. Bien usada, es el año perfecto para renovar hábitos: cambiar de deporte, probar rutinas nuevas, viajar, romper la inercia. Tu cuerpo va a agradecer la variedad: en año 5, la rutina rígida aburre tanto que se abandona; mejor diseña un sistema flexible que cambie cada mes.",
+        "La advertencia del 5 son los excesos: más café, más pantalla, más fiesta, más de todo. La estimulación constante puede tapar las señales de tu antena 2 y el voltaje de tu 11 justo cuando más las necesitas escuchar. La regla del año: muévete mucho, estimúlate menos. Novedad sí; ruido, no tanto."
+      ],
+      "numeros": ["AP"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "En año 5 el cuerpo pide variedad, no intensidad: cambia el estímulo antes de subirle la dosis."
+      },
+      "cierre_accionable": "Renueva un hábito por mes lo que queda del año: mismo objetivo de salud, formato nuevo."
+    }
+  ],
+  "tension_central": {
+    "titulo": "Sostener a todos o sostenerte",
+    "numeros": ["P", "B"],
+    "cuerpo": [
+      "Esta es la ecuación energética de tu vida, Juan Pedro: tu esencia 2 necesita armonía para recargarse, pero tu sombra 6 fabrica sobrecarga para sentirse valiosa. Es decir: la parte de ti que descansa cuando hay paz convive con la parte de ti que no puede dejar de cargar. Una llena el tanque; la otra lo agujerea.",
+      "Por eso tus descansos a veces no descansan: te vas de vacaciones con la logística de todos en la cabeza; llegas a casa y escaneas el ánimo de cada quien antes de soltar el tuyo. Y cuando el cuerpo protesta, entra tu 8 a controlar el síntoma en vez de escucharlo: más aguante, menos pausa, hasta el próximo apagón.",
+      "La salida no es volverte egoísta —tu naturaleza es vincular y eso no va a cambiar—. Es entender que tú también eres alguien a tu cargo. El cuidador que se pone en su propia lista deja de fugarse energía por culpa y resentimiento; el 2 con límites se vuelve lo que siempre debió ser: un regulador que también se regula."
+    ],
+    "como_resolverla": "Trátate como tratas a los que cuidas: con tu 6 a tu favor. Agenda tu descanso con el mismo rigor con que agendas los pendientes de otros, y cuando notes que estás conteniendo (mandíbula, cuello, sueño), descarga físicamente ese mismo día. Tu energía no necesita héroes: necesita mantenimiento."
+  },
+  "plan": [
+    {
+      "titulo": "Ponte en tu lista",
+      "texto": "Cada mañana, antes de revisar pendientes ajenos, un acto de autocuidado no negociable: 15 minutos tuyos. El cuidador empieza por casa."
+    },
+    {
+      "titulo": "Descarga el 8",
+      "texto": "Ejercicio de descarga (intenso y breve) después de cada día de presión. La tensión que no sale por el cuerpo, se queda en el cuerpo."
+    },
+    {
+      "titulo": "Tierra para el 11",
+      "texto": "Sueño a horario fijo y pantallas apagadas una hora antes de dormir. El voltaje del 11 se administra con rutinas aburridas."
+    },
+    {
+      "titulo": "Abre la válvula 3",
+      "texto": "Tres ratos de creación sin propósito a la semana. Tu alma no descansa en el sofá: descansa expresándose."
+    },
+    {
+      "titulo": "Un no por semana",
+      "texto": "Rechaza una carga que no te toca, sin justificarte de más. Cada 'no' a tiempo es una fuga de energía sellada."
+    }
+  ],
+  "cierre": "Juan Pedro, tu cansancio nunca fue falta de fuerza: fue exceso de carga. Tienes la antena más fina de la casa (2), el corazón que se hace cargo (6), el aguante del ejecutivo (8) y un voltaje de maestro (11): un equipo formidable cuando trabaja para ti, y una fábrica de agotamiento cuando trabaja solo para los demás. El mantenimiento de tu energía no exige retiros en la montaña: exige límites amables, descargas a tiempo, tierra para el voltaje y un rato de creación inútil. Cuídate como cuidas: es lo único que le falta a tu sistema para ser tan generoso contigo como lo es con todos."
+}

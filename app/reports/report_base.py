@@ -112,5 +112,17 @@ class Report:
         return self.pdf.get_y()
 
     def output(self) -> bytes:
-        """Devuelve el PDF como bytes (sin tocar el sistema de archivos)."""
-        return bytes(self.pdf.output())
+        """Devuelve el PDF como bytes, comprimido según PDF_COMPRESS."""
+        from ..config import settings
+        from ..pdf import compress
+
+        data = bytes(self.pdf.output())
+        if settings.pdf_compress == "images":
+            return compress.slim_images(
+                data,
+                max_px=settings.pdf_image_max_px,
+                jpeg_quality=settings.pdf_image_quality,
+            )
+        if settings.pdf_compress == "slim":
+            return compress.slim(data)
+        return data

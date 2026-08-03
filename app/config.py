@@ -32,6 +32,15 @@ class Settings(BaseSettings):
 
     environment: str = "development"
 
+    # --- Compresión de los PDF generados -------------------------------- #
+    # "images": recomprime los fondos JPG de los reportes clásicos (ahorra
+    #           50-75% con pérdida imperceptible; el texto es vectorial y no
+    #           se toca). "slim": sólo recompresión estructural sin pérdida.
+    # "off": entrega el PDF tal cual sale del generador.
+    pdf_compress: str = "images"
+    pdf_image_max_px: int = 1600
+    pdf_image_quality: int = 80
+
     # --- Reportes dinámicos con IA ------------------------------------- #
     # Proveedor del modelo: "anthropic" o "google" (Gemini · AI Studio).
     ai_provider: str = "anthropic"

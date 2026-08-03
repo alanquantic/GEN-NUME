@@ -46,6 +46,20 @@ _FICHA = {
     "proposito": ["B", "ALMA", "H", "MADUREZ", "Y", "Z", "D", "A"],
 }
 
+# Número protagonista de la portada, por reporte: (clave, etiqueta).
+# Si la clave no resuelve (p. ej. PAREJA sin pareja), se cae a B.
+_COVER_FEATURE = {
+    "quien-soy": ("B", "Tu número personal"),
+    "amor": ("PAREJA", "Su número de pareja"),
+    "trabajo": ("H", "Tu número de destino"),
+    "bienestar": ("B", "Tu energía base"),
+    "proposito": ("Y", "Tu número de misión"),
+}
+
+# Variantes visuales de los tiles del bento a partir del tercero (el 1.º es
+# el héroe 2x2 y el 2.º el ancho): rompen la uniformidad de la retícula.
+_BENTO_CYCLE = ["soft", "", "gold", "", "dark", "", "soft", ""]
+
 LEGAL_BASE = (
     "Este reporte esta redactado a partir del metodo y los textos de "
     "Numerologia Cotidiana de Laura L. Rodriguez. La numerologia es una "
@@ -104,6 +118,45 @@ def _ficha(report_key: str, numbers: Numbers) -> list[dict]:
             }
         )
     return out
+
+
+def _bento_tiles(report_key: str, numbers: Numbers) -> list[dict]:
+    """La ficha de números convertida en mosaico bento con jerarquía."""
+    tiles = []
+    for i, c in enumerate(_ficha(report_key, numbers)):
+        if i == 0:
+            variant = "hero"
+        elif i == 1:
+            variant = "wide"
+        else:
+            variant = _BENTO_CYCLE[(i - 2) % len(_BENTO_CYCLE)]
+        tiles.append({**c, "value": c["value"].rstrip("*"), "variant": variant})
+    return tiles
+
+
+def _sec_chips(data: dict, numbers: Numbers) -> list[str]:
+    """Por sección: 'Etiqueta valor · Etiqueta valor' en vez de claves crudas."""
+    out = []
+    for sec in data.get("secciones", []):
+        chips = []
+        for k in sec.get("numeros") or []:
+            key = str(k).upper().rstrip("*")
+            val = numbers.get(key)
+            if val:
+                label = _LABEL.get(key, (key, ""))[0]
+                chips.append(f"{label} {val.rstrip('*')}")
+        out.append(" · ".join(chips))
+    return out
+
+
+def _cover_feature(report_key: str, numbers: Numbers) -> tuple[str, bool, str]:
+    """(valor limpio, es kármico, etiqueta) del número protagonista de portada."""
+    key, label = _COVER_FEATURE.get(report_key, ("B", "Tu número personal"))
+    val = numbers.get(key)
+    if not val:
+        key, label = "B", "Tu número personal"
+        val = numbers.get("B") or ""
+    return val.rstrip("*"), val.endswith("*"), label
 
 
 def _numbers_note(numbers: Numbers) -> str:
@@ -243,6 +296,12 @@ def render_html(
     area = AREA_HEX.get(area_token, AREA_HEX["primary"])
     legal = LEGAL_BASE + (LEGAL_BIENESTAR if report_key == "bienestar" else "")
 
+    cover_val, cover_karmic, cover_label = _cover_feature(report_key, numbers)
+    tension_keys = [
+        str(k).upper().rstrip("*")
+        for k in data.get("tension_central", {}).get("numeros", [])[:2]
+    ]
+
     ctx = {
         "css": _css(),
         "data": data,
@@ -254,19 +313,23 @@ def render_html(
         "person_name": person_name,
         "birth_long": birth_long,
         "today_long": today_long,
-        "cover_number": numbers.get("B") or "",
-        "numbers_ficha": _ficha(report_key, numbers),
+        "cover_number_clean": cover_val,
+        "cover_number_karmic": cover_karmic,
+        "cover_number_label": cover_label,
+        "bento_tiles": _bento_tiles(report_key, numbers),
         "numbers_note": _numbers_note(numbers),
         "charts": _charts(report_key, numbers, today_age, area),
         "sec_rail": _sec_rail(data, numbers),
-        "tension_orbs": _tension_orbs(data, numbers),
+        "sec_chips": _sec_chips(data, numbers),
+        "tension_orbs": [o.rstrip("*") for o in _tension_orbs(data, numbers)],
+        "tension_labels": [_LABEL.get(k, (k, ""))[0] for k in tension_keys],
         "legal": legal,
     }
     return _env().get_template("report.html.j2").render(**ctx)
 
 
 def to_pdf(html: str) -> bytes:
-    """Renderiza el HTML a PDF con WeasyPrint."""
+    """Renderiza el HTML a PDF con WeasyPrint y lo comprime."""
     try:
         from weasyprint import HTML
     except OSError as exc:
@@ -275,7 +338,14 @@ def to_pdf(html: str) -> bytes:
             "En Windows es lo esperado; el PDF se genera en el deploy Linux. "
             f"Detalle: {exc}"
         ) from exc
-    return HTML(string=html).write_pdf()
+    from ..config import settings
+    from .compress import slim
+
+    pdf = HTML(string=html).write_pdf(
+        optimize_images=True, jpeg_quality=85, dpi=150,
+    )
+    # Los dinámicos no llevan imágenes raster: con slim (sin pérdida) basta.
+    return slim(pdf) if settings.pdf_compress != "off" else pdf
 
 
 __all__ = ["render_html", "to_pdf", "AREA_HEX"]

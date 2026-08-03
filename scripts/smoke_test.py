@@ -46,7 +46,9 @@ def check(name: str, ok: bool, extra: str = "") -> None:
 
 
 def valid_pdf(data: bytes) -> bool:
-    return data[:4] == b"%PDF" and len(data) > 1000
+    # Estructura, no tamaño: con la compresión activa un reporte de prueba
+    # (fondos no-op) puede bajar de 1 KB y seguir siendo un PDF perfecto.
+    return data[:4] == b"%PDF" and b"%%EOF" in data[-1024:] and len(data) > 500
 
 
 def build_request(report_key: str) -> GenerateRequest:

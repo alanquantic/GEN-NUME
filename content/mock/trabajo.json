@@ -1,0 +1,149 @@
+{
+  "_mock": "Respuesta de EJEMPLO escrita a mano para revisar el diseño. Anclada a los números reales de Juan Pedro Martinez (20/11/1991): B=2, H=4*, D=6, EXPRESION=9, NOMBRE=3, AP=5, Z=1, REALIZACION=4.",
+  "titulo": "El arquitecto que trabaja en equipo",
+  "subtitulo": "Tu talento une personas; tu destino te pide construir algo propio",
+  "frase_clave": "Naciste para unir al equipo que construirá tu obra.",
+  "resumen_portada": "Profesionalmente eres un 2: negociador, diplomático, el que hace que un grupo funcione. Pero tu destino es un 4 kármico que exige estructura, esfuerzo y obra propia. Este reporte mapea tus talentos, la imagen que proyectas, el año 5 de cambios que atraviesas y la meta 4 de tu ciclo actual.",
+  "retrato": {
+    "titulo": "Tu perfil profesional real",
+    "cuerpo": [
+      "Juan Pedro, en el trabajo tu esencia 2 es un talento que las empresas tardan en nombrar pero no pueden reemplazar: haces que la gente funcione junta. Eres el que baja la tensión de una junta, el que traduce entre el técnico y el cliente, el que negocia sin que nadie sienta que perdió. Donde hay equipo, tu valor se multiplica.",
+      "Sobre ese talento, tu cuadro monta dos exigencias mayores. Tu destino 4 lleva asterisco: es deuda kármica de trabajo, y significa que la vida te pedirá construir con método y constancia algo sólido y verificable —no basta con ayudar a que otros construyan—. Y tu expresión 9 hace que la gente espere de ti visión de servicio, casi de propósito: no te compran como operador, te compran como alguien que trabaja para algo más grande.",
+      "El puente entre ambos mundos es tu nombre 3 y tu regalo divino 1: comunicas con gracia y sabes arrancar cosas. La fórmula está completa: inicia (1), comunica (3), une (2) y construye (4). Este reporte es el manual de esa fórmula."
+    ]
+  },
+  "secciones": [
+    {
+      "id": "talento-natural",
+      "titulo": "Tu talento de fábrica",
+      "entradilla": "El 2 profesional brilla en la negociación, la diplomacia y el trabajo con otros.",
+      "cuerpo": [
+        "Tu número personal 2 te hace especialmente apto para todo oficio de vínculo: negociación, ventas consultivas, gestión de personas, mediación, atención de clientes complejos. Tienes paciencia estratégica: sabes esperar el momento, leer al interlocutor y encontrar el punto donde ambas partes ganan. En ambientes hostiles o de competencia feroz, en cambio, tu energía se drena rápido.",
+        "El 2 rinde mejor acompañado que solo, y mejor como número dos de confianza que como cara visible —al menos al principio—. No lo leas como techo sino como método: tu forma natural de liderar es desde la cercanía, no desde el podio. Los equipos que diriges no te obedecen: te siguen porque los escuchas."
+      ],
+      "numeros": ["B"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "El 2 no compite por el micrófono: es el que logra que todos los micrófonos suenen afinados."
+      },
+      "cierre_accionable": "Detecta esta semana una negociación estancada en tu entorno y ofrécete a destrabarla. Es tu cancha."
+    },
+    {
+      "id": "destino-profesional",
+      "titulo": "Tu destino: construir",
+      "entradilla": "El 4 kármico no te pide un empleo: te pide una obra hecha con método y paciencia.",
+      "cuerpo": [
+        "Tu suma de destino es 4, y viene con asterisco: deuda kármica. En lo profesional esto se traduce en una ley que quizá ya reconoces: a ti nada te cae del cielo. Donde otros improvisan y aciertan, tú tienes que estructurar, documentar, sostener el esfuerzo en el tiempo. Es más lento, sí; pero lo que tú construyes, queda.",
+        "El 4 kármico también avisa de su trampa: convertir el trabajo en castigo. Jornadas eternas, control excesivo, desconfianza de lo fácil. Saldar la deuda no es trabajar hasta romperte: es aprender a construir con disciplina y descanso, con procesos que no dependan de tu sacrificio permanente. La obra que tu destino pide necesita un arquitecto, no un mártir."
+      ],
+      "numeros": ["H"],
+      "destacado": {
+        "tipo": "alerta",
+        "texto": "La deuda del 4 se salda con constancia, no con autoexplotación. El exceso de trabajo también es una forma de evadirla."
+      },
+      "cierre_accionable": "Define tu obra: escribe en una frase qué querrás haber construido en cinco años. Pégala donde la veas."
+    },
+    {
+      "id": "como-te-ven",
+      "titulo": "La imagen que proyectas",
+      "entradilla": "Tu máscara 6 y tu expresión 9 te presentan como alguien confiable que sirve a algo mayor.",
+      "cuerpo": [
+        "En lo laboral, tu personalidad 6 es tu mejor tarjeta: proyectas responsabilidad, compromiso y cuidado por la calidad. Los jefes te delegan sin miedo, los clientes descansan cuando tú tomas el caso. A eso se suma tu expresión 9, que envuelve tu imagen en un aire de servicio y visión: pareces —y eres— alguien que no trabaja solo por el sueldo.",
+        "La sombra de esta combinación es conocida: el responsable-de-todo. Acumulas encargos que nadie te pidió formalmente, tapas huecos ajenos, y tu generosidad se vuelve infraestructura invisible de la empresa. El 6 y el 9 dan prestigio, pero mal administrados regalan tu tiempo. Aprende a cotizar lo que hoy regalas: es la diferencia entre ser querido y ser valorado."
+      ],
+      "numeros": ["D", "EXPRESION"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "La máscara (D) abre las puertas; la expresión (9) define qué esperan encontrar detrás. Ambas son negociables."
+      },
+      "cierre_accionable": "Haz una lista de tareas que haces y nadie reconoce. Elige una para delegar y otra para visibilizar."
+    },
+    {
+      "id": "tu-voz-profesional",
+      "titulo": "Tu voz profesional",
+      "entradilla": "Tu nombre vibra en 3: comunicar, presentar y traducir ideas es parte de tu oficio, lo sepas o no.",
+      "cuerpo": [
+        "Tu nombre completo suma 3, la vibración de la palabra. En términos laborales, eso significa que tu carrera avanza cada vez que comunicas: cuando presentas, cuando escribes, cuando explicas lo complejo en simple. Los momentos de mayor reconocimiento de tu trayectoria probablemente coinciden con momentos en que tomaste la palabra.",
+        "Combina esto con tu 2 y aparece tu superpoder concreto: eres traductor entre mundos. Entre lo técnico y lo humano, entre la dirección y el equipo, entre el dato y la decisión. Pocas habilidades se pagan mejor con los años. La tarea pendiente es de volumen: tu 2 tiende a comunicar en privado, y tu 3 necesita también audiencia. Publica, presenta, enseña."
+      ],
+      "numeros": ["NOMBRE"],
+      "destacado": null,
+      "cierre_accionable": "Comparte públicamente un aprendizaje profesional este mes: un post, una charla interna, una demo."
+    },
+    {
+      "id": "regalo-iniciativa",
+      "titulo": "Tu regalo: la iniciativa",
+      "entradilla": "El 1 que traes de regalo divino es el arranque: la capacidad de empezar sin permiso.",
+      "cuerpo": [
+        "Tu regalo divino es un 1: iniciativa pura, la chispa de empezar. Es un regalo estratégico para tu cuadro, porque compensa exactamente lo que tu 2 duda y lo que tu 4 pospone por exceso de planeación. Cuando arrancas algo —un proyecto, una propuesta, una conversación difícil— se nota que hay motor propio.",
+        "Los regalos, sin embargo, hay que desenvolverlos. El tuyo se activa cada vez que tomas la primera acción sin esperar consenso total. No necesitas volverte impulsivo: necesitas recordar que en tu fórmula profesional el 1 va primero. Inicia tú, y deja que tu 2 negocie y tu 4 construya después."
+      ],
+      "numeros": ["Z"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "El regalo divino es la herramienta que no tuviste que ganarte: solo tienes que atreverte a usarla."
+      },
+      "cierre_accionable": "Presenta esa propuesta que llevas semanas puliendo. Al 80% de perfección, ya está lista para existir."
+    },
+    {
+      "id": "tu-anio-laboral",
+      "titulo": "Tu año 5: el ciclo se mueve",
+      "entradilla": "Año personal 5: cambios, oportunidades inesperadas y la tentación de cambiarlo todo.",
+      "cuerpo": [
+        "Atraviesas un año personal 5, y en lo profesional es inconfundible: propuestas que aparecen de la nada, ganas de renunciar un martes cualquiera, reestructuras, movimiento. El 5 trae oportunidades reales —es el año clásico de cambios de puesto, de ciudad o de rumbo— pero también espejismos: no todo lo que brilla en año 5 es oro; a veces es solo novedad.",
+        "La estrategia para tu cuadro es concreta: usa el 5 para explorar y tu 4 de realización para filtrar. Toma reuniones, escucha ofertas, prueba proyectos paralelos; pero decide solo lo que resista una pregunta de constructor: ¿esto suma a la obra de cinco años o solo me distrae de ella? El movimiento correcto este año puede adelantarte una década."
+      ],
+      "numeros": ["AP"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "El año 5 premia la flexibilidad y castiga tanto al que se aferra como al que salta sin mirar."
+      },
+      "cierre_accionable": "Ante cada oportunidad de este año, pregúntate: ¿construye mi obra o solo me entretiene? Decide después."
+    },
+    {
+      "id": "meta-del-ciclo",
+      "titulo": "La meta de tu ciclo: consolidar",
+      "entradilla": "Tu realización actual es 4: esta etapa de tu vida se gana echando cimientos, no recogiendo aplausos.",
+      "cuerpo": [
+        "Las realizaciones marcan la meta de fondo de cada etapa de la vida, y la tuya, ahora, es un 4: consolidación. Más allá del ruido del año 5, el encargo profundo de este ciclo es dejar estructura: patrimonio, método, reputación sólida, procesos que funcionen sin ti. Es la etapa de pasar de prometer a demostrar.",
+        "Que tu realización repita el número de tu destino no es coincidencia: es un ciclo alineado con tu propósito de fondo. Todo lo que construyas ahora cuenta doble. La paradoja de vivir una meta 4 durante un año 5 es tu examen de este año: moverte sin dejar de construir, cambiar de andamios sin tirar los cimientos."
+      ],
+      "numeros": ["REALIZACION"],
+      "destacado": null,
+      "cierre_accionable": "Elige un proceso caótico de tu trabajo y documéntalo esta semana. Cimiento pequeño, obra grande."
+    }
+  ],
+  "tension_central": {
+    "titulo": "Acompañar o encabezar",
+    "numeros": ["B", "H"],
+    "cuerpo": [
+      "La tensión profesional de tu cuadro es esta, Juan Pedro: tu esencia 2 trabaja mejor en equipo, acompañando, sin pelearse por el crédito; tu destino 4 kármico te exige una obra propia, con tu nombre y tu firma, sostenida con tu esfuerzo. El 2 dice 'juntos'; el 4 dice 'tuyo'. Y tú llevas años intentando complacer a los dos a medias.",
+      "Se nota en la práctica: eres el socio perfecto de los proyectos de otros. Los ordenas, los haces viables, los sostienes —y una parte de ti se pregunta cuándo tocará el propio—. Cada vez que pospones tu obra para apuntalar la ajena, el 2 gana la batalla y el 4 anota la deuda.",
+      "La resolución no es renunciar al equipo para volverte llanero solitario: sería amputarte el talento. Es invertir el orden de la fórmula: define primero TU obra —el 4 decide el qué— y luego arma el equipo que la construya contigo —el 2 decide el cómo—. No naciste para trabajar solo; naciste para convocar. Pero convocar exige que haya una obra tuya a la cual invitar."
+    ],
+    "como_resolverla": "Escribe tu obra en una frase y ponle fecha al primer entregable. Después, y solo después, invita gente. Cuando tu 2 trabaje al servicio de tu 4 —y no de los proyectos de todos los demás—, tu carrera dejará de avanzar en círculos."
+  },
+  "plan": [
+    {
+      "titulo": "Nombra tu obra",
+      "texto": "Escribe qué habrás construido en cinco años, en una frase verificable. El 4 kármico no se salda con horas: se salda con obra."
+    },
+    {
+      "titulo": "Inicia sin consenso",
+      "texto": "Una vez por semana, arranca algo sin pedir validación previa. Tu regalo 1 se oxida cada vez que esperas permiso."
+    },
+    {
+      "titulo": "Cotiza lo invisible",
+      "texto": "Lista lo que haces gratis por costumbre —cubrir, resolver, mediar— y convierte al menos una cosa en rol reconocido o pagado."
+    },
+    {
+      "titulo": "Toma el micrófono",
+      "texto": "Un acto de comunicación pública al mes: presentación, artículo, clase. Tu nombre 3 es un activo de carrera, no un adorno."
+    },
+    {
+      "titulo": "Filtra el año 5",
+      "texto": "Explora cada oportunidad, pero decide con la pregunta del constructor: ¿suma a mi obra? Si no suma, es entretenimiento con corbata."
+    }
+  ],
+  "cierre": "Juan Pedro, tu carrera no espera un golpe de suerte: espera una decisión de arquitecto. Ya tienes los planos (4), el motor de arranque (1), la voz para convocar (3) y el don de hacer que la gente construya en armonía (2). Lo único que ha faltado es que la obra sea la tuya. Este año de movimiento es el terreno perfecto: elige el lote, clava la primera estaca y empieza. Dentro de cinco años, alguien va a estar trabajando feliz en el equipo de Juan Pedro. Que ese alguien también seas tú."
+}
