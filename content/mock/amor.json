@@ -1,0 +1,137 @@
+{
+  "_mock": "Respuesta de EJEMPLO escrita a mano para revisar el diseño. Anclada a los números reales de Juan Pedro Martinez (20/11/1991): B=2, J=1, ALMA=3, AP=5, PAREJA=5, A=11, D=6, P=6, ANIO_REL=3.",
+  "titulo": "El que ama tendiendo puentes",
+  "subtitulo": "Amas desde la calma del 2, pero te enamora la chispa del 1",
+  "frase_clave": "Buscas fusión con alguien que te enseñe a estar solo.",
+  "resumen_portada": "Tu esencia 2 ama acompañando: escucha, cede, sostiene. Pero tu espejo es un 1, y por eso te deslumbran las personas independientes que no piden permiso. Este reporte recorre esa paradoja: cómo amas, qué te atrae, qué máscara pones en pareja y qué clima trae tu año 5 al terreno del amor.",
+  "retrato": {
+    "titulo": "Cómo amas cuando amas de verdad",
+    "cuerpo": [
+      "Juan Pedro, en el amor tu número personal 2 se vuelve tu carta de presentación: eres pareja de vínculo, de conversación larga, de estar ahí. No amas con fuegos artificiales sino con constancia; tu manera de decir te quiero es resolver, acompañar, anticiparte a lo que el otro necesita. Quien ha estado contigo lo sabe: contigo se está en paz.",
+      "Pero la paz no es lo que te enamora. Tu número del inconsciente, el 1, hace que te atraigan las personas decididas, autónomas, con dirección propia: justo lo contrario de lo que tu 2 practica. Esa mezcla explica tu historia amorosa mejor que cualquier anécdota: eliges personas fuertes, y luego sufres porque no te necesitan tanto como tú quisieras ser necesitado.",
+      "Y en medio de los dos, tu alma 3 pide algo que a veces olvidas pedir: juego. Risa, conversación, creatividad compartida. Cuando una relación se vuelve puro funcionamiento, tu alma se apaga aunque el vínculo funcione. Este mapa es para que ames entero: con el 2 que cuida, el 1 que admira y el 3 que celebra."
+    ]
+  },
+  "secciones": [
+    {
+      "id": "como-amas",
+      "titulo": "Tu manera de amar",
+      "entradilla": "El 2 ama en plural: tú eres la mitad que escucha, la que cede, la que une.",
+      "cuerpo": [
+        "Tu esencia 2 hace del vínculo su elemento natural. En pareja eres receptivo, diplomático y paciente; detectas el estado de ánimo del otro antes de que abra la boca, y tu instinto es siempre restaurar la armonía. Eres de los que prefieren una conversación a medianoche antes que un portazo, y eso convierte tus relaciones en lugares seguros.",
+        "El riesgo está en el exceso de tu virtud: el 2 puede ceder tanto que desaparece. Cuando llevas meses diciendo 'como tú quieras', la relación se queda sin la mitad de sus opiniones, y tú acumulas una inconformidad silenciosa que tarde o temprano cobra factura. Amar no es desaparecer: es estar presente incluso cuando tu presencia incomoda un poco."
+      ],
+      "numeros": ["B"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "El 2 vino a vivir la unión y el servicio; su lucha es no perderse en el otro."
+      },
+      "cierre_accionable": "La próxima vez que digas 'me da igual', detente y responde lo que de verdad prefieres."
+    },
+    {
+      "id": "que-te-atrae",
+      "titulo": "Lo que te atrae (y por qué)",
+      "entradilla": "Tu espejo es el 1: te enamoran la independencia y la decisión que crees no tener.",
+      "cuerpo": [
+        "El número del inconsciente funciona como un imán: señala lo que crees que te falta y por eso persigues en otros. El tuyo es el 1, la vibración del líder, del independiente, del que empieza cosas sin esperar aprobación. Por eso tu radar amoroso se enciende ante personas con carácter, con proyecto propio, con esa seguridad que parece no dudar nunca.",
+        "La trampa está en confundir admiración con complemento. Si entregas la iniciativa completa al otro, tu 2 se vuelve satélite y la relación se desequilibra: uno decide, otro acompaña, y el acompañante se apaga. La lectura sana de tu espejo es otra: ese 1 que admiras ya vive en ti —es tu nombre activo y tu regalo divino—. La pareja correcta no es la que lo tiene por los dos, sino la que celebra cuando tú lo estrenas."
+      ],
+      "numeros": ["J"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "El espejo (J) describe lo que te atrae porque crees que te falta; no siempre coincide con lo que necesitas."
+      },
+      "cierre_accionable": "En tu próxima cita o plan de pareja, propón tú el lugar, la hora y el plan completo. Observa qué sientes."
+    },
+    {
+      "id": "alma-en-el-amor",
+      "titulo": "Lo que tu alma necesita del amor",
+      "entradilla": "Tu alma 3 no pide seguridad: pide conversación, juego y un cómplice creativo.",
+      "cuerpo": [
+        "Las vocales de tu nombre suman 3, y ese es el anhelo silencioso que traes al amor: expresarte. Tu alma necesita una pareja con la que hablar de todo, reírse de casi todo y crear algo juntos, aunque sea el ritual de cocinar los domingos. Cuando eso existe, floreces; cuando la relación se vuelve puro trámite doméstico, te marchitas sin saber explicar por qué.",
+        "Aquí conviene vigilar una fricción fina: tu esencia 2 tolera la rutina en nombre de la paz, pero tu alma 3 se aburre en ella. Muchas de tus crisis internas de pareja no fueron falta de amor: fueron falta de juego. Nómbralo así y será mucho más fácil pedirlo sin drama."
+      ],
+      "numeros": ["ALMA"],
+      "destacado": null,
+      "cierre_accionable": "Agenda con tu pareja una actividad nueva al mes: algo que ninguno de los dos haya hecho antes."
+    },
+    {
+      "id": "mascara-en-pareja",
+      "titulo": "La máscara del cuidador",
+      "entradilla": "Tu personalidad 6 te presenta como el responsable: el que sostiene, arregla y provee calma.",
+      "cuerpo": [
+        "En el amor, tu 6 de personalidad es lo primero que el otro conoce de ti: un hombre que se hace cargo. Pagas, resuelves, recuerdas las fechas, notas cuando algo anda mal. Es una máscara hermosa y funcional: da confianza, y muchas personas se enamoran precisamente de esa solidez.",
+        "Pero la máscara del 6, sostenida sin descanso, se convierte en un contrato no firmado: tú cuidas, el otro se deja cuidar, y nadie pregunta quién te cuida a ti. Con tu sombra también en 6, el riesgo se duplica: puedes pasar del cuidado al control, y del servicio al reproche silencioso. El amor maduro para ti empieza cuando te dejas cuidar sin sentirte inútil."
+      ],
+      "numeros": ["D", "P"],
+      "destacado": {
+        "tipo": "alerta",
+        "texto": "Cuando el cuidado se vuelve moneda de cambio, deja de ser amor y empieza a ser deuda."
+      },
+      "cierre_accionable": "Pide esta semana una cosa concreta que necesites de tu pareja. Pedir también es intimidad."
+    },
+    {
+      "id": "tu-anio-en-el-amor",
+      "titulo": "El clima de tu año 5",
+      "entradilla": "Estás en un año personal 5: movimiento, cambio y una libertad que también toca al corazón.",
+      "cuerpo": [
+        "Tu año personal es un 5, la vibración del cambio, los viajes y la libertad. En el amor, este clima remueve lo que estaba quieto: si la relación es sólida, pide aire nuevo —viajar, mudarse, reinventar rituales—; si venía sostenida con alfileres, el 5 los descubre todos. No es un año para forzar definiciones, sino para dejar que el movimiento acomode las piezas.",
+        "Para tu 2, que ama la estabilidad, el año 5 puede sentirse como un temblor constante. La clave es no confundir movimiento con amenaza: este año el amor no se cuida quedándose quieto, se cuida acompañando el cambio. Las parejas que juegan juntas al 5 —novedad, aventura, planes espontáneos— salen de este año más vivas que nunca."
+      ],
+      "numeros": ["AP"],
+      "destacado": {
+        "tipo": "dato",
+        "texto": "En año 5 lo que se mueve no siempre se rompe: a veces solo está encontrando su lugar."
+      },
+      "cierre_accionable": "Planea una escapada sin itinerario cerrado antes de que termine el año. Deja que el 5 respire."
+    },
+    {
+      "id": "numero-de-pareja",
+      "titulo": "La vibración de ustedes dos",
+      "entradilla": "Con Ana Belén forman una pareja 5: una unión que vive de la aventura compartida.",
+      "cuerpo": [
+        "La suma de sus fechas da un número de pareja 5: una relación cuyo pacto secreto es no aburrirse jamás. Las parejas 5 crecen mientras exploran —lugares, ideas, proyectos— y se estancan cuando alguno intenta domesticar del todo a la unión. Que tu año personal también sea 5 no es menor: este año, la energía de la relación y la tuya apuntan en la misma dirección.",
+        "Su relación transita además un año de ciclo 3: etapa de comunicación, sociabilidad y disfrute. Es un buen año para rodearse de gente, celebrar y decirse las cosas con humor. El riesgo del 3 es la dispersión: mucha vida social y poca conversación de fondo. Un poco de los dos es la dosis justa."
+      ],
+      "numeros": ["PAREJA"],
+      "destacado": {
+        "tipo": "cita",
+        "texto": "La pareja 5 no se sostiene con promesas de quietud, sino con la promesa de moverse juntos."
+      },
+      "cierre_accionable": "Pregúntale a tu pareja qué aventura le debe la relación, y pónganle fecha este mes."
+    }
+  ],
+  "tension_central": {
+    "titulo": "Fusión o admiración",
+    "numeros": ["B", "J"],
+    "cuerpo": [
+      "Aquí está el nudo de tu vida amorosa, Juan Pedro. Tu esencia 2 quiere fusión: compartirlo todo, decidir juntos, no soltarse de la mano. Tu espejo 1 te hace elegir personas que valoran, por encima de casi todo, su independencia. Resultado: amas a quien necesita menos fusión de la que tú ofreces, y sientes esa distancia como rechazo cuando en realidad es la razón por la que te enamoraste.",
+      "Cada vez que persigues más cercanía, el otro defiende su espacio; cada vez que el otro toma aire, tu 2 lo lee como abandono. No es un defecto tuyo ni del otro: es la física de tus números funcionando sin traducción.",
+      "La salida no es buscar a alguien dependiente —te aburriría en un mes— ni amputarte la necesidad de vínculo. Es entender que elegiste a un 1 para aprender de él: su autonomía no es la amenaza de tu amor, es el modelo del tuyo propio. Cuanto más vida propia construyes, menos asfixia tu cercanía y más libre eres para amar por elección y no por hambre."
+    ],
+    "como_resolverla": "Cuando sientas el impulso de pedir más cercanía, primero date algo a ti: un plan tuyo, un proyecto tuyo, una tarde tuya. Vuelve al vínculo desde la abundancia, no desde la falta. El 2 que tiene vida propia es irresistible para cualquier 1."
+  },
+  "plan": [
+    {
+      "titulo": "Opina primero",
+      "texto": "Una vez al día, di lo que tú prefieres antes de preguntar qué prefiere tu pareja. El 2 que opina sigue siendo amoroso: solo deja de ser invisible."
+    },
+    {
+      "titulo": "Estrena tu 1",
+      "texto": "Arranca un proyecto personal que no dependa de nadie. Tu espejo deja de ser espejismo cuando la independencia que admiras empieza a ser tuya."
+    },
+    {
+      "titulo": "Juega con tu 3",
+      "texto": "Introduce novedad deliberada en la relación: un plan distinto cada mes. Tu alma ama con risa; no la condenes a la rutina."
+    },
+    {
+      "titulo": "Déjate cuidar",
+      "texto": "Pide algo concreto cada semana y recíbelo sin devolverlo al instante. El cuidador que no recibe termina cobrando."
+    },
+    {
+      "titulo": "Acompaña el año 5",
+      "texto": "No tomes la inquietud de este año como señal de ruptura. Muévete con ella: viaja, cambia, prueba. El amor este año se riega en movimiento."
+    }
+  ],
+  "cierre": "Juan Pedro, tu historia de amor no es la de un hombre que ama demasiado: es la de un puente que todavía no aprende que también tiene orillas propias. El 2 que concilia, el 1 que admira y el 3 que juega no se contradicen; se completan. El día que dejes de buscar en el otro la independencia que ya traes de regalo, el amor dejará de ser una negociación entre tu paz y tu deseo, y volverá a ser lo que tu alma vino a buscar: un lugar donde ser todo lo que eres, acompañado."
+}
