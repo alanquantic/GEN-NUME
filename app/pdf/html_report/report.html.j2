@@ -55,7 +55,8 @@
     <div class="q">{{ data.frase_clave }}</div>
   </div>
   <div class="open-body body">
-    {% for par in data.retrato.cuerpo %}<p>{{ par }}</p>{% endfor %}
+    <div class="col">{% for par in retrato_cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
+    {% if retrato_cols[1] %}<div class="col">{% for par in retrato_cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
   </div>
   <div class="folio"><span>{{ person_name }}</span><span class="num">02</span></div>
 </section>
@@ -125,22 +126,26 @@
     <h2 class="t sm">{{ sec.titulo }}</h2>
     {% if sec_chips[loop.index0] %}<div class="sec-nums-inline">{{ sec_chips[loop.index0] }}</div>{% endif %}
     {% if sec.entradilla %}<div class="entradilla-v2">{{ sec.entradilla }}</div>{% endif %}
+    {% set cols = sec_cols[loop.index0] %}
     <div class="sec-body">
-      {% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}
-      {% if sec.destacado %}
-      <div class="pull-v2 {{ sec.destacado.tipo }}">
-        <div class="ic">{{ {'cita':'❝','dato':'◆','alerta':'▲'}[sec.destacado.tipo] }}</div>
-        <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}[sec.destacado.tipo] }}</div>
-        <p>{{ sec.destacado.texto }}</p>
-      </div>
-      {% endif %}
-      {% if sec.cierre_accionable %}
-      <div class="accion-v2">
-        <div class="arrow">→</div>
-        <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
-      </div>
-      {% endif %}
+      <div class="col">{% for par in cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
+      {% if cols[1] %}<div class="col">{% for par in cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
     </div>
+    {# Fuera del contenedor de columnas: column-span:all dentro de multicol
+       mete a WeasyPrint en un loop infinito de paginación. #}
+    {% if sec.destacado %}
+    <div class="pull-v2 {{ sec.destacado.tipo if sec.destacado.tipo in ('cita','dato','alerta') else 'dato' }}">
+      <div class="ic">{{ {'cita':'❝','dato':'◆','alerta':'▲'}.get(sec.destacado.tipo, '◆') }}</div>
+      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}.get(sec.destacado.tipo, 'Dato') }}</div>
+      <p>{{ sec.destacado.texto }}</p>
+    </div>
+    {% endif %}
+    {% if sec.cierre_accionable %}
+    <div class="accion-v2">
+      <div class="arrow">→</div>
+      <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
+    </div>
+    {% endif %}
   </div>
   <div class="folio"><span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
@@ -156,22 +161,26 @@
   <div class="wm">{{ rail.value if rail else "%02d"|format(loop.index) }}</div>
   <div class="content">
     {% if sec.entradilla %}<div class="entradilla-v2">{{ sec.entradilla }}</div>{% endif %}
+    {% set cols = sec_cols[loop.index0] %}
     <div class="sec-body">
-      {% for par in sec.cuerpo %}<p>{{ par }}</p>{% endfor %}
-      {% if sec.destacado %}
-      <div class="pull-v2 {{ sec.destacado.tipo }}">
-        <div class="ic">{{ {'cita':'❝','dato':'◆','alerta':'▲'}[sec.destacado.tipo] }}</div>
-        <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}[sec.destacado.tipo] }}</div>
-        <p>{{ sec.destacado.texto }}</p>
-      </div>
-      {% endif %}
-      {% if sec.cierre_accionable %}
-      <div class="accion-v2">
-        <div class="arrow">→</div>
-        <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
-      </div>
-      {% endif %}
+      <div class="col">{% for par in cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
+      {% if cols[1] %}<div class="col">{% for par in cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
     </div>
+    {# Fuera del contenedor de columnas: column-span:all dentro de multicol
+       mete a WeasyPrint en un loop infinito de paginación. #}
+    {% if sec.destacado %}
+    <div class="pull-v2 {{ sec.destacado.tipo if sec.destacado.tipo in ('cita','dato','alerta') else 'dato' }}">
+      <div class="ic">{{ {'cita':'❝','dato':'◆','alerta':'▲'}.get(sec.destacado.tipo, '◆') }}</div>
+      <div class="kt">{{ {'cita':'Del texto de Laura','dato':'Dato','alerta':'Atención'}.get(sec.destacado.tipo, 'Dato') }}</div>
+      <p>{{ sec.destacado.texto }}</p>
+    </div>
+    {% endif %}
+    {% if sec.cierre_accionable %}
+    <div class="accion-v2">
+      <div class="arrow">→</div>
+      <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
+    </div>
+    {% endif %}
   </div>
   <div class="folio"><span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
@@ -195,7 +204,8 @@
     </div>
     {% endif %}
     <div class="argument">
-      {% for par in data.tension_central.cuerpo %}<p>{{ par }}</p>{% endfor %}
+      <div class="col">{% for par in tension_cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
+      {% if tension_cols[1] %}<div class="col">{% for par in tension_cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
     </div>
     {% if data.tension_central.como_resolverla %}
     <div class="resolve-v2">

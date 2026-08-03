@@ -42,6 +42,7 @@ class AIReportService:
 
         request = job.request
         today = request.today or date.today()
+        stage = "build_dossier"
 
         try:
             self.store.update(job_id, status="running", stage="build_dossier", error=None)
@@ -56,6 +57,7 @@ class AIReportService:
                 name_sanitize=request.person.name_sanitize,
             )
 
+            stage = "generate_text"
             self.store.update(job_id, stage="generate_text")
             generated = gen.generate(
                 dossier,
@@ -68,6 +70,7 @@ class AIReportService:
                 ),
             )
 
+            stage = "render_html"
             self.store.update(
                 job_id,
                 stage="render_html",
@@ -95,9 +98,11 @@ class AIReportService:
             )
             html_art = self.store.save_text_artifact(job_id, "report.html", html)
 
+            stage = "render_pdf"
             self.store.update(job_id, stage="render_pdf")
             pdf = hr.to_pdf(html)
 
+            stage = "save_outputs"
             self.store.update(job_id, stage="save_outputs")
             pdf_art = self._save_pdf_artifact(request, pdf)
             result = JobResult(pdf=pdf_art, html=html_art, json_report=json_art)
@@ -115,7 +120,10 @@ class AIReportService:
             self._notify_callback(done_job)
         except Exception as exc:  # noqa: BLE001
             logger.exception("Error en job IA %s", job_id)
-            error_job = self.store.update(job_id, status="error", stage="failed", error=str(exc))
+            # str(exc) puede venir vacío (p. ej. AssertionError de WeasyPrint):
+            # siempre se registra el tipo y la etapa donde reventó.
+            detail = f"{stage}: {type(exc).__name__}: {exc}".rstrip(": ")
+            error_job = self.store.update(job_id, status="error", stage="failed", error=detail)
             self._notify_callback(error_job)
 
     def _save_pdf_artifact(self, request: GenerateAIRequest, pdf: bytes) -> JobArtifact:

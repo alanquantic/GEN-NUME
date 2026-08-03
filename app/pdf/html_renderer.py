@@ -149,6 +149,26 @@ def _sec_chips(data: dict, numbers: Numbers) -> list[str]:
     return out
 
 
+def _split_columns(paragraphs: list) -> tuple[list, list]:
+    """Reparte párrafos en dos columnas equilibradas por longitud.
+
+    El multicol de CSS (column-count) mete a WeasyPrint en loops infinitos de
+    balanceo con ciertas alturas de contenido, así que las dos columnas se
+    arman con flex y el reparto se decide aquí, de forma determinista.
+    """
+    paragraphs = list(paragraphs or [])
+    if len(paragraphs) < 2:
+        return paragraphs, []
+    total = sum(len(p) for p in paragraphs)
+    acc, cut = 0, 1
+    for i, p in enumerate(paragraphs):
+        acc += len(p)
+        if acc >= total / 2:
+            cut = min(i + 1, len(paragraphs) - 1)
+            break
+    return paragraphs[:cut], paragraphs[cut:]
+
+
 def _cover_feature(report_key: str, numbers: Numbers) -> tuple[str, bool, str]:
     """(valor limpio, es kármico, etiqueta) del número protagonista de portada."""
     key, label = _COVER_FEATURE.get(report_key, ("B", "Tu número personal"))
@@ -321,6 +341,13 @@ def render_html(
         "charts": _charts(report_key, numbers, today_age, area),
         "sec_rail": _sec_rail(data, numbers),
         "sec_chips": _sec_chips(data, numbers),
+        "retrato_cols": _split_columns(data.get("retrato", {}).get("cuerpo", [])),
+        "sec_cols": [
+            _split_columns(s.get("cuerpo", [])) for s in data.get("secciones", [])
+        ],
+        "tension_cols": _split_columns(
+            data.get("tension_central", {}).get("cuerpo", [])
+        ),
         "tension_orbs": [o.rstrip("*") for o in _tension_orbs(data, numbers)],
         "tension_labels": [_LABEL.get(k, (k, ""))[0] for k in tension_keys],
         "legal": legal,
