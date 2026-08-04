@@ -14,3 +14,7 @@ restartPolicyMaxRetries = 3
 #       PUBLIC_BASE_URL=https://<tu-servicio>.up.railway.app
 #       STORAGE_DIR=/data
 #       ENVIRONMENT=production
+#       AI_PROVIDER=google
+#       AI_MODEL=gemini-3.5-flash   # no usar *-lite: inventa claves y rompe el esquema
+#       GOOGLE_API_KEY=<clave de AI Studio>
+#       PDF_COMPRESS=images         # images | slim | off (ver app/pdf/compress.py)
