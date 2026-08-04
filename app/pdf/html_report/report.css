@@ -385,13 +385,18 @@ h2.t.sm{ font-size:11.5mm; }
   opacity:.5;
 }
 
+/* Columnas con flex (el reparto de párrafos lo hace el renderer):
+   column-count balanceado provoca loops infinitos en WeasyPrint. */
 .open-body{
   position:relative;
   margin:9mm 20mm 0;
-  column-count:2;
-  column-gap:9mm;
+  display:flex;
+  gap:9mm;
+  align-items:flex-start;
   z-index:1;
 }
+
+.open-body .col{ flex:1 1 0; min-width:0; }
 
 .body p{
   font-size:3.5mm;
@@ -401,12 +406,13 @@ h2.t.sm{ font-size:11.5mm; }
   hyphens:auto;
 }
 
-.open-body p:first-child::first-letter{
+/* Letra elevada (sin float): el ::first-letter flotado dentro de columnas
+   dispara un AssertionError en WeasyPrint (layout/float.py). */
+.open-body .col:first-child p:first-child::first-letter{
   font-family:Georgia, serif;
-  font-size:16mm;
-  line-height:.8;
-  float:left;
-  padding:1.5mm 2.5mm 0 0;
+  font-size:9mm;
+  line-height:1;
+  padding-right:1.2mm;
   color:var(--area);
 }
 
@@ -554,15 +560,18 @@ h2.t.sm{ font-size:11.5mm; }
    ========================================================================== */
 .chart-page-v2{
   background:
-    linear-gradient(180deg, var(--area-soft) 0 34%, var(--paper) 34%);
+    linear-gradient(180deg, var(--area-soft) 0%, var(--area-soft) 34%, var(--paper) 34%, var(--paper) 100%);
 }
 
+/* Texto vertical vía rotate puro: WeasyPrint no soporta writing-mode y
+   dejaba la etiqueta de cabeza. Origen 0 0: el texto sube desde el ancla. */
 .chart-page-v2 .side-eyebrow{
   position:absolute;
-  top:26mm;
-  left:9mm;
-  transform:rotate(180deg);
-  writing-mode:vertical-rl;
+  top:110mm;
+  left:8mm;
+  transform-origin:0 0;
+  transform:rotate(-90deg);
+  white-space:nowrap;
   font:700 3mm/1 "Open Sans", sans-serif;
   letter-spacing:.32em;
   text-transform:uppercase;
@@ -663,9 +672,9 @@ h2.t.sm{ font-size:11.5mm; }
 .sec-a .band .rail-label{
   position:absolute;
   bottom:16mm;
-  left:50%;
-  transform:translateX(-50%) rotate(180deg);
-  writing-mode:vertical-rl;
+  left:6.6mm;
+  transform-origin:0 0;
+  transform:rotate(-90deg);
   font:700 2.7mm/1 "Open Sans", sans-serif;
   letter-spacing:.3em;
   text-transform:uppercase;
@@ -782,9 +791,12 @@ h2.t.sm{ font-size:11.5mm; }
 .sec-b .entradilla-v2{ margin-top:8mm; }
 
 .sec-body{
-  column-count:2;
-  column-gap:8mm;
+  display:flex;
+  gap:8mm;
+  align-items:flex-start;
 }
+
+.sec-body .col{ flex:1 1 0; min-width:0; }
 
 .sec-body p{
   font-size:3.4mm;
@@ -794,18 +806,17 @@ h2.t.sm{ font-size:11.5mm; }
   hyphens:auto;
 }
 
-.sec-body p:first-child::first-letter{
+.sec-body .col:first-child p:first-child::first-letter{
   font-family:Georgia, serif;
-  font-size:13mm;
-  line-height:.82;
-  float:left;
-  padding:1.2mm 2.2mm 0 0;
+  font-size:7.5mm;
+  line-height:1;
+  padding-right:1mm;
   color:var(--area);
 }
 
-/* Destacado: tarjeta que interrumpe las columnas */
+/* Destacado: tarjeta a todo lo ancho, como hermana del bloque de columnas.
+   (Nunca column-span:all dentro del multicol: WeasyPrint entra en loop.) */
 .pull-v2{
-  column-span:all;
   position:relative;
   margin:5mm 0 6mm;
   padding:5.5mm 7mm 5.5mm 16mm;
@@ -859,7 +870,6 @@ h2.t.sm{ font-size:11.5mm; }
 
 /* Cierre accionable: sello con flecha */
 .accion-v2{
-  column-span:all;
   display:flex;
   align-items:center;
   gap:5mm;
@@ -899,7 +909,9 @@ h2.t.sm{ font-size:11.5mm; }
   position:relative;
   height:100%;
   color:#fff;
-  background:linear-gradient(115deg, var(--area) 0 52%, #221632 52% 100%);
+  /* Sin sintaxis de doble posición (color 0 52%): WeasyPrint no la soporta
+     y descarta el fondo completo. */
+  background:linear-gradient(115deg, var(--area) 0%, var(--area) 52%, #221632 52%, #221632 100%);
 }
 
 .tension-v2 .grain{
@@ -956,8 +968,10 @@ h2.t.sm{ font-size:11.5mm; }
 .tension-v2 .duel .n.right{
   right:6mm;
   bottom:0;
-  color:transparent;
-  -webkit-text-stroke:.7mm var(--accent);
+  /* Dorado sólido: color:transparent + text-stroke deja el número
+     invisible en WeasyPrint (no soporta el stroke). */
+  color:var(--accent);
+  opacity:.85;
 }
 
 .tension-v2 .duel .n small{
@@ -990,10 +1004,13 @@ h2.t.sm{ font-size:11.5mm; }
   margin:6mm 20mm 0;
   padding:7mm 8mm 0;
   border-top:1px solid rgba(255,255,255,.22);
-  column-count:2;
-  column-gap:8mm;
+  display:flex;
+  gap:8mm;
+  align-items:flex-start;
   z-index:2;
 }
+
+.tension-v2 .argument .col{ flex:1 1 0; min-width:0; }
 
 .tension-v2 .argument p{
   font-size:3.2mm;
@@ -1159,10 +1176,9 @@ h2.t.sm{ font-size:11.5mm; }
 }
 
 .final-v2 .closing::first-letter{
-  font-size:14mm;
-  line-height:.8;
-  float:left;
-  padding:1.5mm 3mm 0 0;
+  font-size:9.5mm;
+  line-height:1;
+  padding-right:1.5mm;
   color:var(--accent);
 }
 
