@@ -16,9 +16,31 @@ Proveedores:
 from __future__ import annotations
 
 import json
+import logging
+import time
 from typing import Any
 
+logger = logging.getLogger("reportpdf.ai")
+
 Result = tuple[dict, str, dict, str | None]
+
+# Reintentos ante errores transitorios del proveedor (503 saturado, 429,
+# 5xx, cortes de red). Un pico de demanda de un par de minutos no debe
+# matar el reporte de un cliente. Esperas: 5s, 15s, 45s.
+_RETRY_DELAYS = (5, 15, 45)
+_TRANSIENT_CODES = {429, 500, 502, 503, 504, 529}
+
+
+def _is_transient(exc: Exception) -> bool:
+    for attr in ("status_code", "code"):
+        value = getattr(exc, attr, None)
+        if isinstance(value, int):
+            return value in _TRANSIENT_CODES
+    # Errores de conexión/timeout de ambos SDKs, sin importarlos aquí.
+    return type(exc).__name__ in {
+        "APIConnectionError", "APITimeoutError", "ServerError",
+        "ConnectionError", "TimeoutError",
+    }
 
 
 def call(settings, system: str, user: str, schema: dict) -> Result:
@@ -26,11 +48,31 @@ def call(settings, system: str, user: str, schema: dict) -> Result:
     ensure_system_trust()          # verifica contra el almacén del SO si hace falta
     provider = settings.ai_provider
     if provider == "anthropic":
-        return _anthropic(settings, system, user, schema)
-    if provider == "google":
-        return _google(settings, system, user, schema)
-    raise ValueError(f"proveedor de IA desconocido: {provider!r} "
-                     "(usa 'anthropic' o 'google')")
+        fn = _anthropic
+    elif provider == "google":
+        fn = _google
+    else:
+        raise ValueError(f"proveedor de IA desconocido: {provider!r} "
+                         "(usa 'anthropic' o 'google')")
+
+    last: Exception | None = None
+    for delay in (0, *_RETRY_DELAYS):
+        if delay:
+            logger.warning(
+                "Error transitorio del proveedor %s (%s); reintento en %ss",
+                provider, last, delay,
+            )
+            time.sleep(delay)
+        try:
+            return fn(settings, system, user, schema)
+        except Exception as exc:  # noqa: BLE001 — sólo se reintenta lo transitorio
+            if not _is_transient(exc):
+                raise
+            last = exc
+    raise RuntimeError(
+        f"El proveedor {provider} sigue sin responder tras "
+        f"{len(_RETRY_DELAYS) + 1} intentos: {last}"
+    ) from last
 
 
 # --------------------------------------------------------------------------- #

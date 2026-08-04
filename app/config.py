@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     def resolved_model(self) -> str:
         """Modelo efectivo según el proveedor."""
         if self.ai_provider == "google" and not self.ai_model.startswith("gemini"):
-            return "gemini-3.5-flash"
+            return "gemini-3.6-flash"
         return self.ai_model
 
     @property
