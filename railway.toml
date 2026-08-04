@@ -20,10 +20,8 @@ restartPolicyMaxRetries = 3
 #       PDF_COMPRESS=images         # images | slim | off (ver app/pdf/compress.py)
 #   - Alertas por correo cuando un reporte falla por proveedor caído
 #     (reintenta 2 veces con 5 min de espera y luego avisa a ALERT_EMAIL):
-#       SMTP_HOST=smtp.gmail.com    # o el SMTP que usen
-#       SMTP_PORT=587               # 587 STARTTLS · 465 SSL
-#       SMTP_USER=<usuario>
-#       SMTP_PASSWORD=<contraseña o app password>
-#       SMTP_FROM=<remitente>       # opcional; por defecto SMTP_USER
-#       ALERT_EMAIL=andres@ceosnm.com   # opcional; ese es el default
+#       RESEND_API_KEY=re_...       # vía preferida (API HTTPS de Resend)
+#       MAIL_FROM=Numerología Cotidiana <alertas@mail.numerologia-cotidiana.com>
+#       ALERT_EMAIL=andres@ceosnm.com   # opcionales; esos son los defaults
+#     (alternativa SMTP: SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASSWORD)
 #     Probar con: py -3 scripts/test_alert_email.py --enviar

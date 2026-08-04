@@ -40,13 +40,15 @@ class Settings(BaseSettings):
     ai_deferred_retries: int = 2
     ai_retry_delay_seconds: int = 300          # 5 minutos
     alert_email: str = "andres@ceosnm.com"
-    # SMTP para las alertas (en Railway van como Variables). Sin smtp_host
-    # el correo se omite con un warning en logs; nada se rompe.
+    mail_from: str = "Numerología Cotidiana <alertas@mail.numerologia-cotidiana.com>"
+    # Vía preferida: Resend (API HTTPS; en Railway no depende de puertos SMTP).
+    resend_api_key: str | None = None
+    # Alternativa: SMTP clásico. Sin resend_api_key ni smtp_host, el correo
+    # se omite con un warning en logs; nada se rompe.
     smtp_host: str | None = None
     smtp_port: int = 587
     smtp_user: str | None = None
     smtp_password: str | None = None
-    smtp_from: str | None = None               # por defecto usa smtp_user
 
     # --- Compresión de los PDF generados -------------------------------- #
     # "images": recomprime los fondos JPG de los reportes clásicos (ahorra
