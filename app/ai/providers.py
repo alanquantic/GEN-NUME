@@ -24,6 +24,12 @@ logger = logging.getLogger("reportpdf.ai")
 
 Result = tuple[dict, str, dict, str | None]
 
+
+class ProviderUnavailableError(RuntimeError):
+    """El modelo/servicio no está disponible tras agotar los reintentos
+    inmediatos. El service la usa para programar un reintento diferido
+    (y avisar por correo si también falla)."""
+
 # Reintentos ante errores transitorios del proveedor (503 saturado, 429,
 # 5xx, cortes de red). Un pico de demanda de un par de minutos no debe
 # matar el reporte de un cliente. Esperas: 5s, 15s, 45s.
@@ -69,7 +75,7 @@ def call(settings, system: str, user: str, schema: dict) -> Result:
             if not _is_transient(exc):
                 raise
             last = exc
-    raise RuntimeError(
+    raise ProviderUnavailableError(
         f"El proveedor {provider} sigue sin responder tras "
         f"{len(_RETRY_DELAYS) + 1} intentos: {last}"
     ) from last

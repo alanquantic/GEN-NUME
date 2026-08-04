@@ -4,16 +4,20 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from datetime import date
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
+from .. import alerts
+from ..config import settings
 from ..domain.dates import format_long_date
 from ..pdf import html_renderer as hr
 from ..security import sign
 from . import dossier as dsr
 from . import generate as gen
 from .job_store import AIJobStore
+from .providers import ProviderUnavailableError
 from .recipes import REPORTS
 from .schemas import GenerateAIRequest, JobArtifact, JobResult, JobStatusResponse, StoredJob
 
@@ -118,6 +122,43 @@ class AIReportService:
                 error=None,
             )
             self._notify_callback(done_job)
+        except ProviderUnavailableError as exc:
+            # El modelo/servicio no está disponible. Reintento diferido; si el
+            # último también falla, alerta por correo con los datos del reporte.
+            attempts = job.attempts
+            if attempts < settings.ai_deferred_retries:
+                delay = settings.ai_retry_delay_seconds
+                logger.warning(
+                    "Job %s: proveedor no disponible; reintento diferido "
+                    "%s/%s en %ss", job_id, attempts + 1,
+                    settings.ai_deferred_retries, delay,
+                )
+                self.store.update(
+                    job_id,
+                    status="queued",
+                    stage="reintento_programado",
+                    attempts=attempts + 1,
+                    error=(
+                        f"proveedor no disponible; reintento "
+                        f"{attempts + 1}/{settings.ai_deferred_retries} "
+                        f"programado: {exc}"
+                    ),
+                )
+                timer = threading.Timer(delay, self.process_job, args=(job_id,))
+                timer.daemon = True
+                timer.start()
+                return
+            logger.error(
+                "Job %s: proveedor no disponible tras %s reintentos "
+                "diferidos; se marca error y se alerta por correo",
+                job_id, attempts,
+            )
+            detail = f"{stage}: proveedor no disponible: {exc}"
+            error_job = self.store.update(
+                job_id, status="error", stage="failed", error=detail,
+            )
+            alerts.send_report_failure(error_job)
+            self._notify_callback(error_job)
         except Exception as exc:  # noqa: BLE001
             logger.exception("Error en job IA %s", job_id)
             # str(exc) puede venir vacío (p. ej. AssertionError de WeasyPrint):
