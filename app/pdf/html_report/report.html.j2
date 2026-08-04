@@ -15,10 +15,15 @@
 </head>
 <body>
 
+{# Los puntos decorativos son elementos sólidos (<i>), no degradados de
+   fondo: así cada página carga 2-3 shadings en vez de ~15 y el visor de
+   PDF no se arrastra al hacer scroll. #}
+{% set sky_dots %}<div class="sky"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>{% endset %}
+
 {# ============ 1 · PORTADA ============ #}
 <section class="page">
   <div class="cover-v2">
-    <div class="stars"></div>
+    <div class="stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="ring a"></div>
     <div class="ring b"></div>
     <div class="ring c"></div>
@@ -43,7 +48,7 @@
 
 {# ============ 2 · APERTURA / RETRATO ============ #}
 <section class="page">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="aura tl"></div>
   <div class="wm" style="right:-18mm; top:-14mm;">{{ cover_number_clean }}</div>
   <div class="open-head">
@@ -63,7 +68,7 @@
 
 {# ============ 3 · NÚMEROS (BENTO) ============ #}
 <section class="page">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="aura br"></div>
   <div class="open-head">
     <div class="eyebrow">Tu mapa</div>
@@ -87,7 +92,7 @@
 {# ============ 4 · GRÁFICOS ============ #}
 {% for chart in charts %}
 <section class="page chart-page-v2">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="side-eyebrow">{{ chart.eyebrow }}</div>
   <div class="chart-head-v2">
     <div>
@@ -109,7 +114,7 @@
 {% set rail = sec_rail[loop.index0] %}
 {% if loop.index0 % 2 == 0 %}
 <section class="page sec-a">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="wm">{{ rail.value if rail else "%02d"|format(loop.index) }}</div>
   <div class="band">
     <div class="idx">{{ "%02d"|format(loop.index) }}</div>
@@ -151,7 +156,7 @@
 </section>
 {% else %}
 <section class="page sec-b">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="header">
     <div class="idx-ghost">{{ "%02d"|format(loop.index) }}</div>
     <div class="eyebrow">{{ "%02d"|format(loop.index) }} · {{ sec.id|replace("-", " ") }}</div>
@@ -190,7 +195,7 @@
 {# ============ 6 · TENSIÓN CENTRAL (diagonal) ============ #}
 <section class="page">
   <div class="tension-v2">
-    <div class="grain"></div>
+    <div class="grain"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="seam"></div>
     <div class="head">
       <div class="eyebrow">La tensión central</div>
@@ -218,7 +223,7 @@
 
 {# ============ 7 · PLAN (línea de tiempo) ============ #}
 <section class="page">
-  <div class="sky"></div>
+  {{ sky_dots }}
   <div class="aura tl"></div>
   <div class="open-head">
     <div class="eyebrow">Tu plan</div>

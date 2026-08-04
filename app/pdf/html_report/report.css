@@ -75,16 +75,26 @@ body{
   position:absolute;
   inset:0;
   pointer-events:none;
-  background-image:
-    radial-gradient(circle 1.1mm at 12% 8%,  var(--area-soft) 45%, transparent 55%),
-    radial-gradient(circle .7mm  at 22% 16%, var(--accent-soft) 45%, transparent 60%),
-    radial-gradient(circle .8mm  at 86% 12%, var(--area-soft) 45%, transparent 55%),
-    radial-gradient(circle .6mm  at 78% 26%, var(--accent-soft) 40%, transparent 60%),
-    radial-gradient(circle 1mm   at 92% 58%, var(--area-soft) 45%, transparent 55%),
-    radial-gradient(circle .7mm  at 8%  72%, var(--accent-soft) 40%, transparent 60%),
-    radial-gradient(circle .9mm  at 16% 90%, var(--area-soft) 45%, transparent 55%),
-    radial-gradient(circle .6mm  at 88% 88%, var(--area-soft) 40%, transparent 60%);
 }
+
+/* Constelación con puntos SÓLIDOS (<i>), no con radial-gradients: cada
+   degradado de fondo se vuelve un shading a página completa en el PDF y
+   el visor los recalcula al hacer scroll (se sentía lento al navegar). */
+.sky i{
+  position:absolute;
+  border-radius:50%;
+  background:var(--area-soft);
+}
+
+.sky i:nth-child(2n){ background:var(--accent-soft); }
+.sky i:nth-child(1){ width:2.2mm; height:2.2mm; left:12%; top:8%; }
+.sky i:nth-child(2){ width:1.4mm; height:1.4mm; left:22%; top:16%; }
+.sky i:nth-child(3){ width:1.6mm; height:1.6mm; left:86%; top:12%; }
+.sky i:nth-child(4){ width:1.2mm; height:1.2mm; left:78%; top:26%; }
+.sky i:nth-child(5){ width:2mm;   height:2mm;   left:92%; top:58%; }
+.sky i:nth-child(6){ width:1.4mm; height:1.4mm; left:8%;  top:72%; }
+.sky i:nth-child(7){ width:1.8mm; height:1.8mm; left:16%; top:90%; }
+.sky i:nth-child(8){ width:1.2mm; height:1.2mm; left:88%; top:88%; }
 
 .aura{
   position:absolute;
@@ -146,27 +156,34 @@ body{
   position:relative;
   height:100%;
   color:#fff;
-  background:
-    radial-gradient(90% 60% at 82% 18%, rgba(255,255,255,.14), transparent 60%),
-    radial-gradient(70% 55% at 12% 88%, rgba(0,0,0,.35), transparent 65%),
-    linear-gradient(150deg, var(--area) 0%, var(--area-deep) 78%);
+  /* Una sola capa: cada capa extra de fondo es otro shading que el visor
+     recalcula al navegar. */
+  background:linear-gradient(150deg, var(--area) 0%, var(--area-deep) 78%);
 }
 
 .cover-v2 .stars{
   position:absolute;
   inset:0;
-  background-image:
-    radial-gradient(circle .5mm at 15% 12%, rgba(255,255,255,.9) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 28% 22%, rgba(255,255,255,.6) 40%, transparent 60%),
-    radial-gradient(circle .4mm at 55% 9%,  rgba(255,255,255,.75) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 70% 30%, rgba(255,255,255,.55) 40%, transparent 60%),
-    radial-gradient(circle .5mm at 87% 44%, rgba(255,255,255,.8) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 8%  47%, rgba(255,255,255,.5) 40%, transparent 60%),
-    radial-gradient(circle .4mm at 22% 64%, rgba(255,255,255,.65) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 64% 71%, rgba(255,255,255,.5) 40%, transparent 60%),
-    radial-gradient(circle .5mm at 40% 86%, rgba(255,255,255,.7) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 90% 80%, rgba(255,255,255,.55) 40%, transparent 60%);
 }
+
+/* Estrellas sólidas (<i>) por la misma razón que .sky */
+.cover-v2 .stars i{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.75);
+}
+
+.cover-v2 .stars i:nth-child(2n){ background:rgba(255,255,255,.5); }
+.cover-v2 .stars i:nth-child(1){ width:1mm;  height:1mm;  left:15%; top:12%; }
+.cover-v2 .stars i:nth-child(2){ width:.6mm; height:.6mm; left:28%; top:22%; }
+.cover-v2 .stars i:nth-child(3){ width:.8mm; height:.8mm; left:55%; top:9%; }
+.cover-v2 .stars i:nth-child(4){ width:.6mm; height:.6mm; left:70%; top:30%; }
+.cover-v2 .stars i:nth-child(5){ width:1mm;  height:1mm;  left:87%; top:44%; }
+.cover-v2 .stars i:nth-child(6){ width:.6mm; height:.6mm; left:8%;  top:47%; }
+.cover-v2 .stars i:nth-child(7){ width:.8mm; height:.8mm; left:22%; top:64%; }
+.cover-v2 .stars i:nth-child(8){ width:.6mm; height:.6mm; left:64%; top:71%; }
+.cover-v2 .stars i:nth-child(9){ width:1mm;  height:1mm;  left:40%; top:86%; }
+.cover-v2 .stars i:nth-child(10){ width:.6mm; height:.6mm; left:90%; top:80%; }
 
 .cover-v2 .ring{
   position:absolute;
@@ -205,7 +222,6 @@ body{
   font:400 168mm/0.78 Georgia, serif;
   letter-spacing:-.06em;
   color:rgba(255,255,255,.16);
-  text-shadow:0 0 18mm rgba(255,255,255,.18);
 }
 
 .cover-v2 .meganum .in{
@@ -917,13 +933,19 @@ h2.t.sm{ font-size:11.5mm; }
 .tension-v2 .grain{
   position:absolute;
   inset:0;
-  background-image:
-    radial-gradient(circle .4mm at 20% 15%, rgba(255,255,255,.5) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 74% 12%, rgba(255,255,255,.4) 40%, transparent 60%),
-    radial-gradient(circle .4mm at 88% 38%, rgba(255,255,255,.45) 40%, transparent 60%),
-    radial-gradient(circle .3mm at 10% 55%, rgba(255,255,255,.35) 40%, transparent 60%),
-    radial-gradient(circle .4mm at 55% 78%, rgba(255,255,255,.4) 40%, transparent 60%);
 }
+
+.tension-v2 .grain i{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.45);
+}
+
+.tension-v2 .grain i:nth-child(1){ width:.8mm; height:.8mm; left:20%; top:15%; }
+.tension-v2 .grain i:nth-child(2){ width:.6mm; height:.6mm; left:74%; top:12%; }
+.tension-v2 .grain i:nth-child(3){ width:.8mm; height:.8mm; left:88%; top:38%; }
+.tension-v2 .grain i:nth-child(4){ width:.6mm; height:.6mm; left:10%; top:55%; }
+.tension-v2 .grain i:nth-child(5){ width:.8mm; height:.8mm; left:55%; top:78%; }
 
 .tension-v2 .seam{
   position:absolute;
@@ -962,7 +984,6 @@ h2.t.sm{ font-size:11.5mm; }
   left:6mm;
   top:0;
   color:#fff;
-  text-shadow:0 3mm 12mm rgba(0,0,0,.35);
 }
 
 .tension-v2 .duel .n.right{
@@ -1144,9 +1165,7 @@ h2.t.sm{ font-size:11.5mm; }
   display:flex;
   flex-direction:column;
   justify-content:center;
-  background:
-    radial-gradient(80% 55% at 50% 118%, rgba(211,174,54,.25), transparent 60%),
-    linear-gradient(165deg, var(--area-deep) 0%, #1A1026 80%);
+  background:linear-gradient(165deg, var(--area-deep) 0%, #1A1026 80%);
 }
 
 .final-v2 .ring{
