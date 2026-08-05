@@ -93,6 +93,8 @@ class AIReportService:
                 birth_long=format_long_date(request.person.birth_date),
                 today_long=format_long_date(today),
                 today_age=dossier.numbers.pinnacle.age_at(today),
+                birth_date=request.person.birth_date,
+                today=today,
             )
 
             json_art = self.store.save_text_artifact(
