@@ -18,3 +18,10 @@ restartPolicyMaxRetries = 3
 #       AI_MODEL=gemini-3.6-flash   # no usar *-lite: inventa claves y rompe el esquema
 #       GOOGLE_API_KEY=<clave de AI Studio>
 #       PDF_COMPRESS=images         # images | slim | off (ver app/pdf/compress.py)
+#   - Alertas por correo cuando un reporte falla por proveedor caído
+#     (reintenta 2 veces con 5 min de espera y luego avisa a ALERT_EMAIL):
+#       RESEND_API_KEY=re_...       # vía preferida (API HTTPS de Resend)
+#       MAIL_FROM=Numerología Cotidiana <alertas@mail.numerologia-cotidiana.com>
+#       ALERT_EMAIL=andres@ceosnm.com   # opcionales; esos son los defaults
+#     (alternativa SMTP: SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASSWORD)
+#     Probar con: py -3 scripts/test_alert_email.py --enviar

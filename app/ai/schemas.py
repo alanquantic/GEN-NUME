@@ -100,6 +100,8 @@ class StoredJob(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     model: str | None = None
     usage: dict[str, int] | None = None
+    # Reintentos diferidos ya consumidos por indisponibilidad del proveedor.
+    attempts: int = 0
 
     def public_view(self) -> JobStatusResponse:
         return JobStatusResponse.model_validate(

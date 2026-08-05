@@ -1,12 +1,15 @@
-"""Renderiza un reporte dinamico: JSON + numeros -> HTML -> PDF."""
+"""Renderiza un reporte dinámico: JSON + números -> HTML -> PDF."""
 
 from __future__ import annotations
 
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
 from ..ai.numbers import Numbers
+from ..domain.time_wheel import month_data, quarter_arcs
 from . import charts
+from .charts import _mix
 
 _DIR = Path(__file__).resolve().parent / "html_report"
 
@@ -19,23 +22,23 @@ AREA_HEX = {
 }
 
 _LABEL = {
-    "B": ("Esencia", "numero personal · el dia"),
+    "B": ("Esencia", "número personal · el día"),
     "A": ("Karma", "el mes · tu clan"),
-    "C": ("Vida pasada", "el ano"),
-    "D": ("Personalidad", "tu mascara"),
-    "H": ("Destino", "a donde vas"),
-    "I": ("Subconsciente", "tu brujula"),
+    "C": ("Vida pasada", "el año"),
+    "D": ("Personalidad", "tu máscara"),
+    "H": ("Destino", "a dónde vas"),
+    "I": ("Subconsciente", "tu brújula"),
     "J": ("Espejo", "lo que te atrae"),
     "P": ("Sombra", "tu punto ciego"),
     "ALMA": ("Alma", "vocales del nombre"),
-    "EXPRESION": ("Expresion", "consonantes"),
+    "EXPRESION": ("Expresión", "consonantes"),
     "NOMBRE": ("Nombre", "todas las letras"),
     "Z": ("Regalo divino", "tu don"),
-    "Y": ("Mision", "tu sintesis"),
-    "X": ("Reaccion", "como te ven"),
-    "AP": ("Ano personal", "tu ano en curso"),
+    "Y": ("Misión", "tu síntesis"),
+    "X": ("Reacción", "cómo te ven"),
+    "AP": ("Año personal", "tu año en curso"),
     "MADUREZ": ("Madurez", "la segunda mitad"),
-    "PAREJA": ("Pareja", "la union"),
+    "PAREJA": ("Pareja", "la unión"),
 }
 
 _FICHA = {
@@ -61,30 +64,16 @@ _COVER_FEATURE = {
 _BENTO_CYCLE = ["soft", "", "gold", "", "dark", "", "soft", ""]
 
 LEGAL_BASE = (
-    "Este reporte esta redactado a partir del metodo y los textos de "
-    "Numerologia Cotidiana de Laura L. Rodriguez. La numerologia es una "
+    "Este reporte está redactado a partir del método y los textos de "
+    "Numerología Cotidiana de Laura L. Rodríguez. La numerología es una "
     "herramienta de autoconocimiento; sus interpretaciones no sustituyen el "
     "criterio profesional en ninguna materia."
 )
 LEGAL_BIENESTAR = (
-    " Este contenido trata de energia, habitos y bienestar general, y no "
-    "constituye diagnóstico, consejo ni tratamiento medico o psicologico. "
-    "Ante cualquier sintoma, consulta a un profesional de la salud."
+    " Este contenido trata de energía, hábitos y bienestar general, y no "
+    "constituye diagnóstico, consejo ni tratamiento médico o psicológico. "
+    "Ante cualquier síntoma, consulta a un profesional de la salud."
 )
-
-
-def _mix(hex_color: str, target: str, ratio: float) -> str:
-    """Mezcla dos colores hex para no depender de color-mix() en CSS."""
-    ratio = max(0.0, min(1.0, ratio))
-
-    def _rgb(value: str) -> tuple[int, int, int]:
-        value = value.lstrip("#")
-        return tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
-
-    src = _rgb(hex_color)
-    dst = _rgb(target)
-    mixed = tuple(round(src[i] * (1 - ratio) + dst[i] * ratio) for i in range(3))
-    return "#" + "".join(f"{c:02X}" for c in mixed)
 
 
 @lru_cache(maxsize=1)
@@ -184,13 +173,13 @@ def _numbers_note(numbers: Numbers) -> str:
     bits = []
     if pin.karmic_debts:
         bits.append(
-            '<span class="star">*</span> Los numeros marcados son '
-            "<b>karmicos</b>: deudas que este camino viene a saldar."
+            '<span class="star">*</span> Los números marcados son '
+            "<b>kármicos</b>: deudas que este camino viene a saldar."
         )
     if pin.h_alternative is not None:
         bits.append(
             f"Tu destino puede vivirse como <b>{pin.h}</b> o elevarse a "
-            f"su vibracion maestra <b>{pin.h_alternative}</b>."
+            f"su vibración maestra <b>{pin.h_alternative}</b>."
         )
     if pin.absences:
         aus = ", ".join(str(a) for a in pin.absences)
@@ -198,7 +187,14 @@ def _numbers_note(numbers: Numbers) -> str:
     return " ".join(bits)
 
 
-def _charts(report_key: str, numbers: Numbers, today_age: int, area: str) -> list[dict]:
+def _charts(
+    report_key: str,
+    numbers: Numbers,
+    today_age: int,
+    area: str,
+    birth_date: date,
+    today: date,
+) -> list[dict]:
     pin = numbers.pinnacle
     out: list[dict] = []
 
@@ -214,68 +210,91 @@ def _charts(report_key: str, numbers: Numbers, today_age: int, area: str) -> lis
                 }
             )
 
+    def time_wheel() -> str:
+        ap = int(numbers.get("AP") or 0)
+        return charts.time_wheel_svg(
+            numbers.get("AP") or "",
+            today.year,
+            month_data(ap, today.year),
+            quarter_arcs(birth_date, today.year, today.month),
+            today.month,
+            area,
+        )
+
+    wheel_caption = (
+        "Tu año, desglosado: el año personal al centro, los cuatrimestres en "
+        "dorado (arrancan en tu mes de nacimiento, marcado con el rombo) y, por "
+        "cada mes, su mes personal, el universal (en pequeño) y las cuatro "
+        "semanas personales del borde. El sector sólido es tu mes en curso."
+    )
+    name_caption = (
+        "Cada letra de tu nombre aporta un número: arriba, las vocales que "
+        "suman tu alma; abajo, las consonantes que suman tu expresión. Los "
+        "círculos del final son el resultado de cada fila."
+    )
+
     if report_key == "quien-soy":
         cap = ""
         if pin.special_pinnacle:
             cap = (
-                "Tu zona inferior esta llena de ceros: es un <b>Pinaculo "
-                "Especial</b>, con la energia de los desafios volcada hacia "
+                "Tu zona inferior está llena de ceros: es un <b>Pináculo "
+                "Especial</b>, con la energía de los desafíos volcada hacia "
                 "lo colectivo."
             )
-        add("Tu pinaculo personal", "Un mapa que no cambia jamas", charts.pinnacle_svg(pin), cap, kind="map")
+        add("Tu pináculo personal", "Un mapa que no cambia jamás", charts.pinnacle_svg(pin), cap, kind="map")
         add(
             "El poder de tu nombre",
-            "Cada letra, una vibracion",
-            charts.name_strip_svg(numbers.name_sanitize, numbers.get("ALMA"), numbers.get("EXPRESION")),
-            "Las vocales muestran lo que sientes; las consonantes, la forma en que esa energia se expresa hacia afuera.",
+            "Cada letra, una vibración",
+            charts.name_table_svg(numbers.name_sanitize, numbers.get("ALMA"), numbers.get("EXPRESION"), area),
+            name_caption,
             kind="strip",
         )
     elif report_key == "proposito":
         add(
-            "Tu linea de vida",
+            "Tu línea de vida",
             "Tus cuatro etapas",
             charts.stages_svg(pin, today_age, area),
-            "La franja mas solida marca la etapa que esta activa hoy en tu recorrido.",
+            "La franja más sólida marca la etapa que está activa hoy en tu recorrido.",
             kind="timeline",
         )
-        add("Tu pinaculo", "El mapa completo", charts.pinnacle_svg(pin), kind="map")
+        add("Tu pináculo", "El mapa completo", charts.pinnacle_svg(pin), kind="map")
     elif report_key == "trabajo":
         add(
-            "La energia de tu ano",
-            "Donde estas en el ciclo",
-            charts.personal_year_svg(numbers.get("AP"), area),
-            "El sector encendido muestra la vibracion dominante de este ano y el centro resume el aprendizaje principal.",
-            kind="wheel",
+            "La energía de tu año",
+            "El círculo de tu tiempo",
+            time_wheel(),
+            wheel_caption,
+            kind="wheel-v2",
         )
         add(
             "El poder de tu nombre",
-            "Tu canal de expresion",
-            charts.name_strip_svg(numbers.name_sanitize, numbers.get("ALMA"), numbers.get("EXPRESION")),
-            "Este trazado convierte tu nombre en ritmo: primero la emocion que mueve, luego la voz con la que sales al mundo.",
+            "Tu canal de expresión",
+            charts.name_table_svg(numbers.name_sanitize, numbers.get("ALMA"), numbers.get("EXPRESION"), area),
+            name_caption,
             kind="strip",
         )
     elif report_key == "amor":
         add(
-            "La energia de tu ano",
+            "La energía de tu año",
             "Tu amor en el ciclo",
-            charts.personal_year_svg(numbers.get("AP"), area),
-            "No habla de destino fijo, sino del clima emocional que mas probablemente esta marcando tu ano.",
-            kind="wheel",
+            time_wheel(),
+            wheel_caption,
+            kind="wheel-v2",
         )
     elif report_key == "bienestar":
         add(
             "Presencias y ausencias",
             "Lo que te sobra y lo que te falta",
             charts.absences_svg(pin, area),
-            "Los cuadros llenos se viven como recursos disponibles; los vacios piden conciencia, practica y paciencia.",
+            "Los cuadros llenos se viven como recursos disponibles; los vacíos piden conciencia, práctica y paciencia.",
             kind="grid",
         )
         add(
-            "La energia de tu ano",
-            "Como cuidarte este ano",
-            charts.personal_year_svg(numbers.get("AP"), area),
-            "La rueda ayuda a leer en que tono conviene acompanar tus habitos, tus limites y tu recuperacion.",
-            kind="wheel",
+            "La energía de tu año",
+            "Cómo cuidarte este año",
+            time_wheel(),
+            wheel_caption,
+            kind="wheel-v2",
         )
     return out
 
@@ -312,6 +331,8 @@ def render_html(
     birth_long: str,
     today_long: str,
     today_age: int,
+    birth_date: date,
+    today: date,
 ) -> str:
     area = AREA_HEX.get(area_token, AREA_HEX["primary"])
     legal = LEGAL_BASE + (LEGAL_BIENESTAR if report_key == "bienestar" else "")
@@ -338,7 +359,7 @@ def render_html(
         "cover_number_label": cover_label,
         "bento_tiles": _bento_tiles(report_key, numbers),
         "numbers_note": _numbers_note(numbers),
-        "charts": _charts(report_key, numbers, today_age, area),
+        "charts": _charts(report_key, numbers, today_age, area, birth_date, today),
         "sec_rail": _sec_rail(data, numbers),
         "sec_chips": _sec_chips(data, numbers),
         "retrato_cols": _split_columns(data.get("retrato", {}).get("cuerpo", [])),

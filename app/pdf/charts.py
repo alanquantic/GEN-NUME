@@ -1,4 +1,4 @@
-"""Graficos SVG generados en servidor desde los numeros de la persona."""
+"""Gráficos SVG generados en servidor desde los números de la persona."""
 
 from __future__ import annotations
 
@@ -9,6 +9,10 @@ from ..domain.pinnacle import Pinnacle
 PRIMARY = "#4C1D95"
 FUCHSIA_D = "#6D28D9"
 ACCENT = "#D3AE36"
+ACCENT_INK = "#96751B"
+ACCENT_SOFT = "#F8EFD8"
+ACCENT_DEEP = "#F0DFAE"
+PAPER = "#FDFCFA"
 INK = "#2A1E3E"
 INK_SOFT = "#6B6280"
 BORDER = "#E6DDEE"
@@ -16,6 +20,20 @@ DANGER = "#E8304F"
 GREEN = "#8BC34A"
 ROYAL = "#2047C5"
 GREY = "#B2A9C6"
+
+
+def _mix(hex_color: str, target: str, ratio: float) -> str:
+    """Mezcla dos colores hex para no depender de color-mix() en CSS."""
+    ratio = max(0.0, min(1.0, ratio))
+
+    def _rgb(value: str) -> tuple[int, int, int]:
+        value = value.lstrip("#")
+        return tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
+
+    src = _rgb(hex_color)
+    dst = _rgb(target)
+    mixed = tuple(round(src[i] * (1 - ratio) + dst[i] * ratio) for i in range(3))
+    return "#" + "".join(f"{c:02X}" for c in mixed)
 
 
 def _esc(s: str) -> str:
@@ -243,27 +261,107 @@ _CONS = {
 }
 
 
-def name_strip_svg(name_sanitize: str, alma: str, expresion: str) -> str:
-    letters = [c for c in name_sanitize.replace("-", "") if c in _VOWELS or c in _CONS]
+def name_table_svg(
+    name_sanitize: str,
+    alma: str,
+    expresion: str,
+    area: str = PRIMARY,
+) -> str:
+    """El nombre como tabla de 3 filas: valores de vocales / letras / valores
+    de consonantes, con la suma de cada fila como chip al final.
+    """
+    words = [w for w in name_sanitize.split("-") if w]
+    letters: list[tuple[str, bool]] = []      # (letra, ¿inicia palabra?)
+    for w in words:
+        for j, ch in enumerate(w):
+            if ch in _VOWELS or ch in _CONS:
+                letters.append((ch, j == 0 and bool(letters)))
     if not letters:
         return ""
-    width = 720
-    step = min(34, (width - 40) / max(len(letters), 1))
-    x0 = (width - step * (len(letters) - 1)) / 2
 
-    parts = [_svg_root(f"0 0 {width} 200", width, 200, "Valor de cada letra del nombre")]
-    parts.append(_text(6, 16, f"VOCALES · ALMA {alma}", size=8.5, fill="#96751B", weight=600, anchor="start", letter_spacing=".14em"))
-    parts.append(_text(6, 192, f"CONSONANTES · EXPRESIÓN {expresion}", size=8.5, fill=PRIMARY, weight=600, anchor="start", letter_spacing=".14em"))
-    parts.append(f'<line x1="0" y1="100" x2="{width - 42}" y2="100" stroke="{BORDER}"/>')
+    W, H = 720, 196
+    table_x0, table_x1 = 8, 664          # a la derecha quedan los chips de suma
+    y_v0, y_v1 = 30, 68                  # banda de vocales
+    y_l0, y_l1 = 68, 122                 # banda de letras
+    y_c0, y_c1 = 122, 160                # banda de consonantes
 
-    for i, ch in enumerate(letters):
-        x = x0 + i * step
-        parts.append(_center_text(x, 100, ch.upper(), class_name="lt", size=20, fill=INK, family="Georgia, serif", weight=400))
+    n_gaps = sum(1 for _, brk in letters if brk)
+    slots = len(letters) + 0.7 * n_gaps
+    step = min(40.0, (table_x1 - table_x0 - 24) / max(slots - 1, 1))
+    span = step * (len(letters) - 1 + 0.7 * n_gaps)
+    x = table_x0 + ((table_x1 - table_x0) - span) / 2
+
+    parts = [_svg_root(f"0 0 {W} {H}", W, H, "Tabla de valores del nombre")]
+    parts.append(_text(8, 16, f"VOCALES · ALMA {alma}", size=8.5, fill=ACCENT_INK,
+                       weight=600, anchor="start", letter_spacing=".14em"))
+    parts.append(_text(8, 188, f"CONSONANTES · EXPRESIÓN {expresion}", size=8.5,
+                       fill=area, weight=600, anchor="start", letter_spacing=".14em"))
+
+    tw = table_x1 - table_x0
+    # bandas: vocales (dorado suave, esquinas superiores), letras (blanco),
+    # consonantes (tinte del área, esquinas inferiores)
+    parts.append(
+        f'<path d="M{table_x0} {y_v1} V{y_v0 + 9} Q{table_x0} {y_v0} {table_x0 + 9} {y_v0} '
+        f'H{table_x1 - 9} Q{table_x1} {y_v0} {table_x1} {y_v0 + 9} V{y_v1} Z" '
+        f'fill="{ACCENT_SOFT}"/>'
+    )
+    parts.append(f'<rect x="{table_x0}" y="{y_l0}" width="{tw}" height="{y_l1 - y_l0}" fill="#fff"/>')
+    area_band = _mix(area, "#FFFFFF", 0.9)
+    parts.append(
+        f'<path d="M{table_x0} {y_c0} H{table_x1} V{y_c1 - 9} '
+        f'Q{table_x1} {y_c1} {table_x1 - 9} {y_c1} H{table_x0 + 9} '
+        f'Q{table_x0} {y_c1} {table_x0} {y_c1 - 9} Z" fill="{area_band}"/>'
+    )
+    # contorno + divisores horizontales
+    parts.append(
+        f'<rect x="{table_x0}" y="{y_v0}" width="{tw}" height="{y_c1 - y_v0}" '
+        f'rx="9" fill="none" stroke="{BORDER}" stroke-width="1.2"/>'
+    )
+    for yy in (y_v1, y_c0):
+        parts.append(
+            f'<line x1="{table_x0}" y1="{yy}" x2="{table_x1}" y2="{yy}" '
+            f'stroke="{BORDER}" stroke-width="1"/>'
+        )
+
+    xs: list[float] = []
+    for ch, brk in letters:
+        if brk:
+            x += step * 0.7
+        xs.append(x)
+        x += step
+
+    # separadores de columna (no en los cortes de palabra)
+    for i in range(1, len(letters)):
+        if letters[i][1]:
+            continue
+        mid = (xs[i - 1] + xs[i]) / 2
+        parts.append(
+            f'<line x1="{mid:.1f}" y1="{y_v0 + 5}" x2="{mid:.1f}" y2="{y_c1 - 5}" '
+            f'stroke="{BORDER}" stroke-width="1" opacity=".55"/>'
+        )
+
+    y_letter = (y_l0 + y_l1) / 2
+    y_vowel = (y_v0 + y_v1) / 2
+    y_cons = (y_c0 + y_c1) / 2
+    area_ink = _mix(area, "#120B1F", 0.25)
+    for (ch, _), cx in zip(letters, xs):
+        parts.append(_center_text(cx, y_letter, ch.upper(), size=21, fill=INK,
+                                  family="Georgia, serif", weight=400))
         if ch in _VOWELS:
-            parts.append(_center_text(x, 60, str(_VOWELS[ch]), class_name="lv", size=11, fill="#96751B", weight=600))
-            parts.append(f'<circle cx="{x:.1f}" cy="76" r="2.4" fill="{ACCENT}"/>')
+            parts.append(_center_text(cx, y_vowel, str(_VOWELS[ch]),
+                                      size=12, fill=ACCENT_INK, weight=700))
         else:
-            parts.append(_center_text(x, 140, str(_CONS[ch]), class_name="lv", size=11, fill="#5B21B6", weight=600))
+            parts.append(_center_text(cx, y_cons, str(_CONS[ch]),
+                                      size=12, fill=area_ink, weight=700))
+
+    # chips de suma al final de cada fila de valores
+    chip_x = table_x1 + 27
+    parts.append(f'<line x1="{table_x1 + 4}" y1="{y_vowel:.0f}" x2="{chip_x - 15}" y2="{y_vowel:.0f}" stroke="{ACCENT}" stroke-width="1.4"/>')
+    parts.append(f'<circle cx="{chip_x}" cy="{y_vowel:.0f}" r="14" fill="{ACCENT}"/>')
+    parts.append(_center_text(chip_x, y_vowel, alma, size=12.5, fill="#fff", weight=800))
+    parts.append(f'<line x1="{table_x1 + 4}" y1="{y_cons:.0f}" x2="{chip_x - 15}" y2="{y_cons:.0f}" stroke="{area}" stroke-width="1.4"/>')
+    parts.append(f'<circle cx="{chip_x}" cy="{y_cons:.0f}" r="14" fill="{area}"/>')
+    parts.append(_center_text(chip_x, y_cons, expresion, size=12.5, fill="#fff", weight=800))
 
     parts.append("</svg>")
     return "".join(parts)
@@ -324,34 +422,133 @@ def stages_svg(pin: Pinnacle, today_age: int, area: str = PRIMARY) -> str:
     return "".join(parts)
 
 
-def personal_year_svg(ap: str, area: str = PRIMARY) -> str:
-    ring = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    active = "2" if ap == "11" else ap
-    radius = 92
-    inner = 42
-    parts = [_svg_root("0 0 300 210", 300, 210, "Año personal")]
-    parts.append('<g transform="translate(150 105)">')
+def _pol(r: float, ang: float) -> tuple[float, float]:
+    return r * math.cos(ang), r * math.sin(ang)
 
-    for idx, label in enumerate(ring):
-        a0 = -math.pi / 2 + idx * 2 * math.pi / 9
-        a1 = -math.pi / 2 + (idx + 1) * 2 * math.pi / 9
-        x0, y0 = radius * math.cos(a0), radius * math.sin(a0)
-        x1, y1 = radius * math.cos(a1), radius * math.sin(a1)
-        opacity = "1" if label == active else ".13"
-        parts.append(
-            f'<path d="M0 0 L{x0:.1f} {y0:.1f} A{radius} {radius} 0 0 1 {x1:.1f} {y1:.1f} Z" '
-            f'fill="{area}" opacity="{opacity}"/>'
-        )
+
+def _annular(r_in: float, r_out: float, a0: float, a1: float) -> str:
+    """Sector de anillo (dona) entre dos radios y dos ángulos."""
+    x0o, y0o = _pol(r_out, a0)
+    x1o, y1o = _pol(r_out, a1)
+    x0i, y0i = _pol(r_in, a0)
+    x1i, y1i = _pol(r_in, a1)
+    large = 1 if (a1 - a0) > math.pi else 0
+    return (
+        f"M{x0o:.1f} {y0o:.1f} A{r_out} {r_out} 0 {large} 1 {x1o:.1f} {y1o:.1f} "
+        f"L{x1i:.1f} {y1i:.1f} A{r_in} {r_in} 0 {large} 0 {x0i:.1f} {y0i:.1f} Z"
+    )
+
+
+def time_wheel_svg(
+    ap: str,
+    year: int,
+    months: list[dict],
+    cuatrimestres: list[dict],
+    current_month: int,          # 1..12
+    area: str = PRIMARY,
+) -> str:
+    """Rueda del año desglosada: AP al centro, cuatrimestres, mes personal/
+    universal y semanas personales. Sólo fills planos (cero shadings extra).
+
+    `months` y `cuatrimestres` vienen de `domain.time_wheel` (month_data y
+    quarter_arcs).
+    """
+    parts = [_svg_root("0 0 440 440", 440, 440, f"Círculo del tiempo {year}")]
+    parts.append('<g transform="translate(220 220)">')
+
+    def ang(i: float) -> float:
+        return -math.pi / 2 + i * 2 * math.pi / 12
+
+    # --- Banda de cuatrimestres (tinte dorado, anclada al mes natal) ------- #
+    gap = math.radians(1.6)
+    for cu in cuatrimestres:
+        a0 = ang(cu["start"]) + gap
+        a1 = ang(cu["start"] + cu["span"]) - gap
+        fill = ACCENT_DEEP if cu.get("active") else ACCENT_SOFT
+        parts.append(f'<path d="{_annular(74, 106, a0, a1)}" fill="{fill}"/>')
         am = (a0 + a1) / 2
-        lx, ly = (radius - 14) * math.cos(am), (radius - 14) * math.sin(am)
-        col = "#fff" if label == active else INK
-        parts.append(_center_text(lx, ly, label, size=11, fill=col, weight=700))
+        cx, cy = _pol(90, am)
+        parts.append(_center_text(cx, cy - 5, cu["value"], size=15,
+                                  fill=ACCENT_INK, family="Georgia, serif"))
+        parts.append(_text(cx, cy + 12, cu["range"], size=6, fill=ACCENT_INK,
+                           weight=700, letter_spacing=".14em"))
+    # rombo dorado en el arranque del ciclo (el mes de nacimiento)
+    if cuatrimestres:
+        a_start = ang(cuatrimestres[0]["start"])
+        dx, dy_ = _pol(110, a_start)
+        parts.append(
+            f'<path d="M{dx:.1f} {dy_ - 4:.1f} L{dx + 3.2:.1f} {dy_:.1f} '
+            f'L{dx:.1f} {dy_ + 4:.1f} L{dx - 3.2:.1f} {dy_:.1f} Z" fill="{ACCENT}"/>'
+        )
 
-    parts.append(f'<circle cx="0" cy="0" r="{inner}" fill="#fff" stroke="{BORDER}"/>')
-    parts.append(_text(0, -4, ap, size=32, fill=area, family="Georgia, serif", weight=800))
-    parts.append(_text(0, 18, "AÑO PERSONAL", size=7.5, fill=INK_SOFT, weight=700, letter_spacing=".14em"))
+    # --- Meses + semanas --------------------------------------------------- #
+    for i, mo in enumerate(months):
+        a0, a1 = ang(i), ang(i + 1)
+        am = (a0 + a1) / 2
+        m_num = i + 1
+        is_now = m_num == current_month
+        is_past = m_num < current_month
+
+        if is_now:
+            op_m, op_w = "1", "1"
+        elif is_past:
+            op_m, op_w = ".08", ".06"
+        else:
+            op_m, op_w = ".16", ".09"
+
+        # sector del mes (r 112–164) y de sus semanas (r 168–200)
+        parts.append(
+            f'<path d="{_annular(112, 164, a0, a1)}" fill="{area}" '
+            f'opacity="{op_m}" stroke="{PAPER}" stroke-width="1.5"/>'
+        )
+        parts.append(
+            f'<path d="{_annular(168, 200, a0, a1)}" fill="{area}" '
+            f'opacity="{op_w}" stroke="{PAPER}" stroke-width="1.5"/>'
+        )
+
+        name_fill = "#fff" if is_now else (INK_SOFT if not is_past else "#A89EBB")
+        val_fill = "#fff" if is_now else (INK if not is_past else "#A89EBB")
+        uni_fill = _mix("#FFFFFF", area, 0.25) if is_now else "#9A91AD"
+
+        nx, ny = _pol(150, am)
+        parts.append(_text(nx, ny + 2, mo["abbr"], size=6.8, fill=name_fill,
+                           weight=700, letter_spacing=".16em"))
+        vx, vy = _pol(130, am)
+        parts.append(
+            f'<text x="{vx:.1f}" y="{vy:.1f}" dy="0.35em" text-anchor="middle" '
+            f'font-family="Open Sans, Arial, sans-serif">'
+            f'<tspan font-size="11px" font-weight="700" fill="{val_fill}">{mo["mp"]}</tspan>'
+            f'<tspan font-size="8px" font-weight="600" fill="{uni_fill}"> /{mo["mu"]}</tspan>'
+            f"</text>"
+        )
+
+        # 4 semanas personales por mes
+        wk_fill = "#fff" if is_now else (INK_SOFT if not is_past else "#B6AEC6")
+        for k, wv in enumerate(mo["weeks"]):
+            aw = a0 + (a1 - a0) * (2 * k + 1) / 8
+            wx, wy = _pol(184, aw)
+            parts.append(_center_text(wx, wy, wv, size=7, fill=wk_fill, weight=600))
+        # separadores de semana (ticks finos)
+        for k in (1, 2, 3):
+            at = a0 + (a1 - a0) * k / 4
+            x0t, y0t = _pol(170, at)
+            x1t, y1t = _pol(198, at)
+            parts.append(
+                f'<line x1="{x0t:.1f}" y1="{y0t:.1f}" x2="{x1t:.1f}" y2="{y1t:.1f}" '
+                f'stroke="{PAPER}" stroke-width="1" opacity=".8"/>'
+            )
+
+    # --- Centro ------------------------------------------------------------ #
+    parts.append(f'<circle cx="0" cy="0" r="62" fill="#fff" stroke="{BORDER}"/>')
+    parts.append(_text(0, -30, str(year), size=7.5, fill=ACCENT_INK, weight=700,
+                       letter_spacing=".3em"))
+    parts.append(_text(0, 10, ap, size=38, fill=area,
+                       family="Georgia, serif", weight=800))
+    parts.append(_text(0, 32, "AÑO PERSONAL", size=7.5, fill=INK_SOFT,
+                       weight=700, letter_spacing=".14em"))
+
     parts.append("</g></svg>")
     return "".join(parts)
 
 
-__all__ = ["pinnacle_svg", "name_strip_svg", "absences_svg", "stages_svg", "personal_year_svg"]
+__all__ = ["pinnacle_svg", "name_table_svg", "absences_svg", "stages_svg", "time_wheel_svg"]

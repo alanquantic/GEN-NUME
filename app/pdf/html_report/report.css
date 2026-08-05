@@ -639,7 +639,7 @@ h2.t.sm{ font-size:11.5mm; }
   height:auto;
 }
 
-.chart-card.kind-wheel svg{ width:102mm; margin:0 auto; }
+.chart-card.kind-wheel-v2 svg{ width:128mm; margin:0 auto; display:block; }
 .chart-card.kind-grid  svg{ width:96mm;  margin:0 auto; }
 
 .chart-note-v2{

@@ -43,6 +43,30 @@ def _is_transient(exc: Exception) -> bool:
     }
 
 
+class ProviderUnavailableError(RuntimeError):
+    """El modelo/servicio no está disponible tras agotar los reintentos
+    inmediatos. El service la usa para programar un reintento diferido
+    (y avisar por correo si también falla)."""
+
+# Reintentos ante errores transitorios del proveedor (503 saturado, 429,
+# 5xx, cortes de red). Un pico de demanda de un par de minutos no debe
+# matar el reporte de un cliente. Esperas: 5s, 15s, 45s.
+_RETRY_DELAYS = (5, 15, 45)
+_TRANSIENT_CODES = {429, 500, 502, 503, 504, 529}
+
+
+def _is_transient(exc: Exception) -> bool:
+    for attr in ("status_code", "code"):
+        value = getattr(exc, attr, None)
+        if isinstance(value, int):
+            return value in _TRANSIENT_CODES
+    # Errores de conexión/timeout de ambos SDKs, sin importarlos aquí.
+    return type(exc).__name__ in {
+        "APIConnectionError", "APITimeoutError", "ServerError",
+        "ConnectionError", "TimeoutError",
+    }
+
+
 def call(settings, system: str, user: str, schema: dict) -> Result:
     from ._tls import ensure_system_trust
     ensure_system_trust()          # verifica contra el almacén del SO si hace falta
@@ -69,7 +93,7 @@ def call(settings, system: str, user: str, schema: dict) -> Result:
             if not _is_transient(exc):
                 raise
             last = exc
-    raise RuntimeError(
+    raise ProviderUnavailableError(
         f"El proveedor {provider} sigue sin responder tras "
         f"{len(_RETRY_DELAYS) + 1} intentos: {last}"
     ) from last
