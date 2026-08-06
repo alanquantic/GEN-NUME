@@ -84,6 +84,8 @@ def main() -> int:
         person_name=name, birth_long=format_long_date(birth),
         today_long=format_long_date(today),
         today_age=numbers.pinnacle.age_at(today),
+        birth_date=birth,
+        today=today,
     )
 
     OUT.mkdir(parents=True, exist_ok=True)

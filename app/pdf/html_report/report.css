@@ -953,7 +953,10 @@ h2.t.sm{ font-size:11.5mm; }
   bottom:-10mm;
   left:50%;
   width:1px;
-  background:linear-gradient(180deg, transparent, rgba(211,174,54,.8), transparent);
+  /* Sin degradado: extremos transparentes sobre un elemento ROTADO obligan a
+     PDFium (visor de Chrome/Edge) a componer una soft mask de página entera:
+     ~1s de render por página, 16x más que cualquier otra. Alpha constante. */
+  background:rgba(211,174,54,.65);
   transform:rotate(25deg);
 }
 
