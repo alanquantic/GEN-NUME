@@ -227,6 +227,21 @@ def _charts(
         "cada mes, su mes personal, el universal (en pequeño) y las cuatro "
         "semanas personales del borde. El sector sólido es tu mes en curso."
     )
+
+    def add_pinnacle(title: str) -> None:
+        """El pináculo como lectura visual autocontenida: el texto de estos
+        reportes no lo explica, así que el caption lo presenta."""
+        cap = (
+            "Tu mapa de nacimiento: sale de tu fecha, no cambia jamás y de él "
+            "nacen varios de los números que lee este reporte."
+        )
+        if pin.special_pinnacle:
+            cap += (
+                " Tu zona inferior está llena de ceros: es un <b>Pináculo "
+                "Especial</b>, con la energía de los desafíos volcada hacia "
+                "lo colectivo."
+            )
+        add("Tu pináculo personal", title, charts.pinnacle_svg(pin), cap, kind="map")
     name_caption = (
         "Cada letra de tu nombre aporta un número: arriba, las vocales que "
         "suman tu alma; abajo, las consonantes que suman tu expresión. Los "
@@ -259,6 +274,7 @@ def _charts(
         )
         add("Tu pináculo", "El mapa completo", charts.pinnacle_svg(pin), kind="map")
     elif report_key == "trabajo":
+        add_pinnacle("El mapa detrás de tu talento")
         add(
             "La energía de tu año",
             "El círculo de tu tiempo",
@@ -274,6 +290,7 @@ def _charts(
             kind="strip",
         )
     elif report_key == "amor":
+        add_pinnacle("El mapa con el que amas")
         add(
             "La energía de tu año",
             "Tu amor en el ciclo",
@@ -282,6 +299,7 @@ def _charts(
             kind="wheel-v2",
         )
     elif report_key == "bienestar":
+        add_pinnacle("El mapa de tu energía")
         add(
             "Presencias y ausencias",
             "Lo que te sobra y lo que te falta",
@@ -354,6 +372,8 @@ def render_html(
         "person_name": person_name,
         "birth_long": birth_long,
         "today_long": today_long,
+        "ap_value": (numbers.get("AP") or "").rstrip("*"),
+        "current_year": today.year,
         "cover_number_clean": cover_val,
         "cover_number_karmic": cover_karmic,
         "cover_number_label": cover_label,

@@ -20,6 +20,9 @@
    PDF no se arrastra al hacer scroll. #}
 {% set sky_dots %}<div class="sky"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>{% endset %}
 
+{# Pie izquierdo de todas las páginas interiores (la portada no lleva folio). #}
+{% set folio_year %}<span class="yr">Año personal: {{ ap_value }} | Año en curso: {{ current_year }}</span><i class="ln"></i>{% endset %}
+
 {# ============ 1 · PORTADA ============ #}
 <section class="page">
   <div class="cover-v2">
@@ -63,7 +66,7 @@
     <div class="col">{% for par in retrato_cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
     {% if retrato_cols[1] %}<div class="col">{% for par in retrato_cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
   </div>
-  <div class="folio"><span>{{ person_name }}</span><span class="num">02</span></div>
+  <div class="folio">{{ folio_year }}<span>{{ person_name }}</span><span class="num">02</span></div>
 </section>
 
 {# ============ 3 · NÚMEROS (BENTO) ============ #}
@@ -86,7 +89,7 @@
     </div>
     {% if numbers_note %}<div class="bento-note">{{ numbers_note|safe }}</div>{% endif %}
   </div>
-  <div class="folio"><span>{{ report_title }}</span><span class="num">03</span></div>
+  <div class="folio">{{ folio_year }}<span>{{ report_title }}</span><span class="num">03</span></div>
 </section>
 
 {# ============ 4 · GRÁFICOS ============ #}
@@ -104,7 +107,7 @@
   </div>
   <div class="chart-card kind-{{ chart.kind }}">{{ chart.svg|safe }}</div>
   {% if chart.caption %}<div class="chart-note-v2"><div>{{ chart.caption|safe }}</div></div>{% endif %}
-  <div class="folio"><span>Lectura visual</span><span class="num">{{ "%02d"|format(loop.index + 3) }}</span></div>
+  <div class="folio">{{ folio_year }}<span>Lectura visual</span><span class="num">{{ "%02d"|format(loop.index + 3) }}</span></div>
 </section>
 {% endfor %}
 
@@ -152,7 +155,7 @@
     </div>
     {% endif %}
   </div>
-  <div class="folio"><span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
+  <div class="folio">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
 {% else %}
 <section class="page sec-b">
@@ -187,7 +190,7 @@
     </div>
     {% endif %}
   </div>
-  <div class="folio"><span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
+  <div class="folio">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
 {% endif %}
 {% endfor %}
@@ -219,6 +222,7 @@
     </div>
     {% endif %}
   </div>
+  <div class="folio dark">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(4 + chart_pages + data.secciones|length) }}</span></div>
 </section>
 
 {# ============ 7 · PLAN (línea de tiempo) ============ #}
@@ -239,7 +243,7 @@
     </div>
     {% endfor %}
   </div>
-  <div class="folio"><span>Tu plan</span><span class="num">{{ "%02d"|format(5 + chart_pages + data.secciones|length) }}</span></div>
+  <div class="folio">{{ folio_year }}<span>Tu plan</span><span class="num">{{ "%02d"|format(5 + chart_pages + data.secciones|length) }}</span></div>
 </section>
 
 {# ============ 8 · CIERRE ============ #}
@@ -258,6 +262,7 @@
     </div>
     <div class="legal">{{ legal }}</div>
   </div>
+  <div class="folio dark">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(6 + chart_pages + data.secciones|length) }}</span></div>
 </section>
 
 </body>

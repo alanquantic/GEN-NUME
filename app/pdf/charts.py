@@ -139,10 +139,14 @@ _LABEL_BELOW = {
     "Y": 368,
     "K": 456,
     "L": 456,
+    "M": 520,
     "N": 592,
     "P": 490,
 }
-_LABEL_ABOVE = {"G": 171, "E": 290, "I": 212, "F": 290, "J": 163, "Z": 271, "O": 387, "M": 492}
+_LABEL_ABOVE = {"E": 290, "I": 212, "F": 290, "Z": 271, "O": 387}
+# G y J no caben ni arriba (chocan con la etiqueta de H) ni abajo (con las de
+# E/I/F): su etiqueta va al costado del círculo, hacia el lado despejado.
+_LABEL_SIDE = {"G": "end", "J": "start"}
 
 
 def _pin_fill(zone: str) -> tuple[str, str]:
@@ -167,8 +171,10 @@ def pinnacle_svg(pin: Pinnacle) -> str:
     parts.append('<rect x="28" y="292" width="536" height="66" rx="9" fill="#EDE3F8"/>')
     parts.append('<path d="M82 388 L378 388 L230 604 Z" fill="#FBDCE1" opacity=".55"/>')
     parts.append(_text(140, 34, "SER SUPERIOR · REALIZACIONES", size=8, fill="#7CB342", weight=700, letter_spacing=".16em"))
-    parts.append(_text(120, 286, "HORIZONTAL · IDENTIDAD", size=8, fill="#6D28D9", weight=700, letter_spacing=".16em"))
-    parts.append(_text(118, 382, "SER INFERIOR · DESAFÍOS", size=8, fill="#C0392B", weight=700, letter_spacing=".16em"))
+    # A la derecha de la banda: a la izquierda chocaba con la etiqueta de E.
+    parts.append(_text(470, 286, "HORIZONTAL · IDENTIDAD", size=8, fill="#6D28D9", weight=700, letter_spacing=".16em"))
+    # Bajo el vértice del triángulo inferior: arriba chocaba con B y O.
+    parts.append(_text(140, 622, "SER INFERIOR · DESAFÍOS", size=8, fill="#C0392B", weight=700, letter_spacing=".16em"))
     parts.append(
         '<g stroke="#CFC6DE" stroke-width="1" stroke-dasharray="3 3" fill="none">'
         '<path d="M92 320 L146 244 M232 320 L146 244 M232 320 L322 244 M392 320 L322 244 '
@@ -218,9 +224,14 @@ def pinnacle_svg(pin: Pinnacle) -> str:
         family = "Georgia, serif" if key == "B" else "Open Sans, Arial, sans-serif"
         parts.append(_center_text(cx, cy, str(vib), size=font_size, fill=num_color, family=family))
         if label:
-            ly = _LABEL_BELOW.get(key) or _LABEL_ABOVE.get(key)
-            if ly:
-                parts.append(_text(cx, ly, label, size=8.5, fill=INK_SOFT, weight=600, letter_spacing=".05em"))
+            side = _LABEL_SIDE.get(key)
+            if side:
+                lx = cx - radius - 10 if side == "end" else cx + radius + 10
+                parts.append(_text(lx, cy + 3, label, size=8.5, fill=INK_SOFT, weight=600, anchor=side, letter_spacing=".05em"))
+            else:
+                ly = _LABEL_BELOW.get(key) or _LABEL_ABOVE.get(key)
+                if ly:
+                    parts.append(_text(cx, ly, label, size=8.5, fill=INK_SOFT, weight=600, letter_spacing=".05em"))
 
     parts.append(_text(462, 520, "Q · R · S — SÚPER OCULTOS", size=8, fill="#C0392B", weight=700, letter_spacing=".16em"))
     aus = " · ".join(str(a) for a in pin.absences) or "—"

@@ -137,8 +137,7 @@ body{
   color:var(--ink-soft);
 }
 
-.folio::before{
-  content:"";
+.folio .ln{
   flex:1;
   height:1px;
   background:linear-gradient(90deg, var(--border), transparent);
@@ -148,6 +147,18 @@ body{
   color:var(--area);
   font-weight:700;
 }
+
+.folio .yr{ color:var(--ink-soft); }
+
+/* Variante para las páginas de fondo oscuro (tensión central y cierre). */
+.folio.dark{
+  z-index:3;
+  color:rgba(255,255,255,.65);
+}
+
+.folio.dark .yr{ color:rgba(255,255,255,.65); }
+.folio.dark .ln{ background:linear-gradient(90deg, rgba(255,255,255,.28), transparent); }
+.folio.dark .num{ color:var(--accent); }
 
 /* ==========================================================================
    PORTADA — a sangre, oscura, número protagonista recortado
@@ -1222,7 +1233,7 @@ h2.t.sm{ font-size:11.5mm; }
 
 .final-v2 .legal{
   position:absolute;
-  bottom:12mm;
+  bottom:16mm;
   left:26mm;
   right:26mm;
   font-size:2.4mm;
