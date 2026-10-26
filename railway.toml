@@ -14,9 +14,11 @@ restartPolicyMaxRetries = 3
 #       PUBLIC_BASE_URL=https://<tu-servicio>.up.railway.app
 #       STORAGE_DIR=/data
 #       ENVIRONMENT=production
-#       AI_PROVIDER=google
-#       AI_MODEL=gemini-3.6-flash   # no usar *-lite: inventa claves y rompe el esquema
-#       GOOGLE_API_KEY=<clave de AI Studio>
+#       AI_PROVIDER=anthropic       # o google
+#       ANTHROPIC_API_KEY=<clave de console.anthropic.com>
+#       AI_MAX_TOKENS=64000         # tope thinking+salida; 16000 trunca reportes
+#       (con google: AI_MODEL=gemini-3.6-flash — no usar *-lite: inventa claves
+#        y rompe el esquema — y GOOGLE_API_KEY=<clave de AI Studio>)
 #       PDF_COMPRESS=images         # images | slim | off (ver app/pdf/compress.py)
 #   - Alertas por correo cuando un reporte falla por proveedor caído
 #     (reintenta 2 veces con 5 min de espera y luego avisa a ALERT_EMAIL):
