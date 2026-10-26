@@ -69,7 +69,10 @@ class Settings(BaseSettings):
     # estable vigente salvo que AI_MODEL ya sea un identificador Gemini.
     ai_model: str = "claude-opus-5"
     ai_effort: str = "high"          # low | medium | high | xhigh | max (Anthropic)
-    ai_max_tokens: int = 16000
+    # Tope TOTAL de la respuesta: el thinking adaptativo y el JSON del reporte
+    # comparten este presupuesto (no existe budget_tokens aparte en los Claude
+    # actuales). 16000 se quedaba corto con effort=high y truncaba el reporte.
+    ai_max_tokens: int = 64000
 
     @property
     def resolved_model(self) -> str:
