@@ -69,7 +69,18 @@ class Settings(BaseSettings):
     # estable vigente salvo que AI_MODEL ya sea un identificador Gemini.
     ai_model: str = "claude-opus-5"
     ai_effort: str = "high"          # low | medium | high | xhigh | max (Anthropic)
-    ai_max_tokens: int = 16000
+    # Tope TOTAL de la respuesta: el thinking adaptativo y el JSON del reporte
+    # comparten este presupuesto (no existe budget_tokens aparte en los Claude
+    # actuales). 16000 se quedaba corto con effort=high y truncaba el reporte.
+    ai_max_tokens: int = 64000
+    # Tabla de precios (USD por millón de tokens) para costear el `usage` que
+    # se reporta a la tienda. JSON por prefijo de modelo; se fusiona sobre los
+    # defaults de app/ai/pricing.py. Ej.:
+    #   AI_PRICE_TABLE={"gemini-3.5-flash": {"input": 0.30, "output": 2.50}}
+    ai_price_table: dict[str, dict[str, float]] = {}
+    # Otros costos por job (render del PDF, almacenamiento…) sumados al costo
+    # de tokens en production_cost_usd. Con 0, production == token cost.
+    ai_production_overhead_usd: float = 0.0
 
     @property
     def resolved_model(self) -> str:

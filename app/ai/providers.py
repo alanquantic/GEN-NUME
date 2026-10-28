@@ -106,7 +106,12 @@ def _anthropic(settings, system: str, user: str, schema: dict) -> Result:
     import anthropic
 
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key or None)
-    resp = client.messages.create(
+    # En los Claude actuales no hay presupuesto separado de thinking
+    # (budget_tokens devuelve 400): el razonamiento adaptativo consume del
+    # mismo max_tokens que la salida, así que el tope debe cubrir ambos.
+    # Streaming es obligatorio para topes altos (sin él, el SDK corta por
+    # timeout HTTP antes de terminar un reporte largo).
+    with client.messages.stream(
         model=settings.resolved_model,
         max_tokens=settings.ai_max_tokens,
         system=[{"type": "text", "text": system,
@@ -117,7 +122,8 @@ def _anthropic(settings, system: str, user: str, schema: dict) -> Result:
             "format": {"type": "json_schema", "schema": schema},
         },
         messages=[{"role": "user", "content": user}],
-    )
+    ) as stream:
+        resp = stream.get_final_message()
 
     if resp.stop_reason == "refusal":
         raise RuntimeError("El modelo rehusó la petición (stop_reason=refusal).")
@@ -172,10 +178,16 @@ def _google(settings, system: str, user: str, schema: dict) -> Result:
         raise RuntimeError(f"Gemini no devolvió texto (finish_reason={stop}).")
 
     um = resp.usage_metadata
+    cached = getattr(um, "cached_content_token_count", 0) or 0
+    prompt = getattr(um, "prompt_token_count", 0) or 0
     usage = {
-        "input": getattr(um, "prompt_token_count", 0) or 0,
-        "output": getattr(um, "candidates_token_count", 0) or 0,
-        "cache_read": getattr(um, "cached_content_token_count", 0) or 0,
+        # prompt_token_count INCLUYE los tokens cacheados: se separan para no
+        # contarlos dos veces al acumular y costear. El thinking se factura
+        # como salida, así que se suma a output.
+        "input": max(prompt - cached, 0),
+        "output": (getattr(um, "candidates_token_count", 0) or 0)
+                  + (getattr(um, "thoughts_token_count", 0) or 0),
+        "cache_read": cached,
         "cache_write": 0,
     }
     return json.loads(text), model, usage, stop

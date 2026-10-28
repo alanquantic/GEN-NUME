@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .pricing import JobUsage, build_usage
+
 JobStatus = Literal["queued", "running", "done", "error"]
 
 
@@ -81,7 +83,7 @@ class JobStatusResponse(BaseModel):
     error: str | None = None
     warnings: list[str] = Field(default_factory=list)
     model: str | None = None
-    usage: dict[str, int] | None = None
+    usage: JobUsage | None = None
 
 
 class StoredJob(BaseModel):
@@ -104,6 +106,8 @@ class StoredJob(BaseModel):
     attempts: int = 0
 
     def public_view(self) -> JobStatusResponse:
-        return JobStatusResponse.model_validate(
-            self.model_dump(mode="python", exclude={"request"})
-        )
+        data = self.model_dump(mode="python", exclude={"request", "usage"})
+        # El job guarda el consumo crudo del proveedor; hacia afuera va el
+        # objeto `usage` del contrato (tokens + costo en USD).
+        data["usage"] = build_usage(self.model, self.usage)
+        return JobStatusResponse.model_validate(data)

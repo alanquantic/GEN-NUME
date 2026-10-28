@@ -87,6 +87,14 @@ def test_service_procesa_job_y_guarda_salidas():
             assert status.status == "done"
             assert status.result is not None
             assert status.result.pdf.path.endswith("/quien-soy.pdf")
+            # El usage público lleva tokens acumulados y costo (null si el
+            # modelo no está en la tabla de precios, como "mock-test").
+            assert status.usage is not None
+            assert status.usage.model == "mock-test"
+            assert status.usage.input_tokens == 10
+            assert status.usage.output_tokens == 20
+            assert status.usage.total_tokens == 30
+            assert status.usage.token_cost_usd is None
             assert (Path(tmp) / "jobs" / job.job_id / "report.json").exists()
             assert (Path(tmp) / "jobs" / job.job_id / "report.html").exists()
             assert (
@@ -95,6 +103,70 @@ def test_service_procesa_job_y_guarda_salidas():
     finally:
         svc.gen.generate = original_generate
         svc.hr.to_pdf = original_to_pdf
+
+
+def test_webhook_reporta_usage_junto_a_result():
+    import app.ai.service as svc
+
+    mock_data, *_ = _load_mock("quien-soy")
+    captured: dict = {}
+
+    class _FakeResponse:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    def fake_urlopen(req, timeout=10):
+        captured["payload"] = json.loads(req.data.decode("utf-8"))
+        return _FakeResponse()
+
+    def fake_generate(*args, **kwargs):
+        return GeneratedReport(
+            report_key="quien-soy",
+            data=mock_data,
+            model="claude-opus-5",
+            usage={"input": 1_000_000, "output": 200_000,
+                   "cache_read": 0, "cache_write": 0},
+            warnings=[],
+            stop_reason="end_turn",
+        )
+
+    originals = (svc.gen.generate, svc.hr.to_pdf, svc.urlopen)
+    try:
+        svc.gen.generate = fake_generate
+        svc.hr.to_pdf = lambda html: b"%PDF-1.7 mock"
+        svc.urlopen = fake_urlopen
+
+        with TemporaryDirectory() as tmp:
+            store = AIJobStore(Path(tmp), "https://example.test")
+            service = AIReportService(store)
+            request = GenerateAIRequest.model_validate({
+                **_request().model_dump(mode="python"),
+                "notify": {
+                    "callback_url": "https://tienda.test/api/callback",
+                    "callback_secret": "secreto",
+                    "report_row_id": "row-1",
+                },
+            })
+            job = service.submit_job(request)
+            service.process_job(job.job_id)
+
+        payload = captured["payload"]
+        assert payload["status"] == "done"
+        assert payload["result"] is not None
+        usage = payload["usage"]
+        assert usage["model"] == "claude-opus-5"
+        assert usage["input_tokens"] == 1_000_000
+        assert usage["output_tokens"] == 200_000
+        assert usage["total_tokens"] == 1_200_000
+        assert usage["token_cost_usd"] == 10.0       # 5 + 0.2·25 USD
+        assert usage["production_cost_usd"] == 10.0
+    finally:
+        svc.gen.generate, svc.hr.to_pdf, svc.urlopen = originals
 
 
 def test_api_generate_ai_acepta_y_consulta_job():
