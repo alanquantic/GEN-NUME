@@ -178,10 +178,16 @@ def _google(settings, system: str, user: str, schema: dict) -> Result:
         raise RuntimeError(f"Gemini no devolvió texto (finish_reason={stop}).")
 
     um = resp.usage_metadata
+    cached = getattr(um, "cached_content_token_count", 0) or 0
+    prompt = getattr(um, "prompt_token_count", 0) or 0
     usage = {
-        "input": getattr(um, "prompt_token_count", 0) or 0,
-        "output": getattr(um, "candidates_token_count", 0) or 0,
-        "cache_read": getattr(um, "cached_content_token_count", 0) or 0,
+        # prompt_token_count INCLUYE los tokens cacheados: se separan para no
+        # contarlos dos veces al acumular y costear. El thinking se factura
+        # como salida, así que se suma a output.
+        "input": max(prompt - cached, 0),
+        "output": (getattr(um, "candidates_token_count", 0) or 0)
+                  + (getattr(um, "thoughts_token_count", 0) or 0),
+        "cache_read": cached,
         "cache_write": 0,
     }
     return json.loads(text), model, usage, stop
