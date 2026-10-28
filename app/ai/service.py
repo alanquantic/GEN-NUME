@@ -16,6 +16,7 @@ from ..pdf import html_renderer as hr
 from ..security import sign
 from . import dossier as dsr
 from . import generate as gen
+from . import pricing
 from .job_store import AIJobStore
 from .providers import ProviderUnavailableError
 from .recipes import REPORTS
@@ -74,13 +75,17 @@ class AIReportService:
                 ),
             )
 
+            # Acumula el consumo de todas las llamadas del job (si un intento
+            # anterior ya gastó tokens, se suma; la tienda recibe el total).
+            usage = pricing.merge_usage(job.usage, generated.usage)
+
             stage = "render_html"
             self.store.update(
                 job_id,
                 stage="render_html",
                 warnings=generated.warnings,
                 model=generated.model,
-                usage=generated.usage,
+                usage=usage,
             )
             report = REPORTS[request.report]
             html = hr.render_html(
@@ -120,7 +125,7 @@ class AIReportService:
                 result=result,
                 warnings=generated.warnings,
                 model=generated.model,
-                usage=generated.usage,
+                usage=usage,
                 error=None,
             )
             self._notify_callback(done_job)
@@ -182,6 +187,7 @@ class AIReportService:
         if notify is None:
             return
 
+        usage = pricing.build_usage(job.model, job.usage)
         payload = {
             "event": "report.completed",
             "job_id": job.job_id,
@@ -190,6 +196,7 @@ class AIReportService:
             "report": job.report,
             "status": job.status,
             "result": job.result.model_dump(mode="json", by_alias=True) if job.result else None,
+            "usage": usage.model_dump(mode="json") if usage else None,
             "error": job.error,
         }
         body = json.dumps(payload).encode("utf-8")
