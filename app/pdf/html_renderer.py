@@ -91,6 +91,26 @@ def _css() -> str:
     return (_DIR / "report.css").read_text(encoding="utf-8")
 
 
+@lru_cache(maxsize=1)
+def _font_faces() -> str:
+    """@font-face embebidas como data-URI: el HTML queda autocontenido y
+    WeasyPrint no depende de las fuentes instaladas en el contenedor."""
+    import base64
+
+    faces = []
+    for family, filename in [
+        ("Mrs Saint Delafield", "MrsSaintDelafield-Regular.ttf"),
+    ]:
+        path = _DIR / "fonts" / filename
+        b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+        faces.append(
+            f'@font-face{{font-family:"{family}";'
+            f'src:url("data:font/ttf;base64,{b64}") format("truetype");'
+            "font-weight:400;font-style:normal;}"
+        )
+    return "".join(faces)
+
+
 def _ficha(report_key: str, numbers: Numbers) -> list[dict]:
     out = []
     for key in _FICHA.get(report_key, []):
@@ -351,6 +371,7 @@ def render_html(
     today_age: int,
     birth_date: date,
     today: date,
+    densities: dict[str, int] | None = None,
 ) -> str:
     area = AREA_HEX.get(area_token, AREA_HEX["primary"])
     legal = LEGAL_BASE + (LEGAL_BIENESTAR if report_key == "bienestar" else "")
@@ -363,6 +384,8 @@ def render_html(
 
     ctx = {
         "css": _css(),
+        "font_faces": _font_faces(),
+        "dens": densities or {},
         "data": data,
         "report_title": report_title,
         "area_hex": area,
@@ -396,8 +419,7 @@ def render_html(
     return _env().get_template("report.html.j2").render(**ctx)
 
 
-def to_pdf(html: str) -> bytes:
-    """Renderiza el HTML a PDF con WeasyPrint y lo comprime."""
+def _weasy_html():
     try:
         from weasyprint import HTML
     except OSError as exc:
@@ -406,14 +428,110 @@ def to_pdf(html: str) -> bytes:
             "En Windows es lo esperado; el PDF se genera en el deploy Linux. "
             f"Detalle: {exc}"
         ) from exc
+    return HTML
+
+
+def _finish_pdf(document) -> bytes:
     from ..config import settings
     from .compress import slim
 
-    pdf = HTML(string=html).write_pdf(
-        optimize_images=True, jpeg_quality=85, dpi=150,
-    )
+    pdf = document.write_pdf(optimize_images=True, jpeg_quality=85, dpi=150)
     # Los dinámicos no llevan imágenes raster: con slim (sin pérdida) basta.
     return slim(pdf) if settings.pdf_compress != "off" else pdf
 
 
-__all__ = ["render_html", "to_pdf", "AREA_HEX"]
+def to_pdf(html: str) -> bytes:
+    """Renderiza el HTML a PDF con WeasyPrint y lo comprime."""
+    return _finish_pdf(_weasy_html()(string=html).render())
+
+
+# Bloques que aceptan densidad (clase d1/d2) cuando su texto no cabe en una
+# página: el retrato, cada sección, la tensión central y el plan.
+_FIT_MAX_DENSITY = 2
+_FIT_EXTRA_RENDERS = 2
+
+
+def _adjustable(key: str) -> bool:
+    """¿El bloque (retrato, sec-N, tension, plan) admite compactarse?"""
+    return key in ("retrato", "tension", "plan") or key.startswith("sec-")
+
+
+# El contenido en flujo debe terminar por encima de la zona del folio
+# (position:absolute, bottom:9mm). Si el marcador .pg-end de un bloque queda
+# por debajo de este límite, el texto pisa el folio aunque quepa en la página.
+_END_LIMIT_MM = 282
+_MM_TO_PX = 96 / 25.4
+
+
+def _overflow_by_block(document) -> dict[str, int]:
+    """Páginas EXTRA que necesita compactar cada bloque ajustable.
+
+    Cada <section class="page"> del template lleva un id pg-… y su contenido
+    termina en un marcador end-…; WeasyPrint registra esas anclas por página
+    con su posición. Un bloque desborda si su ancla pg-… queda a más de una
+    página de la siguiente, o si su end-… cae en la zona del folio.
+    """
+    first_page: dict[str, int] = {}
+    end_y: dict[str, float] = {}
+    for idx, page in enumerate(document.pages):
+        for name, rect in page.anchors.items():
+            # rect = (x0, y0, x1, y1) en px CSS respecto al origen de la página
+            if name.startswith("pg-"):
+                first_page.setdefault(name, idx)
+            elif name.startswith("end-"):
+                key = name.removeprefix("end-")
+                end_y[key] = max(end_y.get(key, 0.0), rect[1])
+
+    ordered = sorted(first_page.items(), key=lambda kv: kv[1])
+    out: dict[str, int] = {}
+    for (name, start), (_, nxt) in zip(
+        ordered, ordered[1:] + [("<fin>", len(document.pages))]
+    ):
+        key = name.removeprefix("pg-")
+        extra = nxt - start - 1
+        if _adjustable(key) and extra > 0:
+            out[key] = extra
+
+    limit = _END_LIMIT_MM * _MM_TO_PX
+    for key, y in end_y.items():
+        if key not in out and y > limit and _adjustable(key):
+            out[key] = 1
+
+    # Marcador ausente: el contenido creció tanto que WeasyPrint recortó el
+    # final del bloque (las columnas flex no se fragmentan, se cortan). Eso
+    # también es desborde, y de los graves: se perdería texto.
+    for name in first_page:
+        key = name.removeprefix("pg-")
+        if _adjustable(key) and key not in end_y:
+            out[key] = max(out.get(key, 0), 1)
+    return out
+
+
+def render_fitted(render) -> tuple[str, bytes]:
+    """Renderiza con ajuste de densidad y devuelve (html, pdf).
+
+    `render` es un callable `dict[str, int] -> str` (densidades -> HTML).
+    Si un bloque derrama texto a una página extra (casi vacía), se le sube
+    la densidad y se vuelve a renderizar, hasta d2 como máximo.
+    """
+    HTML = _weasy_html()
+    densities: dict[str, int] = {}
+    html = render(densities)
+    document = HTML(string=html).render()
+
+    for _ in range(_FIT_EXTRA_RENDERS):
+        changed = False
+        for key, extra in _overflow_by_block(document).items():
+            bumped = min(densities.get(key, 0) + extra, _FIT_MAX_DENSITY)
+            if bumped != densities.get(key, 0):
+                densities[key] = bumped
+                changed = True
+        if not changed:
+            break
+        html = render(densities)
+        document = HTML(string=html).render()
+
+    return html, _finish_pdf(document)
+
+
+__all__ = ["render_html", "render_fitted", "to_pdf", "AREA_HEX"]

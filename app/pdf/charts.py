@@ -463,18 +463,31 @@ def time_wheel_svg(
 
     `months` y `cuatrimestres` vienen de `domain.time_wheel` (month_data y
     quarter_arcs).
+
+    Disposición: ENE queda centrado a la IZQUIERDA y los meses avanzan hacia
+    abajo (izquierda → abajo → derecha → arriba), como la rueda original de
+    la tienda. En coordenadas de pantalla el tiempo corre en ángulo
+    DECRECIENTE, de ahí que `edges` devuelva (a_lo, a_hi) y las semanas se
+    recorran desde a_hi.
     """
     parts = [_svg_root("0 0 440 440", 440, 440, f"Círculo del tiempo {year}")]
     parts.append('<g transform="translate(220 220)">')
 
-    def ang(i: float) -> float:
-        return -math.pi / 2 + i * 2 * math.pi / 12
+    step = 2 * math.pi / 12
+
+    def edges(start: float, span: float = 1.0) -> tuple[float, float]:
+        """Bordes (a_lo, a_hi) del arco que cubre `span` meses desde `start`
+        (índice de mes, 0 = enero, centrado en su posición)."""
+        a_hi = math.pi - (start - 0.5) * step
+        a_lo = math.pi - (start + span - 0.5) * step
+        return a_lo, a_hi
 
     # --- Banda de cuatrimestres (tinte dorado, anclada al mes natal) ------- #
     gap = math.radians(1.6)
     for cu in cuatrimestres:
-        a0 = ang(cu["start"]) + gap
-        a1 = ang(cu["start"] + cu["span"]) - gap
+        a0, a1 = edges(cu["start"], cu["span"])
+        a0 += gap
+        a1 -= gap
         fill = ACCENT_DEEP if cu.get("active") else ACCENT_SOFT
         parts.append(f'<path d="{_annular(74, 106, a0, a1)}" fill="{fill}"/>')
         am = (a0 + a1) / 2
@@ -485,7 +498,7 @@ def time_wheel_svg(
                            weight=700, letter_spacing=".14em"))
     # rombo dorado en el arranque del ciclo (el mes de nacimiento)
     if cuatrimestres:
-        a_start = ang(cuatrimestres[0]["start"])
+        a_start = edges(cuatrimestres[0]["start"])[1]
         dx, dy_ = _pol(110, a_start)
         parts.append(
             f'<path d="M{dx:.1f} {dy_ - 4:.1f} L{dx + 3.2:.1f} {dy_:.1f} '
@@ -494,7 +507,7 @@ def time_wheel_svg(
 
     # --- Meses + semanas --------------------------------------------------- #
     for i, mo in enumerate(months):
-        a0, a1 = ang(i), ang(i + 1)
+        a0, a1 = edges(i)
         am = (a0 + a1) / 2
         m_num = i + 1
         is_now = m_num == current_month
@@ -533,10 +546,10 @@ def time_wheel_svg(
             f"</text>"
         )
 
-        # 4 semanas personales por mes
+        # 4 semanas personales por mes (el tiempo corre de a1 hacia a0)
         wk_fill = "#fff" if is_now else (INK_SOFT if not is_past else "#B6AEC6")
         for k, wv in enumerate(mo["weeks"]):
-            aw = a0 + (a1 - a0) * (2 * k + 1) / 8
+            aw = a1 - (a1 - a0) * (2 * k + 1) / 8
             wx, wy = _pol(184, aw)
             parts.append(_center_text(wx, wy, wv, size=7, fill=wk_fill, weight=600))
         # separadores de semana (ticks finos)

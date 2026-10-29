@@ -1231,6 +1231,27 @@ h2.t.sm{ font-size:11.5mm; }
   color:var(--accent);
 }
 
+/* Firma de la autora bajo el sello: caligráfica (Mrs Saint Delafield,
+   embebida como data-URI por el renderer) + marca en mayúsculas. */
+.final-v2 .firma{
+  margin-top:11mm;
+}
+
+.final-v2 .firma .name{
+  font-family:"Mrs Saint Delafield", "Segoe Script", cursive;
+  font-size:13mm;
+  line-height:1.15;
+  color:rgba(255,255,255,.96);
+}
+
+.final-v2 .firma .brand{
+  margin-top:2.5mm;
+  font:700 2.8mm/1 "Open Sans", sans-serif;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+
 .final-v2 .legal{
   position:absolute;
   bottom:16mm;
@@ -1242,3 +1263,101 @@ h2.t.sm{ font-size:11.5mm; }
   border-top:1px solid rgba(255,255,255,.15);
   padding-top:3.5mm;
 }
+
+/* Marcador invisible al final del contenido de cada bloque ajustable: el
+   renderer lee su posición (ancla end-…) para saber si el texto invade la
+   zona del folio aunque no haya saltado de página. */
+.pg-end{
+  display:block;
+  height:0;
+  visibility:hidden;
+}
+
+/* ==========================================================================
+   DENSIDADES DE AJUSTE (d1 / d2)
+   --------------------------------------------------------------------------
+   El renderer renderiza, detecta con las anclas pg-… qué bloque ocupó más de
+   una página (texto IA más largo que el presupuesto del layout) y lo
+   re-renderiza con d1 o, si aún no cabe, d2: tipografía y aires ligeramente
+   más compactos para que la sección vuelva a caber en su única página en vez
+   de derramar un resto a una hoja casi vacía.
+   ========================================================================== */
+
+/* ---------- nivel 1: compacto ---------- */
+.page.d1 h2.t{ font-size:13mm; }
+.page.d1 h2.t.sm{ font-size:10.3mm; }
+
+.page.d1 .body p{ font-size:3.3mm; line-height:1.6; margin-bottom:4mm; }
+.page.d1 .open-quote{ margin-top:7mm; padding:5.5mm 8mm 5.5mm 14mm; }
+.page.d1 .open-quote .q{ font-size:5.4mm; }
+.page.d1 .open-head{ padding-top:20mm; }
+.page.d1 .open-body{ margin-top:7mm; }
+
+.page.d1 .entradilla-v2{ font-size:4.4mm; margin:4mm 0 5.5mm; }
+.page.d1 .sec-body p{ font-size:3.2mm; line-height:1.58; margin-bottom:3.8mm; }
+.page.d1 .pull-v2{ margin:4mm 0 4.5mm; padding:4.2mm 6mm 4.2mm 15mm; }
+.page.d1 .pull-v2 p{ font-size:3.4mm; line-height:1.42; }
+.page.d1 .accion-v2{ margin-top:3.2mm; padding:3.4mm 5.5mm; }
+.page.d1 .accion-v2 .tx{ font-size:3.15mm; }
+.sec-a.d1 .content{ padding-top:19mm; }
+.sec-b.d1 .header{ padding:16mm 20mm 9mm; }
+.sec-b.d1 .content{ padding-top:7mm; }
+.sec-b.d1 .entradilla-v2{ margin-top:6mm; }
+
+.page.d1 .tension-v2 .head{ padding-top:16mm; }
+.page.d1 .tension-v2 .duel{ height:58mm; }
+.page.d1 .tension-v2 .duel .n{ font-size:48mm; }
+.page.d1 .tension-v2 .argument{ margin-top:5mm; padding-top:5mm; }
+.page.d1 .tension-v2 .argument p{ font-size:3.05mm; line-height:1.52; margin-bottom:3.4mm; }
+.page.d1 .tension-v2 .resolve-v2{ padding:4.5mm 6mm 4.5mm 14mm; }
+.page.d1 .tension-v2 .resolve-v2 p{ font-size:3.3mm; line-height:1.42; }
+
+.page.d1 .plan-intro{ margin-top:5mm; padding:3.6mm 5mm; font-size:3.3mm; }
+.page.d1 .plan-v2{ margin-top:6.5mm; }
+.page.d1 .plan-v2 .step{ padding:4mm 5mm; margin-bottom:4.5mm; }
+.page.d1 .step h4{ font-size:3.4mm; }
+.page.d1 .step p{ font-size:2.75mm; line-height:1.45; }
+
+/* ---------- nivel 2: mínimo legible ---------- */
+.page.d2 h2.t{ font-size:12mm; }
+.page.d2 h2.t.sm{ font-size:9.3mm; }
+
+.page.d2 .body p{ font-size:3.1mm; line-height:1.52; margin-bottom:3.4mm; }
+.page.d2 .open-quote{ margin-top:5.5mm; padding:4.5mm 8mm 4.5mm 14mm; }
+.page.d2 .open-quote .q{ font-size:4.9mm; }
+.page.d2 .open-head{ padding-top:17mm; }
+.page.d2 .open-body{ margin-top:6mm; }
+
+.page.d2 .entradilla-v2{ font-size:4mm; margin:3.2mm 0 4.5mm; }
+.page.d2 .sec-body p{ font-size:3mm; line-height:1.5; margin-bottom:3.2mm; }
+.page.d2 .pull-v2{ margin:3.2mm 0 3.6mm; padding:3.4mm 5.5mm 3.4mm 14mm; }
+.page.d2 .pull-v2 p{ font-size:3.2mm; line-height:1.36; }
+.page.d2 .accion-v2{ margin-top:2.6mm; padding:2.8mm 5mm; }
+.page.d2 .accion-v2 .tx{ font-size:3mm; }
+.page.d2 .accion-v2 .arrow{ width:6.5mm; height:6.5mm; font-size:3.4mm; }
+.sec-a.d2 .content{ padding-top:16mm; }
+.sec-b.d2 .header{ padding:13mm 20mm 7mm; }
+.sec-b.d2 .content{ padding-top:5.5mm; }
+.sec-b.d2 .entradilla-v2{ margin-top:4.5mm; }
+
+.page.d2 .tension-v2 .head{ padding-top:13mm; }
+.page.d2 .tension-v2 .duel{ height:46mm; }
+.page.d2 .tension-v2 .duel .n{ font-size:38mm; }
+.page.d2 .tension-v2 .argument{ margin-top:4mm; padding-top:4mm; }
+.page.d2 .tension-v2 .argument p{ font-size:2.9mm; line-height:1.45; margin-bottom:2.8mm; }
+.page.d2 .tension-v2 .resolve-v2{ padding:3.6mm 5.5mm 3.6mm 13mm; }
+.page.d2 .tension-v2 .resolve-v2 p{ font-size:3.1mm; line-height:1.36; }
+
+.page.d2 .plan-intro{ margin-top:4mm; padding:3mm 4.5mm; font-size:3.1mm; }
+.page.d2 .plan-v2{ margin-top:5mm; }
+.page.d2 .plan-v2 .step{ padding:3.2mm 4.2mm; margin-bottom:3.6mm; }
+.page.d2 .step h4{ font-size:3.2mm; margin-bottom:1.4mm; }
+.page.d2 .step p{ font-size:2.6mm; line-height:1.4; }
+.page.d2 .step .dot{ width:7.5mm; height:7.5mm; font-size:3.2mm; }
+
+/* En d2 el plan pasa de timeline alternado a columna única con el riel a la
+   izquierda: 6 pasos largos no caben en zigzag ni compactados. */
+.page.d2 .plan-v2::before{ left:4.5mm; }
+.page.d2 .plan-v2 .step{ width:100%; margin-left:0; margin-right:0; padding-left:13mm; }
+.page.d2 .step:nth-child(odd) .dot,
+.page.d2 .step:nth-child(even) .dot{ left:4.5mm; right:auto; transform:translateX(-50%); }
