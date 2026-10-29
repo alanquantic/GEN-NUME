@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>{{ report_title }} · {{ person_name }}</title>
-<style>{{ css|safe }}
+<style>{{ font_faces|safe }}{{ css|safe }}
 /* Overrides por reporte: DESPUÉS del CSS para ganar el cascade. */
 :root{
   --area:{{ area_hex }};
@@ -24,7 +24,10 @@
 {% set folio_year %}<span class="yr">Año personal: {{ ap_value }} | Año en curso: {{ current_year }}</span><i class="ln"></i>{% endset %}
 
 {# ============ 1 · PORTADA ============ #}
-<section class="page">
+{# Cada <section> lleva un id "pg-…": son las anclas con las que el renderer
+   detecta qué bloque se desbordó a una página extra y le sube la densidad
+   (clase d1/d2) antes de volver a renderizar. #}
+<section class="page" id="pg-cover">
   <div class="cover-v2">
     <div class="stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="ring a"></div>
@@ -50,7 +53,7 @@
 </section>
 
 {# ============ 2 · APERTURA / RETRATO ============ #}
-<section class="page">
+<section class="page d{{ dens.get('retrato', 0) }}" id="pg-retrato">
   {{ sky_dots }}
   <div class="aura tl"></div>
   <div class="wm" style="right:-18mm; top:-14mm;">{{ cover_number_clean }}</div>
@@ -66,11 +69,12 @@
     <div class="col">{% for par in retrato_cols[0] %}<p>{{ par }}</p>{% endfor %}</div>
     {% if retrato_cols[1] %}<div class="col">{% for par in retrato_cols[1] %}<p>{{ par }}</p>{% endfor %}</div>{% endif %}
   </div>
+  <i class="pg-end" id="end-retrato"></i>
   <div class="folio">{{ folio_year }}<span>{{ person_name }}</span><span class="num">02</span></div>
 </section>
 
 {# ============ 3 · NÚMEROS (BENTO) ============ #}
-<section class="page">
+<section class="page" id="pg-bento">
   {{ sky_dots }}
   <div class="aura br"></div>
   <div class="open-head">
@@ -94,7 +98,7 @@
 
 {# ============ 4 · GRÁFICOS ============ #}
 {% for chart in charts %}
-<section class="page chart-page-v2">
+<section class="page chart-page-v2" id="pg-chart-{{ loop.index0 }}">
   {{ sky_dots }}
   <div class="side-eyebrow">{{ chart.eyebrow }}</div>
   <div class="chart-head-v2">
@@ -116,7 +120,7 @@
 {% for sec in data.secciones %}
 {% set rail = sec_rail[loop.index0] %}
 {% if loop.index0 % 2 == 0 %}
-<section class="page sec-a">
+<section class="page sec-a d{{ dens.get('sec-' ~ loop.index0, 0) }}" id="pg-sec-{{ loop.index0 }}">
   {{ sky_dots }}
   <div class="wm">{{ rail.value if rail else "%02d"|format(loop.index) }}</div>
   <div class="band">
@@ -154,11 +158,12 @@
       <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
     </div>
     {% endif %}
+    <i class="pg-end" id="end-sec-{{ loop.index0 }}"></i>
   </div>
   <div class="folio">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
 {% else %}
-<section class="page sec-b">
+<section class="page sec-b d{{ dens.get('sec-' ~ loop.index0, 0) }}" id="pg-sec-{{ loop.index0 }}">
   {{ sky_dots }}
   <div class="header">
     <div class="idx-ghost">{{ "%02d"|format(loop.index) }}</div>
@@ -189,6 +194,7 @@
       <div class="tx"><b>PRÁCTICA ·</b> {{ sec.cierre_accionable }}</div>
     </div>
     {% endif %}
+    <i class="pg-end" id="end-sec-{{ loop.index0 }}"></i>
   </div>
   <div class="folio">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(loop.index + 3 + chart_pages) }}</span></div>
 </section>
@@ -196,7 +202,7 @@
 {% endfor %}
 
 {# ============ 6 · TENSIÓN CENTRAL (diagonal) ============ #}
-<section class="page">
+<section class="page d{{ dens.get('tension', 0) }}" id="pg-tension">
   <div class="tension-v2">
     <div class="grain"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="seam"></div>
@@ -221,12 +227,13 @@
       <p>{{ data.tension_central.como_resolverla }}</p>
     </div>
     {% endif %}
+    <i class="pg-end" id="end-tension"></i>
   </div>
   <div class="folio dark">{{ folio_year }}<span>{{ report_title }}</span><span class="num">{{ "%02d"|format(4 + chart_pages + data.secciones|length) }}</span></div>
 </section>
 
 {# ============ 7 · PLAN (línea de tiempo) ============ #}
-<section class="page">
+<section class="page d{{ dens.get('plan', 0) }}" id="pg-plan">
   {{ sky_dots }}
   <div class="aura tl"></div>
   <div class="open-head">
@@ -243,11 +250,12 @@
     </div>
     {% endfor %}
   </div>
+  <i class="pg-end" id="end-plan"></i>
   <div class="folio">{{ folio_year }}<span>Tu plan</span><span class="num">{{ "%02d"|format(5 + chart_pages + data.secciones|length) }}</span></div>
 </section>
 
 {# ============ 8 · CIERRE ============ #}
-<section class="page">
+<section class="page" id="pg-cierre">
   <div class="final-v2">
     <div class="ring a"></div>
     <div class="ring b"></div>
@@ -255,9 +263,12 @@
       <div class="eyebrow">Para terminar</div>
       <div class="closing">{{ data.cierre or data.frase_clave }}</div>
       <div class="sello">
-        <div class="b">Numerología Cotidiana</div>
-        <div class="line"></div>
         <div class="b">{{ person_name }}</div>
+        <div class="line"></div>
+      </div>
+      <div class="firma">
+        <div class="name">Laura L. Rodríguez</div>
+        <div class="brand">Numerología Cotidiana</div>
       </div>
     </div>
     <div class="legal">{{ legal }}</div>
