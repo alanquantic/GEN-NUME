@@ -88,30 +88,35 @@ class AIReportService:
                 usage=usage,
             )
             report = REPORTS[request.report]
-            html = hr.render_html(
-                request.report,
-                generated.data,
-                dossier.numbers,
-                report_title=report.title,
-                area_token=report.area,
-                person_name=request.person.name,
-                birth_long=format_long_date(request.person.birth_date),
-                today_long=format_long_date(today),
-                today_age=dossier.numbers.pinnacle.age_at(today),
-                birth_date=request.person.birth_date,
-                today=today,
-            )
+
+            def render(densities: dict[str, int]) -> str:
+                return hr.render_html(
+                    request.report,
+                    generated.data,
+                    dossier.numbers,
+                    report_title=report.title,
+                    area_token=report.area,
+                    person_name=request.person.name,
+                    birth_long=format_long_date(request.person.birth_date),
+                    today_long=format_long_date(today),
+                    today_age=dossier.numbers.pinnacle.age_at(today),
+                    birth_date=request.person.birth_date,
+                    today=today,
+                    densities=densities,
+                )
 
             json_art = self.store.save_text_artifact(
                 job_id,
                 "report.json",
                 json.dumps(generated.data, ensure_ascii=False, indent=2),
             )
-            html_art = self.store.save_text_artifact(job_id, "report.html", html)
 
             stage = "render_pdf"
             self.store.update(job_id, stage="render_pdf")
-            pdf = hr.to_pdf(html)
+            # render_fitted re-renderiza con bloques compactados (d1/d2) si el
+            # texto IA no cabe en su página; el HTML guardado es el ajustado.
+            html, pdf = hr.render_fitted(render)
+            html_art = self.store.save_text_artifact(job_id, "report.html", html)
 
             stage = "save_outputs"
             self.store.update(job_id, stage="save_outputs")
