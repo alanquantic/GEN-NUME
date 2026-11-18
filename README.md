@@ -199,6 +199,46 @@ export async function POST(req: Request) {
 4. Coloca los **assets** (`assets/report/**` y `assets/fonts/*.ttf`) en el
    contexto de build antes de desplegar (ver siguiente sección).
 
+### Variables de IA, compresión y alertas
+
+Se configuran en el dashboard de Railway (IaC no las gestiona):
+
+| Variable | Para qué |
+| --- | --- |
+| `AI_PROVIDER` | `anthropic` o `google` |
+| `ANTHROPIC_API_KEY` | Clave de console.anthropic.com (con `anthropic`) |
+| `GOOGLE_API_KEY` | Clave de AI Studio (con `google`) |
+| `AI_MODEL` | Con `google`: `gemini-3.6-flash`. No usar `*-lite`: inventa claves y rompe el esquema |
+| `AI_MAX_TOKENS` | `64000` (tope thinking + salida; `16000` trunca reportes) |
+| `PDF_COMPRESS` | `images`, `slim` u `off` (ver `app/pdf/compress.py`) |
+| `RESEND_API_KEY` | Alertas por correo, vía preferida (API HTTPS de Resend) |
+| `MAIL_FROM`, `ALERT_EMAIL` | Opcionales; remitente y destinatario de las alertas |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | Alternativa SMTP a Resend |
+
+Cuando un reporte falla por proveedor caído, el job reintenta 2 veces con 5 min
+de espera y luego avisa a `ALERT_EMAIL`. Probar el correo con
+`py -3 scripts/test_alert_email.py --enviar`.
+
+### Configuración del servicio (Infrastructure as Code)
+
+Railway deja de leer `railway.toml` el 2026-12-01 (Config as Code, deprecado). El
+builder, el healthcheck, los reintentos, las réplicas y el volumen se declaran
+en `.railway/railway.ts`. Railway **no** lee ese archivo durante los deploys:
+se aplica a mano con el CLI.
+
+```bash
+cd .railway && npm install      # SDK `railway` que importa el archivo
+railway link                    # proyecto GEN NUME, ambiente production
+railway config plan             # solo lectura: muestra qué cambiaría
+railway config apply            # aplica; revisar antes que no haya borrados
+```
+
+- El archivo debe declarar el volumen `gen-nume-volume` y su montaje en `/data`.
+  `railway config migrate` no lo incluye y, sin él, el plan desmonta el volumen.
+- En Windows, `railway config plan` puede abortar diciendo que el CLI es
+  antiguo: el SDK no logra ejecutar el `railway.cmd` de npm. Se evita llamando
+  al `railway.exe` real con la variable de entorno `_` apuntando a ese binario.
+
 ## Assets y fuentes
 
 Los assets del catálogo activo ya están **incluidos y optimizados** en el
