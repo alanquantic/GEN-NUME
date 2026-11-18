@@ -17,6 +17,9 @@ data/
 samples/
 samples.zip
 
+# SDK de Railway para .railway/railway.ts (se instala con npm install)
+.railway/node_modules/
+
 # Sistema
 .DS_Store
 Thumbs.db
