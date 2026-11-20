@@ -7,10 +7,26 @@ inyecta por entorno y en Railway se define en las Variables del servicio.
 
 from __future__ import annotations
 
+import logging
+import os
 from functools import lru_cache
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+logger = logging.getLogger("reportpdf")
+
+
+def _inside_volume(path: Path, volume: str) -> bool:
+    """True si `path` es absoluta y cae dentro del punto de montaje `volume`.
+
+    Se compara como ruta POSIX (el contenedor de Railway es Linux) para que la
+    comprobación dé lo mismo al correr las pruebas en Windows.
+    """
+    candidate = PurePosixPath(str(path).replace("\\", "/"))
+    root = PurePosixPath(volume)
+    return candidate.is_absolute() and candidate.is_relative_to(root)
 
 
 class Settings(BaseSettings):
@@ -81,6 +97,26 @@ class Settings(BaseSettings):
     # Otros costos por job (render del PDF, almacenamiento…) sumados al costo
     # de tokens en production_cost_usd. Con 0, production == token cost.
     ai_production_overhead_usd: float = 0.0
+
+    @model_validator(mode="after")
+    def _storage_en_el_volumen(self) -> "Settings":
+        """En Railway, los PDFs van SIEMPRE dentro del Volume montado.
+
+        Railway expone el punto de montaje en RAILWAY_VOLUME_MOUNT_PATH. Si
+        STORAGE_DIR apunta fuera de él (p. ej. el `data` relativo de
+        .env.example, que resuelve a /app/data), los archivos caen en el disco
+        efímero y cada deploy los borra sin ningún error visible. En ese caso
+        se ignora el valor y se usa el Volume.
+        """
+        volume = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH", "").strip()
+        if volume and not _inside_volume(self.storage_dir, volume):
+            logger.warning(
+                "STORAGE_DIR=%s queda fuera del Volume (%s): se usa %s para no "
+                "perder los PDFs en cada deploy. Corrige la variable en Railway.",
+                self.storage_dir, volume, volume,
+            )
+            self.storage_dir = Path(volume)
+        return self
 
     @property
     def resolved_model(self) -> str:
